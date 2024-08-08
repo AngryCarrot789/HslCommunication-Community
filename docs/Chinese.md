@@ -12,30 +12,35 @@
 </pre>
 
 # HslCommunication
+
 HslCommnication.dll
 
-![Build status](https://img.shields.io/badge/Build-Success-green.svg) [![NuGet Status](https://img.shields.io/nuget/v/HslCommunication.svg)](https://www.nuget.org/packages/HslCommunication/) ![NuGet Download](https://img.shields.io/nuget/dt/HslCommunication.svg) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](http://shang.qq.com/wpa/qunwpa?idkey=2278cb9c2e0c04fc305c43e41acff940499a34007dfca9e83a7291e726f9c4e8) [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/) [![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2017-red.svg)](https://www.visualstudio.com/zh-hans/) ![License status](https://img.shields.io/badge/License-LGPL3.0-yellow.svg) ![copyright status](https://img.shields.io/badge/CopyRight-Richard.Hu-brightgreen.svg) 
+![Build status](https://img.shields.io/badge/Build-Success-green.svg) [![NuGet Status](https://img.shields.io/nuget/v/HslCommunication.svg)](https://www.nuget.org/packages/HslCommunication/) ![NuGet Download](https://img.shields.io/nuget/dt/HslCommunication.svg) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](http://shang.qq.com/wpa/qunwpa?idkey=2278cb9c2e0c04fc305c43e41acff940499a34007dfca9e83a7291e726f9c4e8) [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/) [![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2017-red.svg)](https://www.visualstudio.com/zh-hans/) ![License status](https://img.shields.io/badge/License-LGPL3.0-yellow.svg) ![copyright status](https://img.shields.io/badge/CopyRight-Richard.Hu-brightgreen.svg)
 
 HslCommunication.jar
 
-![Build status](https://img.shields.io/badge/Build-Success-green.svg) ![License status](https://img.shields.io/badge/License-LGPL3.0-yellow.svg) ![NetFramework](https://img.shields.io/badge/Language-java-orange.svg) ![JDK status](https://img.shields.io/badge/JDK-1.8.0-green.svg) ![IDE status](https://img.shields.io/badge/Intellij%20Idea-2018.4-red.svg) ![copyright status](https://img.shields.io/badge/CopyRight-Richard.Hu-brightgreen.svg) 
+![Build status](https://img.shields.io/badge/Build-Success-green.svg) ![License status](https://img.shields.io/badge/License-LGPL3.0-yellow.svg) ![NetFramework](https://img.shields.io/badge/Language-java-orange.svg) ![JDK status](https://img.shields.io/badge/JDK-1.8.0-green.svg) ![IDE status](https://img.shields.io/badge/Intellij%20Idea-2018.4-red.svg) ![copyright status](https://img.shields.io/badge/CopyRight-Richard.Hu-brightgreen.svg)
 
 HslCommunication.py
 
-![Build status](https://img.shields.io/badge/Build-Success-green.svg) ![License status](https://img.shields.io/badge/License-LGPL3.0-yellow.svg) ![NetFramework](https://img.shields.io/badge/python-3.6-orange.svg) ![IDE status](https://img.shields.io/badge/Visual%20Studio-Code-red.svg) ![copyright status](https://img.shields.io/badge/CopyRight-Richard.Hu-brightgreen.svg) 
+![Build status](https://img.shields.io/badge/Build-Success-green.svg) ![License status](https://img.shields.io/badge/License-LGPL3.0-yellow.svg) ![NetFramework](https://img.shields.io/badge/python-3.6-orange.svg) ![IDE status](https://img.shields.io/badge/Visual%20Studio-Code-red.svg) ![copyright status](https://img.shields.io/badge/CopyRight-Richard.Hu-brightgreen.svg)
 
 ## CopyRight
+
 ±¾×é¼ş°æÈ¨¹éRichard.HuËùÓĞ
 
 ## Official Website
+
 Î¨Ò»¹ÙÍø£º[http://www.hslcommunication.cn/](http://www.hslcommunication.cn/)
 
 BBS: [http://bbs.hslcommunication.cn/](http://bbs.hslcommunication.cn/)
 
 ## License
+
 Ê¹ÓÃÇë×ñÑ­LGPL-3.0Ğ­ÒéËµÃ÷¡£¸ÃĞ­ÒéÔÊĞíÄãÃâ·ÑÊ¹ÓÃ¿âÎÄ¼şÎªÉÌÒµÏîÄ¿µÄÒ»²¿·Ö³öÊÛ£¬µ«ÊÇ½ûÖ¹Ë½×ÔĞŞ¸ÄÔ´´úÂë£¬Èç¹ûĞŞ¸ÄÁËÔ´´úÂë£¬±ØĞë½øĞĞ¿ªÔ´¡£
 
 ## Ê²Ã´ÊÇHSL£¿
+
 ÕâÊÇÒ»¸ö»ùÓÚ¹¤ÒµÎïÁªÍø£¬¼ÆËã»úÍ¨Ñ¶µÄ¼Ü¹¹ÊµÏÖ£¬¼¯³ÉÁË¹¤ÒµÈí¼ş¿ª·¢µÄ´ó²¿·ÖµÄ»ù´¡¹¦ÄÜÊµÏÖ£¬±ÈÈçÈıÁâPLCÍ¨Ñ¶£¬Î÷ÃÅ×ÓPLCÍ¨Ñ¶£¬Å·Ä·ÁúPLCÍ¨Ñ¶£¬modbusÍ¨Ñ¶£¬
 ÕâĞ©Í¨Ñ¶È«²¿½øĞĞÁË¶àÓïÑÔµÄÊµÏÖ£¬µ±È»£¬Ö÷´òµÄ .net ¿âµÄ¹¦ÄÜ¼¯³É»¹¸ü¼ÓµÄÇ¿´ó£¬³ı´ËÖ®Íâ£¬»¹ÊµÏÖÁË¿ç³ÌĞò£¬¿çÓïÑÔ£¬¿çÆ½Ì¨µÄÍ¨Ñ¶£¬ÈÃÄã²»ÔÙ¾À½áÓÚÊ¹ÓÃwindows»¹ÊÇ
 linuxÏµÍ³£¬ÊµÏÖÁËÈÕÖ¾¹¦ÄÜ£¬Á÷Ë®ºÅÉú³É¹¦ÄÜ£¬ÓÊ¼ş·¢ËÍ¹¦ÄÜ£¬¸µÁ¢Ò¶±ä»»¹¦ÄÜ£¬µÈµÈ£¬½«À´»á¼¯³É¸ü¶àµÄ¹¤Òµ»·¾³³£¼û¹¦ÄÜµÄÊµÏÖ¡£
@@ -43,6 +48,7 @@ linuxÏµÍ³£¬ÊµÏÖÁËÈÕÖ¾¹¦ÄÜ£¬Á÷Ë®ºÅÉú³É¹¦ÄÜ£¬ÓÊ¼ş·¢ËÍ¹¦ÄÜ£¬¸µÁ¢Ò¶±ä»»¹¦ÄÜ£¬µÈµÈ£¬½
 ÎªÁË²»ÈÃ¹¤Òµ4.0Ö»Í£ÁôÔÚ¿ÚºÅÉÏ£¬ÍòÕÉ¸ßÂ¥Æ½µØÆğ£¬¶ø»ùÊ¯¾ÍÊÇHSL¡£
 
 ## HSLÄÜ¸ÉÊ²Ã´£¿
+
 HSLÄÜ½«¹¤ÒµÉú²úÏÖ³¡µÄÉè±¸½øĞĞÍòÎï»¥Áª£¬½«Êı¾İÔÚµ×²ã×ÔÓÉµÄ´«Êä£¬ÎŞÂÛÊÇÖ÷¶¯µÄ»¹ÊÇ±»¶¯µÄ£¬ÎŞÂÛÄãµÄ²É¼¯ÏµÍ³ÊÇÊ²Ã´£¨Í¨³£²É¼¯ÏµÍ³ÎªwindowsµçÄÔ£¬»òÊÇÇ¶ÈëÊ½ÏµÍ³£¬»òÊÇ»ùÓÚlinuxµÄºĞ×Ó£©£¬
 ¶¼¿ÉÒÔÊµÏÖÊı¾İµÄËæÒâ´«Êä£¬·½±ã¿ìËÙÊµÏÖÇ¿´ó£¬ÊµÊ±£¬¸ßÏìÓ¦µÄ½¡×³ÏµÍ³£¬ÎŞÂÛÄúÊÇ¹¹½¨C/SÏµÍ³£¬»¹ÊÇB/SÏµÍ³£¬»¹ÊÇC-B-S-A£¨¼¯³É×ÀÃæ¿Í»§¶Ë£¬ä¯ÀÀÆ÷£¬°²×¿£©»ìºÏÏµÍ³£¬¶¼ÊÇ¿ìËÙ¶øÇÒµÍ³É±¾µÄÊµÏÖ£¬
 Ö»ÒªÓµÓĞÁË¹¤ÒµÏÖ³¡µÄÒ»ÊÖÊı¾İ£¬¼´¿ÉÒÔ´î½¨Ç¿´óµÄÊµÊ±¼àÊÓ¹¦ÄÜµÄÈí¼ş£¬Éú²ú±¨±í¼°×Ô¶¯»¯ÅÅ²úµÄÈí¼ş£¬¸÷ÖÖ¹¤ÒÕ²ÎÊıÀúÊ·×·×ÙµÄÈí¼ş£¬»ùÓÚÊı¾İ¾­ÑéµÄ»úÆ÷Ñ§Ï°Èí¼ş£¬ÒÔ¼°È«¹¦ÄÜµÄMESÏµÍ³µÈµÈ¡£
@@ -54,12 +60,15 @@ HSLÄÜ½«¹¤ÒµÉú²úÏÖ³¡µÄÉè±¸½øĞĞÍòÎï»¥Áª£¬½«Êı¾İÔÚµ×²ã×ÔÓÉµÄ´«Êä£¬ÎŞÂÛÊÇÖ÷¶¯µÄ»¹ÊÇ±
 **¹ØÓÚÆóÒµºÏ×÷£º** »¶Ó­ÆóÒµ¿Í»§ÁªÏµºÏ×÷£¬°üÀ¨¿ª·¢ĞÂµÄĞ­ÒéÖ§³Ö£¬ÅàÑµ¼°Ö¸µ¼ÉÏÎ»»úÈí¼ş¼°MESÏµÍ³µÄ¿ª·¢£¬Ö¸µ¼¹¤³§ÖÇÄÜ»¯Éı¼¶¸ÄÔì¼°ĞÅÏ¢»¯ÍÅ¶Ó½¨Éè¡£
 
 ## Install From NuGet
+
 ËµÃ÷£ºNuGetÎªÎÈ¶¨°æ±¾£¬Ö§³ÖÔÚÏßÉı¼¶£¬×é¼şµÄÊ¹ÓÃ×îºÃ´ÓNuGetÏÂÔØ£¬´Ë´¦·¢²¼µÄÏîÄ¿ÓĞ¿ÉÄÜÎª»¹Ã»ÓĞÍ¨¹ı±àÒëµÄ²âÊÔ°æ£¬NuGet°²×°ÈçÏÂ£º
+
 ```
 Install-Package HslCommunication
 ```
 
 ## Environment
+
 * IDE: **Visual Studio 2019** ±ØĞëÕâ¸ö°æ±¾¼°ÒÔÉÏ£¬²»È»»áÓï·¨±¨´í
 * .Net Framework»·¾³ÏÂ£ºÖ§³Ö.Net 3.5¼°ÒÔÉÏ»·¾³£¬¹¦ÄÜ×îÍêÉÆ¡£
 * .Net Standard»·¾³ÏÂ£º.Net 2.0ÒÔÉÏ£¬Ö§³Ö.net coreºÍxamarin¡£
@@ -67,10 +76,12 @@ Install-Package HslCommunication
 * python: **Visual Studio Code**
 
 ## Contact
+
 * ÓÊÏäµØÖ·(Email)£ºhsl200909@163.com
 * ![reward](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/support.png)
 
-## HslCommunication.dll Summary 
+## HslCommunication.dll Summary
+
 ÍêÕûµÄÏîÄ¿½éÉÜµØÖ·£º [http://www.cnblogs.com/dathlin/p/7703805.html](http://www.cnblogs.com/dathlin/p/7703805.html)
 
 **HslCommunicationDemo** Í¨¹ıÏÂÃæµÄDemo½çÃæ¿ÉÒÔ´ó¸ÅÇå³ş±¾ÏîÄ¿Ö§³ÖµÄ¹¦ÄÜ:
@@ -105,8 +116,8 @@ Install-Package HslCommunication
 * [Redis¶ÁĞ´](https://www.cnblogs.com/dathlin/p/9998013.html)
 * [´ÓLabviewµ÷ÓÃ±¾¿â](http://bbs.elecfans.com/jishu_1710384_1_1.html)
 
+## HslCommunication.jar Summary
 
-## HslCommunication.jar Summary 
 ±¾×é¼şÌá¹©java°æ±¾£¬Îª.net°æ±¾µÄÑË¸î°æ£¬³ıÈ¥ÁËËùÓĞµÄ·şÎñÆ÷¹¦ÄÜ´úÂë£¬±£ÁôÁË²¿·ÖµÄ¿Í»§¶Ë¹¦ÄÜ´úÂë£¬·½±ãµÄºÍPLC£¬Éè±¸½øĞĞÊı¾İ½»»¥£¬ºÍC#³ÌĞò½øĞĞÊı¾İ½»»¥£¬±¾jar×é¼şÊÊÓÃÓÃ°²×¿¿ª·¢£¬·½±ã´î½¨Ò»¸ö.net ·şÎñÆ÷ + windows ¿Í»§¶Ë + asp.net ¿Í»§¶Ë + j2ee ¿Í»§¶Ë + java ¿Í»§¶Ë + android ¿Í»§¶Ë£¬Ä¿Ç°µÄjava¹¦ÄÜ´úÂëÈçÏÂ£º
 
 * [ÈıÁâPLCµÄÊı¾İ½»»¥](https://www.cnblogs.com/dathlin/p/9176069.html)
@@ -117,7 +128,8 @@ Install-Package HslCommunication
 * Òì²½ÍøÂçÍ¨Ñ¶¹¦ÄÜ **NetComplex**
 * Êı¾İ¶©ÔÄÍÆËÍ **NetPush**
 
-## HslCommunication.py Summary 
+## HslCommunication.py Summary
+
 ±¾×é¼şÌá¹©python°æ±¾£¬Îª.net°æ±¾µÄÑË¸î°æ£¬³ıÈ¥ÁËËùÓĞµÄ·şÎñÆ÷¹¦ÄÜ´úÂë£¬±£ÁôÁË²¿·ÖµÄ¿Í»§¶Ë¹¦ÄÜ´úÂë£¬·½±ãµÄºÍPLC£¬Éè±¸½øĞĞÊı¾İ½»»¥£¬ºÍC#³ÌĞò½øĞĞÊı¾İ½»»¥£¬ÊÊÓÃÓÚ¿çÆ½Ì¨ÔËĞĞ£¬Ö÷Òª¹¦ÄÜÈçÏÂ£º
 
 * [ÈıÁâPLCµÄÊı¾İ½»»¥](https://www.cnblogs.com/dathlin/p/9745147.html)
@@ -130,6 +142,7 @@ Install-Package HslCommunication
 * Redis¶ÁĞ´²Ù×÷
 
 ## Second Extensions Project (ÄÚº¬¼¸¸öDemo)
+
 * »ùÓÚ±¾×é¼ş¿ª·¢µÄÒ»¸öCS¼Ü¹¹µÄÏîÄ¿Ä£°æ£¬¸ÃÄ£°æ²ÉÓÃ±¾×é¼ş½øĞĞ¿ª·¢£¬Íê³ÉÁËÕË»§¹ÜÀí£¬½ÇÉ«¹ÜÀí£¬¸öÈËÎÄ¼ş¹ÜÀí£¬Í·Ïñ»úÖÆ£¬×Ô¶¯Éı¼¶£¬ÍêÉÆµÄÈÕÖ¾µÈµÈ¹¦ÄÜ¡£ÏîÄ¿µØÖ·Îª£º[https://github.com/dathlin/ClientServerProject](https://github.com/dathlin/ClientServerProject)
 * »ùÓÚ±¾×é¼ş¿ª·¢µÄÒ»¸ö¾ÖÓòÍø¶àÈËÁÄÌìµÄ³ÌĞò£¬Ö§³ÖÔÚÏß¿Í»§¶ËĞÅÏ¢²é¿´£¬·şÎñÆ÷Ç¿ÖÆ¹Ø±Õ¿Í»§¶Ë¡£[https://github.com/dathlin/NetChatRoom](https://github.com/dathlin/NetChatRoom)
 * »ùÓÚ±¾×é¼ş¿ª·¢µÄÒ»¸öÎ÷ÃÅ×ÓPLCºóÌ¨¶ÁÈ¡ÏÔÊ¾Êı¾İ£¬²¢ÍÆËÍ¸øÔÚÏß¿Í»§¶Ë£¨°üÀ¨window³ÌĞò£¬asp.netÍøÕ¾£¬Android³ÌĞò£©ÏÔÊ¾ÊµÊ±ÇúÏßµÄÊ¾ÀıÏîÄ¿¡£²¢ÊµÏÖÔ¶³Ì²Ù×÷¡£[https://github.com/dathlin/RemoteMonitor](https://github.com/dathlin/RemoteMonitor)
@@ -140,33 +153,41 @@ Install-Package HslCommunication
 * **MES** ÏµÍ³£¬³õ²½µÄmesÏµÍ³µÄ½çÃæ£¬Ä¿Ç°ÈÔÈ»ÔÚ¿ª·¢ÖĞ¡£[http://118.24.36.220:8081/](http://118.24.36.220:8081/)
 
 ## Contribution
+
 ÈÈÁÒ»¶Ó­¶Ô±¾ÏîÄ¿µÄ´úÂëÌá³ö¸Ä½øÒâ¼û£¬¿ÉÒÔ·¢ÆğPull Request£¬¶ÔÓÚ´úÂëÁ¿¹±Ï×½Ï¶àµÄĞ¡»ï°é£¬»áÓĞ¶îÍâµÄ×é¼şÊ¹ÓÃÈ¨£¬²¢ÔÚÌØ±ğ¸ĞĞ»ÀïĞ´Ã÷¡£
 
 ## Thanks
+
 * »ìºÏËø¼°¿ÉĞòÁĞ»¯Òì³£Àà£¬¶ÁĞ´Ëø£¬²¢·¢Ä£ĞÍ²¿·Ö´úÂë¼°Ë¼Â·²Î¿¼¡¶CLR Via C#¡·£¬¸ĞĞ»×÷ÕßJeffrey Richter
 
 ![´òÉÍ](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/support.png)
 
 ## Controls
+
 This library include some controls render upside picture. u can easily use them
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/controls.png)
 
 ## ÈıÁâ²âÊÔ½çÃæ [ Mitsubishi PLC Communication ]
+
 Using MC protocol, Qna 3E, Include binary and ascii
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/Melsec1.png)
 
 ## Î÷ÃÅ×Ó²âÊÔ½çÃæ [ Siemens PLC Communication ]
+
 Using S7 protocol And Fetch/Write protocol
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/siemens1.png)
 
 ## Å·Ä·²âÊÔ½çÃæ [ Omron PLC Communication ]
+
 Using Fins-tcp protocol
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/Omron.png)
 
 ## AB PLC²âÊÔ½çÃæ [ AllenBradley PLC Communication ]
+
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/ab1.png)
 
 ## Modbus-Tcp ¿Í»§¶Ë·şÎñÆ÷ [ Modbus-tcp Communication ]
+
 Client, using read/write coils and register, read discrete input , read register input
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/Modbus1.png)
 
@@ -174,21 +195,25 @@ Server, you can build your own modbus-tcp server easily
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/Modbus2.png)
 
 ## RedisµÄ½çÃæ£¬Ö§³Ö¶ÁĞ´£¬ä¯ÀÀ [ Redis Client Communication ]
+
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/redis.png)
 
 ## Simplify Net ²âÊÔÑİÊ¾ [ Based on Tcp/Ip ]
+
 Communicaion with multi-computers , client can exchange data with server easily, include server side ,client side
 
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/Simlify1.png)
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/Simlify2.png)
 
 ## Udp Net ²âÊÔÑİÊ¾ [ Base on Udp/Ip ]
+
 Communicaion with multi-computers , client can send a large of data to server, include server side ,client side
 
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/Udp1.png)
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/Udp2.png)
 
 ## File Net ²âÊÔÑİÊ¾ [ Base on Tcp/Ip ]
+
 Communicaion with multi-computers , client can exchange File with server easily, include server side ,client side
 
 ![Picture](https://raw.githubusercontent.com/dathlin/HslCommunication/master/imgs/File1.png)
