@@ -1,9 +1,10 @@
 ﻿using System.Net.Sockets;
 using HslCommunication.BasicFramework;
-using HslCommunication.Core.Net;
-using HslCommunication.ModBus;
-using HslCommunication.Profinet.Melsec;
-using HslCommunication.Profinet.Siemens;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Types;
+using HslCommunication.Devices.Melsec;
+using HslCommunication.Devices.Siemens;
+using HslCommunication.ModBus.ModbusTcp;
 
 namespace HslCommunication.Tests.Documentation.Samples.Core;
 
@@ -90,7 +91,7 @@ public class NetworkDoubleBaseTest {
         MelsecMcNet client = new MelsecMcNet();
 
         client.SetPersistentConnection(); // 设置长连接，但是不立即连接，等到第一次读写的时候再启动连接。
-        System.Threading.Thread.Sleep(10000); // 休眠10秒
+        Thread.Sleep(10000); // 休眠10秒
 
 
         // 调用write时才是真正的启动连接，后续的读写操作重复利用该连接，此处的地址示例是modbus的地址，对于读取也是一样的

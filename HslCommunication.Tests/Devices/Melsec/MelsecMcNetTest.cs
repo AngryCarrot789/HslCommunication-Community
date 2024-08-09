@@ -1,26 +1,32 @@
-﻿using System.Text;
-using HslCommunication.BasicFramework;
-using HslCommunication.Profinet.Siemens;
+﻿using HslCommunication.BasicFramework;
+using HslCommunication.Core.Types;
+using HslCommunication.Devices.Melsec;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HslCommunication.Tests.Profinet.Siemens;
+namespace HslCommunication.Tests.Devices.Melsec;
 
 [TestClass]
-public class SiemensTest {
+public class MelsecMcNetTest {
     [TestMethod]
-    public async Task SiemensUnitTest() {
-        SiemensS7Net plc = new SiemensS7Net(SiemensPLCS.S1200, "192.168.8.12"); // "192.168.8.12"
+    public void MelsecUnitTest() {
+        MelsecMcNet plc = new MelsecMcNet("192.168.8.13", 6001);
         if (!plc.ConnectServer().IsSuccess) {
             Console.WriteLine("无法连接PLC，将跳过单元测试。等待网络正常时，再进行测试");
             return;
         }
 
         // 开始单元测试，从bool类型开始测试
-        string address = "M200.4";
+        string address = "M200";
+        bool[] boolTmp = new bool[] { true, true, false, true, false, true, false };
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write(address, true).IsSuccess);
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.ReadBool(address).Content == true);
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write(address, boolTmp).IsSuccess);
+        bool[] readBool = plc.ReadBool(address, (ushort) boolTmp.Length).Content;
+        for (int i = 0; i < boolTmp.Length; i++) {
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBool[i] == boolTmp[i]);
+        }
 
-        address = "M300";
+        address = "D300";
         // short类型
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write(address, (short) 12345).IsSuccess);
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.ReadInt16(address).Content == 12345);
@@ -29,17 +35,6 @@ public class SiemensTest {
         short[] readShort = plc.ReadInt16(address, (ushort) shortTmp.Length).Content;
         for (int i = 0; i < readShort.Length; i++) {
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readShort[i] == shortTmp[i]);
-        }
-
-        // 异步short类型
-        for (int j = 0; j < 100; j++) {
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue((await plc.WriteAsync(address, (short) 12345)).IsSuccess);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue((await plc.ReadInt16Async(address)).Content == 12345);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue((await plc.WriteAsync(address, shortTmp)).IsSuccess);
-            readShort = (await plc.ReadInt16Async(address, (ushort) shortTmp.Length)).Content;
-            for (int i = 0; i < readShort.Length; i++) {
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readShort[i] == shortTmp[i]);
-            }
         }
 
         // ushort类型
@@ -114,75 +109,23 @@ public class SiemensTest {
 
         // string类型
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write(address, "123123").IsSuccess);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.ReadString(address).Content == "123123");
-
-        // 中文，编码可以自定义
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write(address, "测试信息123", Encoding.Unicode).IsSuccess);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.ReadString(address, 14, Encoding.Unicode).Content == "测试信息123");
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.ReadString(address, 3).Content == "123123");
 
         // byte类型
         byte[] byteTmp = new byte[] { 0x4F, 0x12, 0x72, 0xA7, 0x54, 0xB8 };
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write(address, byteTmp).IsSuccess);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(plc.Read(address, 6).Content, byteTmp));
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(plc.Read(address, 3).Content, byteTmp));
 
-        // 批量写入测试
-        short[] shortValues = new short[50];
-        for (int i = 0; i < 50; i++) {
-            shortValues[i] = (short) (i * 5 - 3);
-        }
-
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write("M300", shortValues).IsSuccess);
-
-        string[] addresses = new string[50];
-        ushort[] lengths = new ushort[50];
-
-        for (int i = 0; i < 50; i++) {
-            addresses[i] = "M" + (i * 2 + 300);
-            lengths[i] = 2;
-        }
-
-        OperateResult<byte[]> readBytes = plc.Read(addresses, lengths);
-
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBytes.IsSuccess);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBytes.Content.Length == 100);
-        for (int i = 0; i < 50; i++) {
-            short shortTmp1 = plc.ByteTransform.TransInt16(readBytes.Content, i * 2);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(shortValues[i] == shortTmp1);
-        }
-
-        // 自定义类的测试
-        DataTest test = new DataTest() {
-            Data1 = 425,
-            Data2 = 123.53f,
-            Data3 = new byte[] { 2, 4, 6, 8, 100, 123 }
-        };
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write(test).IsSuccess);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.ReadInt16("M100").Content == 425);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.ReadFloat("M200").Content == 123.53f);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(plc.Read("M300", 6).Content, test.Data3));
-        DataTest test1 = plc.Read<DataTest>().Content;
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(test1.Data1 == test.Data1);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(test1.Data2 == test.Data2);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(test1.Data3, test.Data3));
-
-        // 大数据写入测试
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write("M100", (short) 12345).IsSuccess);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write("M500", (short) 12345).IsSuccess);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write("M800", (short) 12345).IsSuccess);
-        OperateResult<short[]> readBatchResult = plc.ReadInt16("M100", 351);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBatchResult.IsSuccess);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBatchResult.Content[0] == 12345);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBatchResult.Content[200] == 12345);
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBatchResult.Content[350] == 12345);
+        // 超长范围读取测试
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write("D1000", (short) 12345).IsSuccess);
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write("D2000", (short) 12345).IsSuccess);
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(plc.Write("D3000", (short) 12345).IsSuccess);
+        OperateResult<short[]> readBatchShort = plc.ReadInt16("D1000", 2001);
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBatchShort.IsSuccess);
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBatchShort.Content[0] == 12345);
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBatchShort.Content[1000] == 12345);
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(readBatchShort.Content[2000] == 12345);
 
         plc.ConnectClose();
-    }
-
-    private class DataTest {
-        [HslDeviceAddress("M100")] public short Data1 { get; set; }
-
-        [HslDeviceAddress("M200")] public float Data2 { get; set; }
-
-        [HslDeviceAddress("M300", 6)] public byte[] Data3 { get; set; }
     }
 }

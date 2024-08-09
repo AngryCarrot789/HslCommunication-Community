@@ -27,14 +27,14 @@ public static class StringResources {
     /// 获取或设置系统的语言选项 ->
     /// Gets or sets the language options for the system
     /// </summary>
-    public static Language.DefaultLanguage Language = new Language.English();
+    public static Language.English Language = new Language.English();
 
     /// <summary>
     /// 将语言设置为中文 ->
     /// Set the language to Chinese
     /// </summary>
     public static void SetLanguageChinese() {
-        Language = new Language.DefaultLanguage();
+        Language = new Language.English();
     }
 
     /// <summary>

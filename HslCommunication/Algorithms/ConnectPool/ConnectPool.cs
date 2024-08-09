@@ -1,5 +1,4 @@
 ﻿using HslCommunication.Core.Thread;
-using HslCommunication.ModBus;
 using HslCommunication.ModBus.ModbusTcp;
 
 namespace HslCommunication.Algorithms.ConnectPool;

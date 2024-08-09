@@ -282,8 +282,8 @@ public class SoftBasicTest {
 
     [TestMethod]
     public void GetEnumFromStringTest() {
-        System.IO.FileMode fileMode = SoftBasic.GetEnumFromString<System.IO.FileMode>("Append");
-        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fileMode == System.IO.FileMode.Append);
+        FileMode fileMode = SoftBasic.GetEnumFromString<FileMode>("Append");
+        Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fileMode == FileMode.Append);
     }
 
     [TestMethod]

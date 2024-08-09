@@ -1,7 +1,11 @@
 ﻿using System.Net.Sockets;
 using HslCommunication.Core.Net;
-using HslCommunication.Enthernet;
-using HslCommunication.Profinet.Melsec;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Types;
+using HslCommunication.Devices.Melsec;
+using HslCommunication.Enthernet.SimplifyNet;
+using HslCommunication.LogNet.Logs;
 
 namespace HslCommunication.Tests.Documentation.Samples.Core;
 
@@ -33,11 +37,11 @@ public class NetworkBaseExample {
         MelsecMcNet melsec = new MelsecMcNet("192.168.0.100", 6000);
 
         // 举例实现日志文件为单日志文件
-        melsec.LogNet = new HslCommunication.LogNet.LogNetSingle("D://123.txt");
+        melsec.LogNet = new LogNetSingle("D://123.txt");
 
         // 一般服务器对象的
         NetSimplifyServer simplifyServer = new NetSimplifyServer();
-        simplifyServer.LogNet = new HslCommunication.LogNet.LogNetSingle("D://log.txt");
+        simplifyServer.LogNet = new LogNetSingle("D://log.txt");
         simplifyServer.ReceiveStringEvent += (AppSession session, NetHandle handle, string data) => {
             simplifyServer.SendMessage(session, handle, "Back:" + data);
         };

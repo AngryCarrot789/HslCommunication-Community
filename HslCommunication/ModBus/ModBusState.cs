@@ -1,5 +1,4 @@
-﻿using HslCommunication.Core;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using HslCommunication.Core.Thread;
 

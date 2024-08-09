@@ -1,4 +1,5 @@
-﻿using HslCommunication.Profinet.Siemens;
+﻿using HslCommunication.Core.Types;
+using HslCommunication.Devices.Siemens;
 
 namespace HslCommunication.Tests.Documentation.Samples.Profinet;
 

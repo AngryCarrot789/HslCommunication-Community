@@ -1,8 +1,9 @@
 ﻿using HslCommunication.BasicFramework;
-using HslCommunication.Profinet.FATEK;
+using HslCommunication.Core.Types;
+using HslCommunication.Devices.FATEK;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HslCommunication.Tests.Profinet.FATEK;
+namespace HslCommunication.Tests.Devices.FATEK;
 
 [TestClass]
 public class FatekProgramTest {

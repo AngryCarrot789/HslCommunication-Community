@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using HslCommunication.BasicFramework;
-using HslCommunication.Core;
+using HslCommunication.Core.Transfer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HslCommunication.Tests.Core.Transfer;

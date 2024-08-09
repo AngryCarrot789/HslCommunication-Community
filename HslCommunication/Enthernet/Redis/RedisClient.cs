@@ -1,6 +1,4 @@
-﻿using HslCommunication.Core;
-using HslCommunication.Core.IMessage;
-using HslCommunication.Core.Net;
+﻿using HslCommunication.Core.IMessage;
 using System.Net.Sockets;
 using System.Text;
 using HslCommunication.Core.Net.NetworkBase;

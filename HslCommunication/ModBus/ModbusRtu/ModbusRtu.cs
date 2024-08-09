@@ -261,7 +261,7 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
     /// <returns>带是否成功的结果数据</returns>
     protected virtual OperateResult<byte[]> CheckModbusTcpResponse(byte[] send) {
         // 核心交互
-        OperateResult<byte[]> result = this.ReadBase(send);
+        OperateResult<byte[]> result = this.SendMessageAndGetResponce(send);
         if (!result.IsSuccess)
             return result;
 
@@ -287,13 +287,8 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         return OperateResult.CreateSuccessResult(buffer);
     }
 
-    /// <summary>
-    /// 检查当前接收的字节数据是否正确的
-    /// </summary>
-    /// <param name="rBytes">从设备反馈回来的数据</param>
-    /// <returns>是否校验成功</returns>
-    protected override bool CheckReceiveBytes(byte[] rBytes) {
-        return SoftCRC16.CheckCRC16(rBytes);
+    protected override bool IsReceivedMessageComplete(byte[] received, int receivedCount) {
+        return SoftCRC16.CheckCRC16(received, receivedCount);
     }
 
     /// <summary>
@@ -304,7 +299,7 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
     /// <param name="length">长度</param>
     /// <returns>带结果信息的字节返回数据</returns>
     protected OperateResult<byte[]> ReadModBusBase(byte code, string address, ushort length) {
-        OperateResult<byte[]> command = null;
+        OperateResult<byte[]> command;
         switch (code) {
             case ModbusInfo.ReadCoil: {
                 command = this.BuildReadCoilCommand(address, length);

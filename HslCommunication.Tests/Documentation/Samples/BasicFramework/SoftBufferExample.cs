@@ -1,4 +1,5 @@
 ﻿using HslCommunication.BasicFramework;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.Tests.Documentation.Samples.BasicFramework;
 

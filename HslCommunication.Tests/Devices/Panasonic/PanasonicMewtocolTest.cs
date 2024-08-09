@@ -1,8 +1,9 @@
 ﻿using System.Text;
-using HslCommunication.Profinet.Panasonic;
+using HslCommunication.Core.Types;
+using HslCommunication.Devices.Panasonic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HslCommunication.Tests.Profinet.Panasonic;
+namespace HslCommunication.Tests.Devices.Panasonic;
 
 [TestClass]
 public class PanasonicMewtocolTest {

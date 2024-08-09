@@ -282,7 +282,7 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
     /// <returns>是否初始化成功，依据具体的协议进行重写</returns>
     /// <example>
     /// 有些协议不需要握手信号，比如三菱的MC协议，Modbus协议，西门子和欧姆龙就存在握手信息，此处的例子是继承本类后重写的西门子的协议示例
-    /// <code lang="cs" source="HslCommunication\Profinet\Siemens\SiemensS7Net.cs" region="NetworkDoubleBase Override" title="西门子重连示例" />
+    /// <code lang="cs" source="HslCommunication\Devices\Siemens\SiemensS7Net.cs" region="NetworkDoubleBase Override" title="西门子重连示例" />
     /// </example>
     protected virtual OperateResult InitializationOnConnect(Socket socket) {
         return OperateResult.CreateSuccessResult();

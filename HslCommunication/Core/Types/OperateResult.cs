@@ -1,4 +1,6 @@
-﻿namespace HslCommunication.Core.Types;
+﻿using System.Runtime.CompilerServices;
+
+namespace HslCommunication.Core.Types;
 
 /*******************************************************************************
  *
@@ -15,7 +17,126 @@
  *    时间：2018年8月23日 12:19:36
  *    更新：新增两个不同的结果对象构造方法
  *
+ *    AngryCarrot789 2024 16:16
+ *    Created LightOperationResult + generic types, to reduce
+ *    class allocations to reduce GC activity
+ *
  *******************************************************************************/
+
+public readonly struct LightOperationResult {
+    public bool IsSuccess { get; }
+    public string Message { get; }
+    public int ErrorCode { get; }
+
+    public LightOperationResult(string? msg = null) : this(10000, msg) { }
+
+    public LightOperationResult(int err, string? msg = null) {
+        this.IsSuccess = false;
+        this.Message = msg ?? StringResources.Language.UnknownError;
+        this.ErrorCode = err;
+    }
+
+    private LightOperationResult(bool isSuccess) {
+        this.IsSuccess = isSuccess;
+        this.ErrorCode = 0;
+        this.Message = StringResources.Language.SuccessText;
+    }
+    
+    public OperateResult ToOperateResult() => this.IsSuccess ? OperateResult.CreateSuccessResult() : new OperateResult(this.ErrorCode, this.Message);
+    
+    public OperateResult ToFailedResult() => new OperateResult(this.ErrorCode, this.Message);
+    public OperateResult<T> ToFailedResult<T>() => new OperateResult<T>(this.ErrorCode, this.Message);
+    public OperateResult<T1, T2> ToFailedResult<T1, T2>() => new OperateResult<T1, T2>(this.ErrorCode, this.Message);
+
+    public static LightOperationResult CreateSuccessResult() => new LightOperationResult(true);
+    public static LightOperationResult<T> CreateSuccessResult<T>(T content) => new LightOperationResult<T>(content);
+    public static LightOperationResult<T1, T2> CreateSuccessResult<T1, T2>(T1 t1, T2 t2) => new LightOperationResult<T1, T2>(t1, t2);
+    public static LightOperationResult<T1, T2, T3> CreateSuccessResult<T1, T2, T3>(T1 t1, T2 t2, T3 t3) => new LightOperationResult<T1, T2, T3>(t1, t2, t3);
+    public override string ToString() => ToString(this.Message, this.ErrorCode);
+
+    public static string ToString(string msg, int errorCode) => $"{StringResources.Language.ErrorCode}{errorCode}{Environment.NewLine}{StringResources.Language.TextDescription}: {msg}";
+}
+
+public readonly struct LightOperationResult<T> {
+    public bool IsSuccess { get; }
+    public string Message { get; }
+    public int ErrorCode { get; }
+
+    public T Content { get; }
+
+    public LightOperationResult(string? msg = null) : this(10000, null) { }
+
+    public LightOperationResult(int err, string? msg = null) {
+        this.IsSuccess = false;
+        this.Message = msg ?? StringResources.Language.UnknownError;
+        this.ErrorCode = err;
+    }
+
+    public LightOperationResult(T value) {
+        this.IsSuccess = true;
+        this.Content = value;
+    }
+
+    public override string ToString() => LightOperationResult.ToString(this.Message, this.ErrorCode);
+
+    public OperateResult<T> ToOperateResult() => this.IsSuccess ? OperateResult.CreateSuccessResult(this.Content) : new OperateResult<T>(this.ErrorCode, this.Message);
+}
+
+public readonly struct LightOperationResult<T1, T2> {
+    public bool IsSuccess { get; }
+    public string Message { get; }
+    public int ErrorCode { get; }
+
+    public T1 Content1 { get; }
+    public T2 Content2 { get; }
+
+    public LightOperationResult(string? msg = null) : this(10000, null) { }
+
+    public LightOperationResult(int err, string? msg = null) {
+        this.IsSuccess = false;
+        this.Message = msg ?? StringResources.Language.UnknownError;
+        this.ErrorCode = err;
+    }
+
+    public LightOperationResult(T1 t1, T2 t2) {
+        this.IsSuccess = true;
+        this.Content1 = t1;
+        this.Content2 = t2;
+    }
+
+    public override string ToString() => LightOperationResult.ToString(this.Message, this.ErrorCode);
+    
+    public OperateResult<T1, T2> ToOperateResult() => this.IsSuccess ? OperateResult.CreateSuccessResult(this.Content1, this.Content2) : new OperateResult<T1, T2>(this.ErrorCode, this.Message);
+}
+
+public readonly struct LightOperationResult<T1, T2, T3> {
+    public bool IsSuccess { get; }
+    public string Message { get; }
+    public int ErrorCode { get; }
+
+    public T1 Content1 { get; }
+    public T2 Content2 { get; }
+    public T3 Content3 { get; }
+
+    public LightOperationResult(string? msg = null) : this(10000, null) { }
+
+    public LightOperationResult(int err, string? msg = null) {
+        this.IsSuccess = false;
+        this.Message = msg ?? StringResources.Language.UnknownError;
+        this.ErrorCode = err;
+    }
+
+    public LightOperationResult(T1 t1, T2 t2, T3 t3) {
+        this.IsSuccess = true;
+        this.Content1 = t1;
+        this.Content2 = t2;
+        this.Content3 = t3;
+    }
+
+    public override string ToString() => LightOperationResult.ToString(this.Message, this.ErrorCode);
+    
+    public OperateResult<T1, T2, T3> ToOperateResult() => this.IsSuccess ? OperateResult.CreateSuccessResult(this.Content1, this.Content2, this.Content3) : new OperateResult<T1, T2, T3>(this.ErrorCode, this.Message);
+}
 
 /// <summary>
 /// 操作结果的类，只带有成功标志和错误信息 -> The class that operates the result, with only success flags and error messages

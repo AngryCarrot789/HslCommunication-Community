@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using HslCommunication.Core;
+using HslCommunication.Core.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HslCommunication.Tests.Core.Reflection;

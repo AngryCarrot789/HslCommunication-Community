@@ -1,7 +1,7 @@
-﻿using HslCommunication.Core;
-using HslCommunication.ModBus;
-using HslCommunication.Profinet.Melsec;
-using HslCommunication.Profinet.Siemens;
+﻿using HslCommunication.Core.Net;
+using HslCommunication.Devices.Melsec;
+using HslCommunication.Devices.Siemens;
+using HslCommunication.ModBus.ModbusTcp;
 
 namespace HslCommunication.Tests.Documentation.Samples.Core;
 

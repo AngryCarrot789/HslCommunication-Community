@@ -131,7 +131,7 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
             return command;
 
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(this.PackCommand(command.Content));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
         if (!read.IsSuccess)
             return OperateResult.CreateFailedResult<byte[]>(read);
 
@@ -158,7 +158,7 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
             return command;
 
         // 核心数据交互
-        OperateResult<byte[]> read = this.ReadBase(this.PackCommand(command.Content));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
         if (!read.IsSuccess)
             return read;
 
@@ -178,7 +178,7 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
     /// <param name="length">读取的长度</param>
     /// <returns>带成功标志的结果数据对象</returns>
     /// <example>
-    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="ReadBool" title="ReadBool示例" />
+    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="ReadBool" title="ReadBool示例" />
     /// </example>
     public override OperateResult<bool[]> ReadBool(string address, ushort length) {
         // 获取指令
@@ -187,7 +187,7 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
             return OperateResult.CreateFailedResult<bool[]>(command);
 
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(this.PackCommand(command.Content));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
         if (!read.IsSuccess)
             return OperateResult.CreateFailedResult<bool[]>(read);
 
@@ -207,7 +207,7 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
     /// <param name="values">要写入的实际数据，可以指定任意的长度</param>
     /// <returns>返回写入结果</returns>
     /// <example>
-    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="WriteBool" title="WriteBool示例" />
+    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="WriteBool" title="WriteBool示例" />
     /// </example>
     public override OperateResult Write(string address, bool[] values) {
         // 获取指令
@@ -217,7 +217,7 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
             return command;
 
         // 核心数据交互
-        OperateResult<byte[]> read = this.ReadBase(this.PackCommand(command.Content));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
         if (!read.IsSuccess)
             return read;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using HslCommunication.Core.Net;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HslCommunication.Tests.Core.Net;
 

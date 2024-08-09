@@ -1,4 +1,5 @@
-﻿using HslCommunication.Profinet.Melsec;
+﻿using HslCommunication.Core.Types;
+using HslCommunication.Devices.Melsec;
 
 namespace HslCommunication.Tests.Documentation.Samples.Profinet;
 

@@ -18,9 +18,9 @@ public class SoftCRC16 {
     /// </summary>
     /// <param name="value">需要校验的数据，带CRC校验码</param>
     /// <returns>返回校验成功与否</returns>
-    public static bool CheckCRC16(byte[] value) {
-        return CheckCRC16(value, 0xA0, 0x01);
-    }
+    public static bool CheckCRC16(byte[] value) => CheckCRC16(value, value.Length);
+    
+    public static bool CheckCRC16(byte[] value, int arrayLength) => CheckCRC16(value, 0xA0, 0x01, arrayLength);
 
     /// <summary>
     /// 指定多项式码来校验对应的接收数据的CRC校验码
@@ -29,23 +29,19 @@ public class SoftCRC16 {
     /// <param name="CH">多项式码高位</param>
     /// <param name="CL">多项式码低位</param>
     /// <returns>返回校验成功与否</returns>
-    public static bool CheckCRC16(byte[] value, byte CH, byte CL) {
+    public static bool CheckCRC16(byte[] value, byte CH, byte CL) => CheckCRC16(value, CH, CL, value.Length);
+
+    public static bool CheckCRC16(byte[] value, byte CH, byte CL, int arrayLength) {
         if (value == null)
             return false;
-        if (value.Length < 2)
+        if (arrayLength < 2)
             return false;
 
-        int length = value.Length;
-        byte[] buf = new byte[length - 2];
+        byte[] buf = new byte[arrayLength - 2];
         Array.Copy(value, 0, buf, 0, buf.Length);
 
         byte[] CRCbuf = CRC16(buf, CH, CL);
-        if (CRCbuf[length - 2] == value[length - 2] &&
-            CRCbuf[length - 1] == value[length - 1]) {
-            return true;
-        }
-
-        return false;
+        return CRCbuf[arrayLength - 2] == value[arrayLength - 2] && CRCbuf[arrayLength - 1] == value[arrayLength - 1];
     }
 
 
@@ -54,10 +50,11 @@ public class SoftCRC16 {
     /// </summary>
     /// <param name="value">需要校验的数据，不包含CRC字节</param>
     /// <returns>返回带CRC校验码的字节数组，可用于串口发送</returns>
-    public static byte[] CRC16(byte[] value) {
-        return CRC16(value, 0xA0, 0x01);
-    }
+    public static byte[] CRC16(byte[] value) => CRC16(value, value.Length);
+    public static byte[] CRC16(byte[] value, int arrayLength) => CRC16(value, 0xA0, 0x01, arrayLength);
 
+    public static byte[] CRC16(byte[] value, byte CH, byte CL) => CRC16(value, CH, CL, value.Length);
+    
     /// <summary>
     /// 通过指定多项式码来获取对应的数据的CRC校验码
     /// </summary>
@@ -65,24 +62,22 @@ public class SoftCRC16 {
     /// <param name="CL">多项式码地位</param>
     /// <param name="CH">多项式码高位</param>
     /// <returns>返回带CRC校验码的字节数组，可用于串口发送</returns>
-    public static byte[] CRC16(byte[] value, byte CH, byte CL) {
-        byte[] buf = new byte[value.Length + 2];
+    public static byte[] CRC16(byte[] value, byte CH, byte CL, int arrayLength) {
+        byte[] buf = new byte[arrayLength + 2];
         value.CopyTo(buf, 0);
 
         byte CRC16Lo;
         byte CRC16Hi; // CRC寄存器                   
         byte SaveHi;
         byte SaveLo;
-        byte[] tmpData;
         int Flag;
 
         // 预置寄存器
         CRC16Lo = 0xFF;
         CRC16Hi = 0xFF;
 
-        tmpData = value;
-        for (int i = 0; i < tmpData.Length; i++) {
-            CRC16Lo = (byte) (CRC16Lo ^ tmpData[i]); // 每一个数据与CRC寄存器低位进行异或，结果返回CRC寄存器                 
+        for (int i = 0; i < arrayLength; i++) {
+            CRC16Lo = (byte) (CRC16Lo ^ value[i]); // 每一个数据与CRC寄存器低位进行异或，结果返回CRC寄存器                 
             for (Flag = 0; Flag <= 7; Flag++) {
                 SaveHi = CRC16Hi;
                 SaveLo = CRC16Lo;

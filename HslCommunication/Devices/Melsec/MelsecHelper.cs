@@ -307,12 +307,12 @@ public class MelsecHelper {
     /// </summary>
     /// <param name="data">字节数据</param>
     /// <returns>校验之后的数据</returns>
-    internal static byte[] FxCalculateCRC(byte[] data) {
+    internal static byte[] FxCalculateCRC(byte[] data) => FxCalculateCRC(data, data.Length);
+    
+    internal static byte[] FxCalculateCRC(byte[] data, int length) {
         int sum = 0;
-        for (int i = 1; i < data.Length - 2; i++) {
+        for (int i = 1; i < length - 2; i++)
             sum += data[i];
-        }
-
         return SoftBasic.BuildAsciiBytesFrom((byte) sum);
     }
 
@@ -321,11 +321,13 @@ public class MelsecHelper {
     /// </summary>
     /// <param name="data">字节数据</param>
     /// <returns>是否成功</returns>
-    internal static bool CheckCRC(byte[] data) {
-        byte[] crc = FxCalculateCRC(data);
-        if (crc[0] != data[data.Length - 2])
+    internal static bool CheckCRC(byte[] data) => CheckCRC(data, data.Length);
+    
+    internal static bool CheckCRC(byte[] data, int length) {
+        byte[] crc = FxCalculateCRC(data, length);
+        if (crc[0] != data[length - 2])
             return false;
-        if (crc[1] != data[data.Length - 1])
+        if (crc[1] != data[length - 1])
             return false;
         return true;
     }

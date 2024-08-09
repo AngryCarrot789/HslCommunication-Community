@@ -1,8 +1,9 @@
 ﻿using HslCommunication.BasicFramework;
-using HslCommunication.Profinet.Melsec;
+using HslCommunication.Core.Types;
+using HslCommunication.Devices.Melsec;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HslCommunication.Tests.Profinet.Melsec;
+namespace HslCommunication.Tests.Devices.Melsec;
 
 [TestClass]
 public class MelsecMcAsciiNetTest {

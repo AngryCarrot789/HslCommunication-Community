@@ -83,8 +83,8 @@ namespace HslCommunication.Devices.Omron;
 /// </list>
 /// </remarks>
 /// <example>
-/// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="Usage" title="简单的短连接使用" />
-/// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="Usage2" title="简单的长连接使用" />
+/// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="Usage" title="简单的短连接使用" />
+/// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="Usage2" title="简单的长连接使用" />
 /// </example>
 public class OmronFinsNet : NetworkDeviceBase<FinsMessage, ReverseWordTransform> {
     /// <summary>
@@ -305,9 +305,9 @@ public class OmronFinsNet : NetworkDeviceBase<FinsMessage, ReverseWordTransform>
     /// <returns>带成功标志的结果数据对象</returns>
     /// <example>
     /// 假设起始地址为D100，D100存储了温度，100.6℃值为1006，D101存储了压力，1.23Mpa值为123，D102,D103存储了产量计数，读取如下：
-    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="ReadExample2" title="Read示例" />
+    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="ReadExample2" title="Read示例" />
     /// 以下是读取不同类型数据的示例
-    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="ReadExample1" title="Read示例" />
+    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="ReadExample1" title="Read示例" />
     /// </example>
     public override OperateResult<byte[]> Read(string address, ushort length) {
         // 获取指令
@@ -337,9 +337,9 @@ public class OmronFinsNet : NetworkDeviceBase<FinsMessage, ReverseWordTransform>
     /// <returns>结果</returns>
     /// <example>
     /// 假设起始地址为D100，D100存储了温度，100.6℃值为1006，D101存储了压力，1.23Mpa值为123，D102,D103存储了产量计数，读取如下：
-    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="WriteExample2" title="Write示例" />
+    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="WriteExample2" title="Write示例" />
     /// 以下是写入不同类型数据的示例
-    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="WriteExample1" title="Write示例" />
+    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="WriteExample1" title="Write示例" />
     /// </example>
     public override OperateResult Write(string address, byte[] value) {
         // 获取指令
@@ -368,7 +368,7 @@ public class OmronFinsNet : NetworkDeviceBase<FinsMessage, ReverseWordTransform>
     /// <param name="length">读取的长度</param>
     /// <returns>带成功标志的结果数据对象</returns>
     /// <example>
-    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="ReadBool" title="ReadBool示例" />
+    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="ReadBool" title="ReadBool示例" />
     /// </example>
     public override OperateResult<bool[]> ReadBool(string address, ushort length) {
         // 获取指令
@@ -397,7 +397,7 @@ public class OmronFinsNet : NetworkDeviceBase<FinsMessage, ReverseWordTransform>
     /// <param name="values">要写入的实际数据，可以指定任意的长度</param>
     /// <returns>返回写入结果</returns>
     /// <example>
-    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Profinet\OmronFinsNet.cs" region="WriteBool" title="WriteBool示例" />
+    /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\OmronFinsNet.cs" region="WriteBool" title="WriteBool示例" />
     /// </example>
     public override OperateResult Write(string address, bool[] values) {
         // 获取指令

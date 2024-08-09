@@ -1,4 +1,6 @@
-﻿using HslCommunication.Profinet.Siemens;
+﻿using HslCommunication.Core.Types;
+using HslCommunication.Devices.Siemens;
+using HslCommunication.LogNet.Logs;
 
 namespace HslCommunication.Tests.Documentation.Samples.Profinet;
 
@@ -18,7 +20,7 @@ public class SiemensS7ServerExample {
     public void S7Start2() {
         try {
             this.s7NetServer = new SiemensS7Server();
-            this.s7NetServer.LogNet = new HslCommunication.LogNet.LogNetSingle("logs.txt"); // 配置日志信息
+            this.s7NetServer.LogNet = new LogNetSingle("logs.txt"); // 配置日志信息
             this.s7NetServer.ServerStart(102);
         }
         catch (Exception ex) {
@@ -30,7 +32,7 @@ public class SiemensS7ServerExample {
     public void S7Start3() {
         try {
             this.s7NetServer = new SiemensS7Server();
-            this.s7NetServer.LogNet = new HslCommunication.LogNet.LogNetSingle("logs.txt"); // 配置日志信息
+            this.s7NetServer.LogNet = new LogNetSingle("logs.txt"); // 配置日志信息
             this.s7NetServer.SetTrustedIpAddress(new List<string>() { "127.0.0.1" }); // 仅仅限制本机客户端读写
             this.s7NetServer.ServerStart(102);
         }
@@ -43,7 +45,7 @@ public class SiemensS7ServerExample {
     public void S7Start4() {
         try {
             this.s7NetServer = new SiemensS7Server();
-            this.s7NetServer.LogNet = new HslCommunication.LogNet.LogNetSingle("logs.txt"); // 配置日志信息
+            this.s7NetServer.LogNet = new LogNetSingle("logs.txt"); // 配置日志信息
             this.s7NetServer.SetTrustedIpAddress(new List<string>() { "127.0.0.1" }); // 仅仅限制本机客户端读写
             this.s7NetServer.OnDataReceived += this.S7NetServer_OnDataReceived;
             this.s7NetServer.ServerStart(102);

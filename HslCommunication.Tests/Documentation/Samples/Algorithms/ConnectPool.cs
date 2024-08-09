@@ -1,5 +1,6 @@
 ﻿using HslCommunication.Algorithms.ConnectPool;
-using HslCommunication.ModBus;
+using HslCommunication.Core.Types;
+using HslCommunication.ModBus.ModbusTcp;
 
 namespace HslCommunication.Tests.Documentation.Samples.Algorithms;
 

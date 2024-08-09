@@ -49,7 +49,7 @@ public class NetworkUdpBase : NetworkBase {
             Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             server.SendTo(value, value.Length, SocketFlags.None, endPoint);
             IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-            EndPoint Remote = (EndPoint) sender;
+            EndPoint Remote = sender;
 
             // 对于不存在的IP地址，加入此行代码后，可以在指定时间内解除阻塞模式限制
             server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, this.ReceiveTimeout);

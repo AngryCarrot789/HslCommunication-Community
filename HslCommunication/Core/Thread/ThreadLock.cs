@@ -202,16 +202,16 @@ public sealed class HslReadWriteLock : IDisposable {
     private const int c_lsWritersWaitingStartBit = 21;
 
     // Mask = unchecked((int) ((1 << numBits) - 1) << startBit);
-    private const int c_lsStateMask = unchecked((int) ((1 << 3) - 1) << c_lsStateStartBit);
-    private const int c_lsReadersReadingMask = unchecked((int) ((1 << 9) - 1) << c_lsReadersReadingStartBit);
-    private const int c_lsReadersWaitingMask = unchecked((int) ((1 << 9) - 1) << c_lsReadersWaitingStartBit);
-    private const int c_lsWritersWaitingMask = unchecked((int) ((1 << 9) - 1) << c_lsWritersWaitingStartBit);
+    private const int c_lsStateMask = unchecked((1 << 3) - 1 << c_lsStateStartBit);
+    private const int c_lsReadersReadingMask = unchecked((1 << 9) - 1 << c_lsReadersReadingStartBit);
+    private const int c_lsReadersWaitingMask = unchecked((1 << 9) - 1 << c_lsReadersWaitingStartBit);
+    private const int c_lsWritersWaitingMask = unchecked((1 << 9) - 1 << c_lsWritersWaitingStartBit);
     private const int c_lsAnyWaitingMask = c_lsReadersWaitingMask | c_lsWritersWaitingMask;
 
     // FirstBit = unchecked((int) 1 << startBit);
-    private const int c_ls1ReaderReading = unchecked((int) 1 << c_lsReadersReadingStartBit);
-    private const int c_ls1ReaderWaiting = unchecked((int) 1 << c_lsReadersWaitingStartBit);
-    private const int c_ls1WriterWaiting = unchecked((int) 1 << c_lsWritersWaitingStartBit);
+    private const int c_ls1ReaderReading = unchecked(1 << c_lsReadersReadingStartBit);
+    private const int c_ls1ReaderWaiting = unchecked(1 << c_lsReadersWaitingStartBit);
+    private const int c_ls1WriterWaiting = unchecked(1 << c_lsWritersWaitingStartBit);
 
     private static OneManyLockStates State(int ls) { return (OneManyLockStates) (ls & c_lsStateMask); }
 

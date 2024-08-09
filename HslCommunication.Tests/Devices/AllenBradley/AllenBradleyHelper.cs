@@ -1,7 +1,7 @@
-﻿using HslCommunication.Profinet.AllenBradley;
+﻿using HslCommunication.Devices.AllenBradley;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HslCommunication.Tests.Profinet.AllenBradley;
+namespace HslCommunication.Tests.Devices.AllenBradley;
 
 [TestClass]
 public class AllenBradleyHelperTest {

@@ -67,7 +67,7 @@ public class XGBCnet : SerialDeviceBase<RegularByteTransform> {
         if (!command.IsSuccess)
             return command;
 
-        OperateResult<byte[]> read = this.ReadBase(command.Content);
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
             return read;
 
@@ -85,7 +85,7 @@ public class XGBCnet : SerialDeviceBase<RegularByteTransform> {
         if (!command.IsSuccess)
             return command;
 
-        OperateResult<byte[]> read = this.ReadBase(command.Content);
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
             return read;
 

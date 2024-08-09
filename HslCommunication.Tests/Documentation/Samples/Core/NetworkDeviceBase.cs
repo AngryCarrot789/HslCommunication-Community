@@ -1,6 +1,8 @@
-﻿using HslCommunication.Core;
-using HslCommunication.Profinet.Melsec;
-using HslCommunication.Profinet.Siemens;
+﻿using HslCommunication.Core.Reflection;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
+using HslCommunication.Devices.Melsec;
+using HslCommunication.Devices.Siemens;
 
 namespace HslCommunication.Tests.Documentation.Samples.Core;
 

@@ -1,4 +1,4 @@
-﻿using HslCommunication.Core;
+﻿using HslCommunication.Core.Thread;
 
 namespace HslCommunication.Tests.Documentation.Samples.Core;
 

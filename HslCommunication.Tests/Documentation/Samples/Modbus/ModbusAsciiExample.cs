@@ -1,4 +1,6 @@
-﻿using HslCommunication.ModBus;
+﻿using HslCommunication.Core.Types;
+using HslCommunication.ModBus.ModbusAscii;
+using HslCommunication.ModBus.ModbusRtu;
 
 namespace HslCommunication.Tests.Documentation.Samples.Modbus;
 

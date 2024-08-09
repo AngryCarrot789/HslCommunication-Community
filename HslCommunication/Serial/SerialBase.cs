@@ -1,8 +1,6 @@
 ﻿using System.IO.Ports;
-using HslCommunication.Core;
 using HslCommunication.Core.Thread;
 using HslCommunication.Core.Types;
-using HslCommunication.LogNet;
 using HslCommunication.LogNet.Core;
 
 namespace HslCommunication.Serial;
@@ -11,58 +9,89 @@ namespace HslCommunication.Serial;
 /// 所有串行通信类的基类，提供了一些基础的服务
 /// </summary>
 public class SerialBase : IDisposable {
-    private SerialPort SP_ReadData = null; // 串口交互的核心
-    private SimpleHybirdLock hybirdLock; // 数据交互的锁
-    private ILogNet logNet; // 日志存储
-    private int receiveTimeout = 1000; // 接收数据的超时时间
-    private int sleepTime = 2; // 睡眠的时间
-    private bool isClearCacheBeforeRead = false; // 是否在发送前清除缓冲
+    private readonly SerialPort serialPort;
+    private SimpleHybirdLock hybirdLock; // Guard against multiple threads sending and receiving data at the same time
+    private ILogNet? logNet;
+    private int receiveTimeout = 5000;
+    private int sleepTime;
+    private bool clearReadBufferBeforeSend;
+    private bool disposedValue;
     
+    /// <summary>
+    /// 当前的日志情况
+    /// </summary>
+    public ILogNet? LogNet {
+        get { return this.logNet; }
+        set { this.logNet = value; }
+    }
+
+    /// <summary>
+    /// The maximum amount of time to wait for a message to be received from the serial port, in milliseconds. Default value of 5000.
+    /// Setting this value to 0 results in an infinite timeout for receiving messages, and could result in the application freezing if the
+    /// PLC disconnects and then reconnects but then never sends a response message.
+    /// </summary>
+    public int ReceiveTimeout {
+        get => this.receiveTimeout;
+        set => this.receiveTimeout = Math.Max(value, 0);
+    }
+
+    /// <summary>
+    /// The amount of time to sleep before attempting to read a message from the PLC, in milliseconds. Defaults to 0,
+    /// meaning no sleeping. Beware of the fact that <see cref="Thread.Sleep(int)"/> is used, therefore, on platforms
+    /// such as windows, the actual sleep duration tends to be a minimum of 16ms which is around about the interval between
+    /// thread time-slices during normal operating system levels (may increase when new threads spawn with much higher priority) 
+    /// </summary>
+    public int SleepTime {
+        get => this.sleepTime;
+        set => this.sleepTime = Math.Max(value, 0);
+    }
+
+    /// <summary>
+    /// Gets or sets whether to clear the read buffer before sending data
+    /// </summary>
+    public bool ClearReadBufferBeforeSend {
+        get => this.clearReadBufferBeforeSend;
+        set => this.clearReadBufferBeforeSend = value;
+    }
+
+    /// <summary>
+    /// Gets the current port name
+    /// </summary>
+    public string PortName { get; private set; }
+
+    /// <summary>
+    /// Gets the current baud rate
+    /// </summary>
+    public int BaudRate { get; private set; }
+
     /// <summary>
     /// 实例化一个无参的构造方法
     /// </summary>
     public SerialBase() {
-        this.SP_ReadData = new SerialPort();
+        this.serialPort = new SerialPort();
         this.hybirdLock = new SimpleHybirdLock();
     }
 
     /// <summary>
-    /// 初始化串口信息，9600波特率，8位数据位，1位停止位，无奇偶校验
-    /// </summary>
-    /// <param name="portName">端口号信息，例如"COM3"</param>
-    public void SerialPortInni(string portName) {
-        this.SerialPortInni(portName, 9600);
-    }
-
-    /// <summary>
-    /// 初始化串口信息，波特率，8位数据位，1位停止位，无奇偶校验
-    /// </summary>
-    /// <param name="portName">端口号信息，例如"COM3"</param>
-    /// <param name="baudRate">波特率</param>
-    public void SerialPortInni(string portName, int baudRate) {
-        this.SerialPortInni(portName, baudRate, 8, StopBits.One, Parity.None);
-    }
-
-    /// <summary>
-    /// 初始化串口信息，波特率，数据位，停止位，奇偶校验需要全部自己来指定
+    /// Initialise serial port variable
     /// </summary>
     /// <param name="portName">端口号信息，例如"COM3"</param>
     /// <param name="baudRate">波特率</param>
     /// <param name="dataBits">数据位</param>
     /// <param name="stopBits">停止位</param>
     /// <param name="parity">奇偶校验</param>
-    public void SerialPortInni(string portName, int baudRate, int dataBits, StopBits stopBits, Parity parity) {
-        if (this.SP_ReadData.IsOpen) {
-            return;
+    public void SerialPortInni(string portName, int baudRate = 38400, int dataBits = 8, StopBits stopBits = StopBits.One, Parity parity = Parity.None) {
+        if (this.serialPort.IsOpen) {
+            throw new InvalidOperationException("Cannot initialise serial port variables because it is currently open");
         }
 
-        this.SP_ReadData.PortName = portName; // 串口
-        this.SP_ReadData.BaudRate = baudRate; // 波特率
-        this.SP_ReadData.DataBits = dataBits; // 数据位
-        this.SP_ReadData.StopBits = stopBits; // 停止位
-        this.SP_ReadData.Parity = parity; // 奇偶校验
-        this.PortName = this.SP_ReadData.PortName;
-        this.BaudRate = this.SP_ReadData.BaudRate;
+        this.serialPort.PortName = portName; // 串口
+        this.serialPort.BaudRate = baudRate; // 波特率
+        this.serialPort.DataBits = dataBits; // 数据位
+        this.serialPort.StopBits = stopBits; // 停止位
+        this.serialPort.Parity = parity; // 奇偶校验
+        this.PortName = this.serialPort.PortName;
+        this.BaudRate = this.serialPort.BaudRate;
     }
 
     /// <summary>
@@ -70,28 +99,28 @@ public class SerialBase : IDisposable {
     /// </summary>
     /// <param name="initi">初始化的委托方法</param>
     public void SerialPortInni(Action<SerialPort> initi) {
-        if (this.SP_ReadData.IsOpen) {
-            return;
+        if (this.serialPort.IsOpen) {
+            throw new InvalidOperationException("Cannot initialise serial port variables because it is currently open");
         }
 
-        this.SP_ReadData.PortName = "COM5";
-        this.SP_ReadData.BaudRate = 9600;
-        this.SP_ReadData.DataBits = 8;
-        this.SP_ReadData.StopBits = StopBits.One;
-        this.SP_ReadData.Parity = Parity.None;
+        this.serialPort.PortName = "COM5";
+        this.serialPort.BaudRate = 9600;
+        this.serialPort.DataBits = 8;
+        this.serialPort.StopBits = StopBits.One;
+        this.serialPort.Parity = Parity.None;
 
-        initi.Invoke(this.SP_ReadData);
+        initi.Invoke(this.serialPort);
 
-        this.PortName = this.SP_ReadData.PortName;
-        this.BaudRate = this.SP_ReadData.BaudRate;
+        this.PortName = this.serialPort.PortName;
+        this.BaudRate = this.serialPort.BaudRate;
     }
 
     /// <summary>
     /// 打开一个新的串行端口连接
     /// </summary>
     public void Open() {
-        if (!this.SP_ReadData.IsOpen) {
-            this.SP_ReadData.Open();
+        if (!this.serialPort.IsOpen) {
+            this.serialPort.Open();
             this.InitializationOnOpen();
         }
     }
@@ -100,58 +129,24 @@ public class SerialBase : IDisposable {
     /// 获取一个值，指示串口是否处于打开状态
     /// </summary>
     /// <returns>是或否</returns>
-    public bool IsOpen() {
-        return this.SP_ReadData.IsOpen;
-    }
+    public bool IsOpen() => this.serialPort.IsOpen;
 
     /// <summary>
     /// 关闭端口连接
     /// </summary>
     public void Close() {
-        if (this.SP_ReadData.IsOpen) {
+        if (this.serialPort.IsOpen) {
             this.ExtraOnClose();
-            this.SP_ReadData.Close();
+            this.serialPort.Close();
         }
-    }
-
-    /// <summary>
-    /// 读取串口的数据
-    /// </summary>
-    /// <param name="send">发送的原始字节数据</param>
-    /// <returns>带接收字节的结果对象</returns>
-    public OperateResult<byte[]> ReadBase(byte[] send) {
-        this.hybirdLock.Enter();
-
-        if (this.IsClearCacheBeforeRead)
-            this.ClearSerialCache();
-
-        OperateResult sendResult = this.SPSend(this.SP_ReadData, send);
-        if (!sendResult.IsSuccess) {
-            this.hybirdLock.Leave();
-            return OperateResult.CreateFailedResult<byte[]>(sendResult);
-        }
-
-        OperateResult<byte[]> receiveResult = this.SPReceived(this.SP_ReadData, true);
-        this.hybirdLock.Leave();
-
-        return receiveResult;
     }
 
     /// <summary>
     /// 清除串口缓冲区的数据，并返回该数据，如果缓冲区没有数据，返回的字节数组长度为0
     /// </summary>
     /// <returns>是否操作成功的方法</returns>
-    public OperateResult<byte[]> ClearSerialCache() {
-        return this.SPReceived(this.SP_ReadData, false);
-    }
-
-    /// <summary>
-    /// 检查当前接收的字节数据是否正确的
-    /// </summary>
-    /// <param name="rBytes">输入字节</param>
-    /// <returns>检查是否正确</returns>
-    protected virtual bool CheckReceiveBytes(byte[] rBytes) {
-        return true;
+    public LightOperationResult<byte[]> ClearSerialCache() {
+        return this.ReadSerialData(false);
     }
 
     /// <summary>
@@ -171,61 +166,121 @@ public class SerialBase : IDisposable {
     }
 
     /// <summary>
-    /// 发送数据到串口里去
+    /// Returns true when this device uses a protocol when sending data to and from devices, and the protocol can
+    /// be identified in the received data. This is required for <see cref="IsReceivedMessageComplete"/> to be called
     /// </summary>
-    /// <param name="serialPort">串口对象</param>
-    /// <param name="data">字节数据</param>
-    /// <returns>是否发送成功</returns>
-    protected virtual OperateResult SPSend(SerialPort serialPort, byte[] data) {
-        if (data != null && data.Length > 0) {
-            try {
-                serialPort.Write(data, 0, data.Length);
-                return OperateResult.CreateSuccessResult();
-            }
-            catch (Exception ex) {
-                return new OperateResult(ex.Message);
-            }
-        }
-        else {
-            return OperateResult.CreateSuccessResult();
-        }
+    /// <returns>True or false</returns>
+    protected virtual bool HasProtocol() {
+        return true;
     }
 
-    protected virtual OperateResult<byte[]> SPReceived(SerialPort serialPort, bool waitForData) {
-        byte[] buffer = new byte[1024];
-        using MemoryStream ms = new MemoryStream();
+    /// <summary>
+    /// Checks if the received bytes account to a valid message from the PLC.
+    /// Do not use the receive array's Length property but instead use receivedCount,
+    /// because the receive array will almost always be larger than what has actually been processed
+    /// </summary>
+    /// <param name="received">An array containing the bytes that have been received back so far</param>
+    /// <param name="receivedCount">The number of bytes received so far. This may differ from the length of the received array's Length</param>
+    /// <returns>True if the message is complete and the received array can be processed, otherwise, keep waiting for data to be received</returns>
+    protected virtual bool IsReceivedMessageComplete(byte[] received, int receivedCount) {
+        return true;
+    }
+    
+    /// <summary>
+    /// Sends the given array of bytes (if non-null) and then reads a response
+    /// </summary>
+    /// <param name="send">发送的原始字节数据</param>
+    /// <returns>带接收字节的结果对象</returns>
+    public OperateResult<byte[]> SendMessageAndGetResponce(byte[] send) {
+        this.hybirdLock.Enter();
 
-        int i = 0;
-        DateTime start = DateTime.Now;
-        for (; ; i++) {
-            try {
-                if (serialPort.BytesToRead < 1) {
-                    if ((DateTime.Now - start).TotalMilliseconds > this.ReceiveTimeout) {
-                        return new OperateResult<byte[]>($"Time out: {this.ReceiveTimeout}");
-                    }
-                    else if (ms.Length > 0) {
-                        break;
-                    }
-                    else if (waitForData) {
-                        Thread.Sleep(0);
-                        continue;
-                    }
-                    else {
-                        break;
-                    }
-                }
+        if (this.ClearReadBufferBeforeSend)
+            this.ClearSerialCache();
 
-                int count = serialPort.Read(buffer, 0, buffer.Length);
-                ms.Write(buffer, 0, count);
-            }
-            catch (Exception ex) {
-                return new OperateResult<byte[]>(ex.Message);
-            }
-
-            Thread.Sleep(this.sleepTime);
+        LightOperationResult sendResult = this.WriteSerialData(send);
+        if (!sendResult.IsSuccess) {
+            this.hybirdLock.Leave();
+            return sendResult.ToFailedResult<byte[]>();
         }
 
-        return OperateResult.CreateSuccessResult(ms.ToArray());
+        LightOperationResult<byte[]> receiveResult = this.ReadSerialData(true);
+        this.hybirdLock.Leave();
+
+        return receiveResult.ToOperateResult();
+    }
+
+    protected virtual LightOperationResult<byte[]> ReadSerialData(bool waitForData) {
+        byte[] buffer;
+        try {
+            buffer = new byte[64];
+        }
+        catch (Exception ex) {
+            return new LightOperationResult<byte[]>(ex.Message);
+        }
+
+        using MemoryStream ms = new MemoryStream(64);
+        
+        DateTime now = DateTime.Now;
+        int iterations = 0;
+
+        LoopStart:
+        
+        if (++iterations > 1 && this.sleepTime >= 0)
+            Thread.Sleep(this.sleepTime);
+
+        try {
+            if (this.serialPort.BytesToRead > 0) {
+                int received = this.serialPort.Read(buffer, 0, buffer.Length);
+                if (received > 0)
+                    ms.Write(buffer, 0, received);
+
+                if (this.HasProtocol() && this.IsReceivedMessageComplete(ms.GetBuffer(), (int) ms.Length))
+                    goto SuccessResult;
+
+                if (this.ReceiveTimeout > 0 && (DateTime.Now - now).TotalMilliseconds > this.ReceiveTimeout)
+                    goto TimeoutResult;
+
+                goto LoopStart;
+            }
+            else if (iterations != 1) {
+                if ((DateTime.Now - now).TotalMilliseconds > this.ReceiveTimeout)
+                    goto TimeoutResult;
+
+                if (ms.Length > 0 || waitForData)
+                    goto LoopStart;
+            }
+            else {
+                goto LoopStart;
+            }
+        }
+        catch (Exception ex) {
+            return new LightOperationResult<byte[]>(ex.Message);
+        }
+
+        SuccessResult:
+        return LightOperationResult.CreateSuccessResult(ms.ToArray());
+        
+        TimeoutResult:
+        return new LightOperationResult<byte[]>($"Time out: {this.ReceiveTimeout}");
+    }
+    
+    /// <summary>
+    /// Writes serial data to our serial port
+    /// </summary>
+    /// <param name="data">字节数据</param>
+    /// <returns>是否发送成功</returns>
+    protected virtual LightOperationResult WriteSerialData(byte[] data) {
+        if (data == null! || data.Length == 0) {
+            return LightOperationResult.CreateSuccessResult();
+        }
+
+        try {
+            this.serialPort.Write(data, 0, data.Length);
+            return LightOperationResult.CreateSuccessResult();
+        }
+        catch (Exception ex) {
+            return new LightOperationResult(ex.Message);
+        }
     }
 
     /// <summary>
@@ -237,85 +292,22 @@ public class SerialBase : IDisposable {
     }
 
     /// <summary>
-    /// 当前的日志情况
-    /// </summary>
-    public ILogNet LogNet {
-        get { return this.logNet; }
-        set { this.logNet = value; }
-    }
-
-    /// <summary>
-    /// 接收数据的超时时间，默认5000ms
-    /// </summary>
-    public int ReceiveTimeout {
-        get { return this.receiveTimeout; }
-        set { this.receiveTimeout = value; }
-    }
-
-    /// <summary>
-    /// 连续串口缓冲数据检测的间隔时间，默认20ms
-    /// </summary>
-    public int SleepTime {
-        get { return this.sleepTime; }
-        set {
-            this.sleepTime = value;
-        }
-    }
-
-    /// <summary>
-    /// 是否在发送数据前清空缓冲数据，默认是false
-    /// </summary>
-    public bool IsClearCacheBeforeRead {
-        get { return this.isClearCacheBeforeRead; }
-        set { this.isClearCacheBeforeRead = value; }
-    }
-
-    /// <summary>
-    /// 本连接对象的端口号名称
-    /// </summary>
-    public string PortName { get; private set; }
-
-    /// <summary>
-    /// 本连接对象的波特率
-    /// </summary>
-    public int BaudRate { get; private set; }
-
-    private bool disposedValue = false; // 要检测冗余调用
-
-    /// <summary>
     /// 释放当前的对象
     /// </summary>
     /// <param name="disposing">是否在</param>
     protected virtual void Dispose(bool disposing) {
         if (!this.disposedValue) {
             if (disposing) {
-                // TODO: 释放托管状态(托管对象)。
                 this.hybirdLock?.Dispose();
-                this.SP_ReadData?.Dispose();
+                this.serialPort?.Dispose();
             }
-
-            // TODO: 释放未托管的资源(未托管的对象)并在以下内容中替代终结器。
-            // TODO: 将大型字段设置为 null。
 
             this.disposedValue = true;
         }
     }
 
-    // TODO: 仅当以上 Dispose(bool disposing) 拥有用于释放未托管资源的代码时才替代终结器。
-    // ~SerialBase()
-    // {
-    //   // 请勿更改此代码。将清理代码放入以上 Dispose(bool disposing) 中。
-    //   Dispose(false);
-    // }
-
-    // 添加此代码以正确实现可处置模式。
     /// <summary>
     /// 释放当前的对象
     /// </summary>
-    public void Dispose() {
-        // 请勿更改此代码。将清理代码放入以上 Dispose(bool disposing) 中。
-        this.Dispose(true);
-        // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
-        // GC.SuppressFinalize(this);
-    }
+    public void Dispose() => this.Dispose(true);
 }

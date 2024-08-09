@@ -25,7 +25,7 @@
 
     <ItemGroup>
         <Folder Include="Documentation\Samples\LogNet\"/>
-        <Folder Include="Profinet\Keyence\"/>
+        <Folder Include="Devices\Keyence\" />
     </ItemGroup>
 
     <ItemGroup>

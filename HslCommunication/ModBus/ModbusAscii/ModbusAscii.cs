@@ -72,7 +72,7 @@ public class ModbusAscii : ModbusRtu.ModbusRtu {
         byte[] modbus_ascii = ModbusInfo.TransRtuToAsciiPackCommand(send);
 
         // 核心交互
-        OperateResult<byte[]> result = this.ReadBase(modbus_ascii);
+        OperateResult<byte[]> result = this.SendMessageAndGetResponce(modbus_ascii);
         if (!result.IsSuccess)
             return result;
 

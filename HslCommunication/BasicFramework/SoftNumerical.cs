@@ -1,5 +1,4 @@
-﻿using HslCommunication.Core;
-using System.Text;
+﻿using System.Text;
 using HslCommunication.Core.Thread;
 
 namespace HslCommunication.BasicFramework;

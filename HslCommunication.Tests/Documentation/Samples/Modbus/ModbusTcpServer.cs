@@ -1,4 +1,7 @@
-﻿using HslCommunication.ModBus;
+﻿using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
+using HslCommunication.ModBus;
+using HslCommunication.ModBus.ModbusTcp;
 
 namespace HslCommunication.Tests.Documentation.Samples.Modbus;
 
@@ -42,7 +45,7 @@ public class ModbusTcpServerExample {
 
 
         // 也支持多字节的数据的情况下调整大小端
-        this.modbusServer.DataFormat = HslCommunication.Core.DataFormat.ABCD; // 默认是ABCD，这个格式和modbus-slave的排列是一致的
+        this.modbusServer.DataFormat = DataFormat.ABCD; // 默认是ABCD，这个格式和modbus-slave的排列是一致的
     }
 
 
@@ -76,7 +79,7 @@ public class ModbusTcpServerExample {
     public void Example5() {
         // 异形连接，modbus服务器运行在本地，客户端运行在云端，客户端需要对服务器进行读写
         // 更多的信息请点击 https://www.cnblogs.com/dathlin/p/8934266.html
-        HslCommunication.OperateResult connect = this.modbusServer.ConnectHslAlientClient("117.48.203.204", 12345, "12345678901");
+        OperateResult connect = this.modbusServer.ConnectHslAlientClient("117.48.203.204", 12345, "12345678901");
         if (connect.IsSuccess) {
             Console.WriteLine("success!");
         }

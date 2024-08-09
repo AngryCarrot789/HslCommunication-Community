@@ -1,5 +1,7 @@
 ﻿using HslCommunication.BasicFramework;
-using HslCommunication.ModBus;
+using HslCommunication.Core.Types;
+using HslCommunication.ModBus.ModbusRtu;
+using HslCommunication.ModBus.ModbusTcp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HslCommunication.Tests.Modbus;

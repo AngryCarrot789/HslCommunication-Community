@@ -1,4 +1,6 @@
-﻿namespace HslCommunication.Tests.Documentation.Samples.Core;
+﻿using HslCommunication.Core.Net;
+
+namespace HslCommunication.Tests.Documentation.Samples.Core;
 
 public class NetHandleExample {
     public void Example() {

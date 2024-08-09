@@ -1,5 +1,4 @@
-﻿using HslCommunication.Core;
-using HslCommunication.Core.Thread;
+﻿using HslCommunication.Core.Thread;
 using HslCommunication.Core.Transfer;
 using HslCommunication.Core.Types;
 

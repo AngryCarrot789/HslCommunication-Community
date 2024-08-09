@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using HslCommunication.Core;
+using HslCommunication.Core.Net;
 
 namespace HslCommunication.Tests.Documentation.Samples.Core;
 

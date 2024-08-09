@@ -126,7 +126,7 @@ public class KeyenceNanoSerial : SerialDeviceBase<KeyenceNanoByteTransform> {
     /// <returns>是否初始化成功</returns>
     protected override OperateResult InitializationOnOpen() {
         // 建立通讯连接{CR/r}
-        OperateResult<byte[]> result = this.ReadBase(this._buildConnectCmd);
+        OperateResult<byte[]> result = this.SendMessageAndGetResponce(this._buildConnectCmd);
         if (!result.IsSuccess)
             return result;
 
@@ -288,7 +288,7 @@ public class KeyenceNanoSerial : SerialDeviceBase<KeyenceNanoByteTransform> {
             return OperateResult.CreateFailedResult<byte[]>(command);
 
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(command.Content);
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
             return OperateResult.CreateFailedResult<byte[]>(read);
 
@@ -331,7 +331,7 @@ public class KeyenceNanoSerial : SerialDeviceBase<KeyenceNanoByteTransform> {
             return command;
 
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(command.Content);
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
             return read;
 
@@ -358,7 +358,7 @@ public class KeyenceNanoSerial : SerialDeviceBase<KeyenceNanoByteTransform> {
             return command;
 
         // 和串口进行核心的数据交互
-        OperateResult<byte[]> read = this.ReadBase(command.Content);
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
             return read;
 

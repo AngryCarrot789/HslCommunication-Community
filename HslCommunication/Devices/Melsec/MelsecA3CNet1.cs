@@ -251,7 +251,7 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
         byte[] command = MelsecHelper.BuildAsciiReadMcCoreCommand(addressResult.Content, false);
 
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(PackCommand(command, this.station));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
         if (!read.IsSuccess)
             return read;
 
@@ -285,7 +285,7 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
         byte[] command = MelsecHelper.BuildAsciiWriteWordCoreCommand(addressResult.Content, value);
 
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(PackCommand(command, this.station));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
         if (!read.IsSuccess)
             return read;
 
@@ -313,7 +313,7 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
         byte[] command = MelsecHelper.BuildAsciiReadMcCoreCommand(addressResult.Content, true);
 
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(PackCommand(command, this.station));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
         if (!read.IsSuccess)
             return OperateResult.CreateFailedResult<bool[]>(read);
 
@@ -343,7 +343,7 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
         byte[] command = MelsecHelper.BuildAsciiWriteBitCoreCommand(addressResult.Content, value);
 
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(PackCommand(command, this.station));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
         if (!read.IsSuccess)
             return read;
 
@@ -361,7 +361,7 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
     /// <returns>是否成功</returns>
     public OperateResult RemoteRun() {
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(PackCommand(Encoding.ASCII.GetBytes("1001000000010000"), this.station));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(Encoding.ASCII.GetBytes("1001000000010000"), this.station));
         if (!read.IsSuccess)
             return read;
 
@@ -379,7 +379,7 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
     /// <returns>是否成功</returns>
     public OperateResult RemoteStop() {
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(PackCommand(Encoding.ASCII.GetBytes("100200000001"), this.station));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(Encoding.ASCII.GetBytes("100200000001"), this.station));
         if (!read.IsSuccess)
             return read;
 
@@ -397,7 +397,7 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
     /// <returns>返回型号的结果对象</returns>
     public OperateResult<string> ReadPlcType() {
         // 核心交互
-        OperateResult<byte[]> read = this.ReadBase(PackCommand(Encoding.ASCII.GetBytes("01010000"), this.station));
+        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(Encoding.ASCII.GetBytes("01010000"), this.station));
         if (!read.IsSuccess)
             return OperateResult.CreateFailedResult<string>(read);
 

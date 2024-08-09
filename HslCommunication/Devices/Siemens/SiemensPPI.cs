@@ -56,7 +56,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return command;
 
         // 第一次数据交互
-        OperateResult<byte[]> read1 = this.ReadBase(command.Content);
+        OperateResult<byte[]> read1 = this.SendMessageAndGetResponce(command.Content);
         if (!read1.IsSuccess)
             return read1;
 
@@ -65,7 +65,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return new OperateResult<byte[]>("PLC Receive Check Failed:" + BasicFramework.SoftBasic.ByteToHexString(read1.Content, ' '));
 
         // 第二次数据交互
-        OperateResult<byte[]> read2 = this.ReadBase(this.executeConfirm);
+        OperateResult<byte[]> read2 = this.SendMessageAndGetResponce(this.executeConfirm);
         if (!read2.IsSuccess)
             return read2;
 
@@ -99,7 +99,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return OperateResult.CreateFailedResult<bool[]>(command);
 
         // 第一次数据交互
-        OperateResult<byte[]> read1 = this.ReadBase(command.Content);
+        OperateResult<byte[]> read1 = this.SendMessageAndGetResponce(command.Content);
         if (!read1.IsSuccess)
             return OperateResult.CreateFailedResult<bool[]>(read1);
 
@@ -108,7 +108,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return new OperateResult<bool[]>("PLC Receive Check Failed:" + BasicFramework.SoftBasic.ByteToHexString(read1.Content, ' '));
 
         // 第二次数据交互
-        OperateResult<byte[]> read2 = this.ReadBase(this.executeConfirm);
+        OperateResult<byte[]> read2 = this.SendMessageAndGetResponce(this.executeConfirm);
         if (!read2.IsSuccess)
             return OperateResult.CreateFailedResult<bool[]>(read2);
 
@@ -142,7 +142,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return command;
 
         // 第一次数据交互
-        OperateResult<byte[]> read1 = this.ReadBase(command.Content);
+        OperateResult<byte[]> read1 = this.SendMessageAndGetResponce(command.Content);
         if (!read1.IsSuccess)
             return read1;
 
@@ -151,7 +151,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return new OperateResult<byte[]>("PLC Receive Check Failed:" + read1.Content[0]);
 
         // 第二次数据交互
-        OperateResult<byte[]> read2 = this.ReadBase(this.executeConfirm);
+        OperateResult<byte[]> read2 = this.SendMessageAndGetResponce(this.executeConfirm);
         if (!read2.IsSuccess)
             return read2;
 
@@ -179,7 +179,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return command;
 
         // 第一次数据交互
-        OperateResult<byte[]> read1 = this.ReadBase(command.Content);
+        OperateResult<byte[]> read1 = this.SendMessageAndGetResponce(command.Content);
         if (!read1.IsSuccess)
             return read1;
 
@@ -188,7 +188,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return new OperateResult<byte[]>("PLC Receive Check Failed:" + read1.Content[0]);
 
         // 第二次数据交互
-        OperateResult<byte[]> read2 = this.ReadBase(this.executeConfirm);
+        OperateResult<byte[]> read2 = this.SendMessageAndGetResponce(this.executeConfirm);
         if (!read2.IsSuccess)
             return read2;
 
@@ -233,7 +233,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
     public OperateResult Start() {
         byte[] cmd = new byte[] { 0x68, 0x21, 0x21, 0x68, this.station, 0x00, 0x6C, 0x32, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFD, 0x00, 0x00, 0x09, 0x50, 0x5F, 0x50, 0x52, 0x4F, 0x47, 0x52, 0x41, 0x4D, 0xAA, 0x16 };
         // 第一次数据交互
-        OperateResult<byte[]> read1 = this.ReadBase(cmd);
+        OperateResult<byte[]> read1 = this.SendMessageAndGetResponce(cmd);
         if (!read1.IsSuccess)
             return read1;
 
@@ -242,7 +242,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return new OperateResult<byte[]>("PLC Receive Check Failed:" + read1.Content[0]);
 
         // 第二次数据交互
-        OperateResult<byte[]> read2 = this.ReadBase(this.executeConfirm);
+        OperateResult<byte[]> read2 = this.SendMessageAndGetResponce(this.executeConfirm);
         if (!read2.IsSuccess)
             return read2;
 
@@ -257,7 +257,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
     public OperateResult Stop() {
         byte[] cmd = new byte[] { 0x68, 0x1D, 0x1D, 0x68, this.station, 0x00, 0x6C, 0x32, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x29, 0x00, 0x00, 0x00, 0x00, 0x00, 0x09, 0x50, 0x5F, 0x50, 0x52, 0x4F, 0x47, 0x52, 0x41, 0x4D, 0xAA, 0x16 };
         // 第一次数据交互
-        OperateResult<byte[]> read1 = this.ReadBase(cmd);
+        OperateResult<byte[]> read1 = this.SendMessageAndGetResponce(cmd);
         if (!read1.IsSuccess)
             return read1;
 
@@ -266,7 +266,7 @@ public class SiemensPPI : SerialDeviceBase<ReverseBytesTransform> {
             return new OperateResult<byte[]>("PLC Receive Check Failed:" + read1.Content[0]);
 
         // 第二次数据交互
-        OperateResult<byte[]> read2 = this.ReadBase(this.executeConfirm);
+        OperateResult<byte[]> read2 = this.SendMessageAndGetResponce(this.executeConfirm);
         if (!read2.IsSuccess)
             return read2;
 

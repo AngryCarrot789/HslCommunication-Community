@@ -1,4 +1,5 @@
-﻿using HslCommunication.Profinet.Omron;
+﻿using HslCommunication.Core.Types;
+using HslCommunication.Devices.Omron;
 
 namespace HslCommunication.Tests.Documentation.Samples.Profinet;
 
