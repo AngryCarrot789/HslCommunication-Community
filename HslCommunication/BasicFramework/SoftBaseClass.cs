@@ -1,5 +1,7 @@
 ﻿using HslCommunication.Core;
 using System.Text;
+using HslCommunication.Core.Thread;
+using HslCommunication.LogNet.Core;
 
 namespace HslCommunication.BasicFramework;
 
@@ -67,8 +69,6 @@ public interface ISoftFileSaveBase {
 /// 如果还是担心被反编译获取数据，那么这个密钥就要来自服务器的数据，本地不做存储。
 /// </example>
 public class SoftFileSaveBase : ISoftFileSaveBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个文件存储的基类
     /// </summary>
@@ -76,24 +76,12 @@ public class SoftFileSaveBase : ISoftFileSaveBase {
         this.HybirdLock = new SimpleHybirdLock();
     }
 
-    #endregion
-
-    #region Private Member
-
     private SimpleHybirdLock HybirdLock; // 文件存储的同步锁
-
-    #endregion
-
-    #region Protect Member
 
     /// <summary>
     /// 在日志保存时的标记当前调用类的信息
     /// </summary>
     protected string LogHeaderText { get; set; }
-
-    #endregion
-
-    #region Save Load String
 
     /// <summary>
     /// 获取需要保存的数据，需要重写实现
@@ -110,10 +98,6 @@ public class SoftFileSaveBase : ISoftFileSaveBase {
     /// <param name="content">字符串数据</param>
     public virtual void LoadByString(string content) {
     }
-
-    #endregion
-
-    #region Save Load File
 
     /// <summary>
     /// 不使用解密方法从文件读取数据
@@ -177,8 +161,6 @@ public class SoftFileSaveBase : ISoftFileSaveBase {
         }
     }
 
-    #endregion
-
 
     /// <summary>
     /// 文件存储的路径
@@ -188,5 +170,5 @@ public class SoftFileSaveBase : ISoftFileSaveBase {
     /// <summary>
     /// 日志记录类
     /// </summary>
-    public LogNet.ILogNet ILogNet { get; set; }
+    public ILogNet ILogNet { get; set; }
 }

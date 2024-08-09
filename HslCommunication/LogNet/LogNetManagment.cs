@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using HslCommunication.LogNet.Core;
 
 namespace HslCommunication.LogNet;
 /*************************************************************************************

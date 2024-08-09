@@ -5,8 +5,6 @@ using HslCommunication.Profinet.Siemens;
 namespace HslCommunication.Tests.Documentation.Samples.Core;
 
 public class NetworkDeviceBase {
-    #region IDataTransfer Example
-
     public class DataMy : IDataTransfer {
         // 根据对应的设备选择对应的实例化
         // 三菱 RegularByteTransform
@@ -37,12 +35,8 @@ public class NetworkDeviceBase {
         }
     }
 
-    #endregion
-
 
     public void ReadCustomerExample() {
-        #region ReadCustomerExample
-
         MelsecMcNet melsec = new MelsecMcNet("192.168.0.100", 6000);
         OperateResult<DataMy> read = melsec.ReadCustomer<DataMy>("M100");
         if (read.IsSuccess) {
@@ -53,13 +47,9 @@ public class NetworkDeviceBase {
             // failed
             Console.WriteLine("读取失败：" + read.Message);
         }
-
-        #endregion
     }
 
     public async void ReadCustomerAsyncExample() {
-        #region ReadCustomerAsyncExample
-
         MelsecMcNet melsec = new MelsecMcNet("192.168.0.100", 6000);
         OperateResult<DataMy> read = await melsec.ReadCustomerAsync<DataMy>("M100");
         if (read.IsSuccess) {
@@ -70,13 +60,9 @@ public class NetworkDeviceBase {
             // failed
             Console.WriteLine("读取失败：" + read.Message);
         }
-
-        #endregion
     }
 
     public void WriteCustomerExample() {
-        #region WriteCustomerExample
-
         MelsecMcNet melsec = new MelsecMcNet("192.168.0.100", 6000);
 
         DataMy dataMy = new DataMy();
@@ -93,13 +79,9 @@ public class NetworkDeviceBase {
             // failed
             Console.WriteLine("读取失败：" + write.Message);
         }
-
-        #endregion
     }
 
     public async void WriteCustomerAsyncExample() {
-        #region WriteCustomerAsyncExample
-
         MelsecMcNet melsec = new MelsecMcNet("192.168.0.100", 6000);
 
         DataMy dataMy = new DataMy();
@@ -116,11 +98,7 @@ public class NetworkDeviceBase {
             // failed
             Console.WriteLine("读取失败：" + write.Message);
         }
-
-        #endregion
     }
-
-    #region ObjectDefineExample
 
     // 假设你要读取几个数据的情况，我们把需要读取的数据定义成一个个的数量，本示例既适合单个读取，也适合批量读取，以下就是混搭的情况。
     // 我们假设，我们要读取的PLC是西门子PLC，地址数据的假设如下
@@ -156,11 +134,7 @@ public class NetworkDeviceBase {
         public byte[] AlarmStatus { get; set; }
     }
 
-    #endregion
-
     public void ReadObjectExample() {
-        #region ReadObjectExample
-
         SiemensS7Net plc = new SiemensS7Net(SiemensPLCS.S1200, "192.168.0.100");
 
         // 此处需要注意的是，凡是带有 HslDeviceAddress 特性的属性都会被读取出来
@@ -173,13 +147,9 @@ public class NetworkDeviceBase {
             // failed
             Console.WriteLine("读取失败：" + read.Message);
         }
-
-        #endregion
     }
 
     public async void ReadObjectAsyncExample() {
-        #region ReadObjectAsyncExample
-
         SiemensS7Net plc = new SiemensS7Net(SiemensPLCS.S1200, "192.168.0.100");
 
         // 此处需要注意的是，凡是带有 HslDeviceAddress 特性的属性都会被读取出来
@@ -192,13 +162,9 @@ public class NetworkDeviceBase {
             // failed
             Console.WriteLine("读取失败：" + read.Message);
         }
-
-        #endregion
     }
 
     public void WriteObjectExample() {
-        #region WriteObjectExample
-
         SiemensS7Net plc = new SiemensS7Net(SiemensPLCS.S1200, "192.168.0.100");
 
         // 此处需要注意的是，凡是带有 HslDeviceAddress 特性的属性都会被写入进去
@@ -218,13 +184,9 @@ public class NetworkDeviceBase {
             // failed
             Console.WriteLine("写入失败：" + write.Message);
         }
-
-        #endregion
     }
 
     public async void WriteObjectAsyncExample() {
-        #region WriteObjectAsyncExample
-
         SiemensS7Net plc = new SiemensS7Net(SiemensPLCS.S1200, "192.168.0.100");
 
         // 此处需要注意的是，凡是带有 HslDeviceAddress 特性的属性都会被写入进去
@@ -244,13 +206,9 @@ public class NetworkDeviceBase {
             // failed
             Console.WriteLine("写入失败：" + write.Message);
         }
-
-        #endregion
     }
 
     public void ReadInt16() {
-        #region ReadInt16
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -266,13 +224,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadInt16Async() {
-        #region ReadInt16Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -288,13 +242,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadInt16Array() {
-        #region ReadInt16Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -318,13 +268,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadInt16ArrayAsync() {
-        #region ReadInt16ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -348,13 +294,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadUInt16() {
-        #region ReadUInt16
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -369,13 +311,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadUInt16Async() {
-        #region ReadUInt16Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -390,13 +328,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadUInt16Array() {
-        #region ReadUInt16Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -420,13 +354,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadUInt16ArrayAsync() {
-        #region ReadUInt16ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -450,13 +380,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadInt32() {
-        #region ReadInt32
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -471,13 +397,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadInt32Async() {
-        #region ReadInt32Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -492,13 +414,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadInt32Array() {
-        #region ReadInt32Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -523,13 +441,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadInt32ArrayAsync() {
-        #region ReadInt32ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -554,13 +468,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadUInt32() {
-        #region ReadUInt32
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -575,13 +485,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadUInt32Async() {
-        #region ReadUInt32Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -596,13 +502,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadUInt32Array() {
-        #region ReadUInt32Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -626,14 +528,10 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
 
     public async void ReadUInt32ArrayAsync() {
-        #region ReadUInt32ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -657,13 +555,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadFloat() {
-        #region ReadFloat
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -678,14 +572,10 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
 
     public async void ReadFloatAsync() {
-        #region ReadFloatAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -700,13 +590,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadFloatArray() {
-        #region ReadFloatArray
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -730,13 +616,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadFloatArrayAsync() {
-        #region ReadFloatArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -760,13 +642,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadInt64() {
-        #region ReadInt64
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -781,13 +659,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadInt64Async() {
-        #region ReadInt64Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -802,13 +676,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadInt64Array() {
-        #region ReadInt64Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -832,13 +702,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadInt64ArrayAsync() {
-        #region ReadInt64ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -862,13 +728,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadUInt64() {
-        #region ReadUInt64
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -883,13 +745,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadUInt64Async() {
-        #region ReadUInt64Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -904,13 +762,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadUInt64Array() {
-        #region ReadUInt64Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -934,13 +788,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadUInt64ArrayAsync() {
-        #region ReadUInt64ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -964,13 +814,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadDouble() {
-        #region ReadDouble
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -985,13 +831,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadDoubleAsync() {
-        #region ReadDoubleAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -1006,13 +848,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadDoubleArray() {
-        #region ReadDoubleArray
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -1036,13 +874,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadDoubleArrayAsync() {
-        #region ReadDoubleArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -1066,13 +900,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void ReadString() {
-        #region ReadString
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -1087,13 +917,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void ReadStringAsync() {
-        #region ReadStringAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -1108,13 +934,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteAsync() {
-        #region WriteAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1128,13 +950,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteInt16() {
-        #region WriteInt16
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1148,13 +966,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteInt16Async() {
-        #region WriteInt16Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1168,13 +982,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteInt16Array() {
-        #region WriteInt16Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1188,13 +998,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteInt16ArrayAsync() {
-        #region WriteInt16ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1208,13 +1014,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteUInt16() {
-        #region WriteUInt16
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1228,13 +1030,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteUInt16Async() {
-        #region WriteUInt16Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1248,13 +1046,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteUInt16Array() {
-        #region WriteUInt16Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1268,13 +1062,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteUInt16ArrayAsync() {
-        #region WriteUInt16ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1288,14 +1078,10 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
 
     public void WriteInt32() {
-        #region WriteInt32
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1309,13 +1095,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteInt32Async() {
-        #region WriteInt32Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1329,13 +1111,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteInt32Array() {
-        #region WriteInt32Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1349,13 +1127,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteInt32ArrayAsync() {
-        #region WriteInt32ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1369,13 +1143,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteUInt32() {
-        #region WriteUInt32
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1389,13 +1159,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteUInt32Async() {
-        #region WriteUInt32Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1409,13 +1175,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteUInt32Array() {
-        #region WriteUInt32Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1429,13 +1191,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteUInt32ArrayAsync() {
-        #region WriteUInt32ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1449,13 +1207,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteFloat() {
-        #region WriteFloat
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1469,13 +1223,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteFloatAsync() {
-        #region WriteFloatAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1489,13 +1239,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteFloatArray() {
-        #region WriteFloatArray
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1509,13 +1255,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteFloatArrayAsync() {
-        #region WriteFloatArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1529,13 +1271,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteInt64() {
-        #region WriteInt64
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1549,13 +1287,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteInt64Async() {
-        #region WriteInt64Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1569,13 +1303,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteInt64Array() {
-        #region WriteInt64Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1589,13 +1319,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteInt64ArrayAsync() {
-        #region WriteInt64ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1609,13 +1335,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteUInt64() {
-        #region WriteUInt64
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1629,14 +1351,10 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
 
     public async void WriteUInt64Async() {
-        #region WriteUInt64Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1650,13 +1368,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteUInt64Array() {
-        #region WriteUInt64Array
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1670,13 +1384,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteUInt64ArrayAsync() {
-        #region WriteUInt64ArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1690,14 +1400,10 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
 
     public void WriteDouble() {
-        #region WriteDouble
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1711,13 +1417,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public async void WriteDoubleAsync() {
-        #region WriteDoubleAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1731,13 +1433,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteDoubleArray() {
-        #region WriteDoubleArray
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1751,14 +1449,10 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
 
     public async void WriteDoubleArrayAsync() {
-        #region WriteDoubleArrayAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1772,13 +1466,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteString() {
-        #region WriteString
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1792,14 +1482,10 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
 
     public async void WriteStringAsync() {
-        #region WriteStringAsync
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1813,13 +1499,9 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteString2() {
-        #region WriteString2
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1833,14 +1515,10 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 
 
     public async void WriteString2Async() {
-        #region WriteString2Async
-
         MelsecMcNet melsec_net = new MelsecMcNet("192.168.0.100", 6000);
 
         // 简单的写入
@@ -1854,7 +1532,5 @@ public class NetworkDeviceBase {
         else {
             // failed
         }
-
-        #endregion
     }
 }

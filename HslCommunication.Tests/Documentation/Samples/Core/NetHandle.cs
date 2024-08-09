@@ -2,8 +2,6 @@
 
 public class NetHandleExample {
     public void Example() {
-        #region NetHandleExample
-
         NetHandle netHandle1 = new NetHandle(1, 1, 1);
 
         NetHandle netHandle2 = 16842753;
@@ -19,7 +17,5 @@ public class NetHandleExample {
         if (netHandle2 == 16842754) {
             Console.WriteLine("true"); // 会执行这一步
         }
-
-        #endregion
     }
 }

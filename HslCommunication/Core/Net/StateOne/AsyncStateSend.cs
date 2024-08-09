@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
+using HslCommunication.Core.Thread;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.StateOne;
 
 internal class AsyncStateSend {
     /// <summary>

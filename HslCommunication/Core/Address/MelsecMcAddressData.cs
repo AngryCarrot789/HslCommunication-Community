@@ -1,4 +1,5 @@
-﻿using HslCommunication.Profinet.Melsec;
+﻿using HslCommunication.Core.Types;
+using HslCommunication.Devices.Melsec;
 
 namespace HslCommunication.Core.Address;
 
@@ -6,16 +7,12 @@ namespace HslCommunication.Core.Address;
 /// 三菱的数据地址表示形式
 /// </summary>
 public class McAddressData : DeviceAddressDataBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
     public McAddressData() {
         this.McDataType = MelsecMcDataType.D;
     }
-
-    #endregion
 
     /// <summary>
     /// 三菱的数据地址信息
@@ -35,8 +32,6 @@ public class McAddressData : DeviceAddressDataBase {
             this.McDataType = addressData.Content.McDataType;
         }
     }
-
-    #region Static Method
 
     /// <summary>
     /// 从实际三菱的地址里面解析出
@@ -447,6 +442,4 @@ public class McAddressData : DeviceAddressDataBase {
 
         return OperateResult.CreateSuccessResult(addressData);
     }
-
-    #endregion
 }

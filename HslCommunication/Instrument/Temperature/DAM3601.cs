@@ -1,5 +1,7 @@
 ﻿using HslCommunication.Core.Address;
+using HslCommunication.Core.Types;
 using HslCommunication.ModBus;
+using HslCommunication.ModBus.ModbusRtu;
 
 namespace HslCommunication.Instrument.Temperature;
 
@@ -10,8 +12,6 @@ namespace HslCommunication.Instrument.Temperature;
 /// 该温度采集模块是基于modbus-rtu，但不是标准的modbus协议，存在一些小误差，需要重写实现，并且提供了基础的数据转换
 /// </remarks>
 public class DAM3601 : ModbusRtu {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -26,10 +26,6 @@ public class DAM3601 : ModbusRtu {
     public DAM3601(byte station) : base(station) {
         this.SleepTime = 200;
     }
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 读取所有的温度数据，并转化成相关的信息
@@ -61,10 +57,6 @@ public class DAM3601 : ModbusRtu {
         }
     }
 
-    #endregion
-
-    #region Override
-
     /// <summary>
     /// 从Modbus服务器批量读取寄存器的信息，需要指定起始地址，读取长度
     /// </summary>
@@ -83,10 +75,6 @@ public class DAM3601 : ModbusRtu {
         return this.ReadModBusBase(analysis.Content, length);
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -94,6 +82,4 @@ public class DAM3601 : ModbusRtu {
     public override string ToString() {
         return $"DAM3601[{this.PortName}:{this.BaudRate}]";
     }
-
-    #endregion
 }

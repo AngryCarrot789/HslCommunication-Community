@@ -1,14 +1,13 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using HslCommunication.Core.Thread;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.StateOne;
 
 /// <summary>
 /// 网络会话信息
 /// </summary>
 public class AppSession {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个构造方法
     /// </summary>
@@ -16,8 +15,6 @@ public class AppSession {
         this.ClientUniqueID = Guid.NewGuid().ToString("N");
         this.HybirdLockSend = new SimpleHybirdLock();
     }
-
-    #endregion
 
 
     /// <summary>
@@ -99,8 +96,6 @@ public class AppSession {
     }
 
 
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串，以IP，端口，客户端名称组成
     /// </summary>
@@ -113,6 +108,4 @@ public class AppSession {
             return $"AppSession[{this.IpEndPoint}] [{this.LoginAlias}]";
         }
     }
-
-    #endregion
 }

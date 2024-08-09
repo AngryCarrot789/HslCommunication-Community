@@ -4,19 +4,13 @@ namespace HslCommunication.Tests.Documentation.Samples.Profinet;
 
 public class SiemensS7NetExample {
     public void ClassTest() {
-        #region Usage
-
         // 实例化对象，指定PLC的ip地址
         SiemensS7Net siemens = new SiemensS7Net(SiemensPLCS.S1200, " 192.168.1.110");
         // 举例读取M100的值
         short M100 = siemens.ReadInt16("M100").Content;
-
-        #endregion
     }
 
     public void ClassTest2() {
-        #region Usage2
-
         // 实例化对象，指定PLC的ip地址和端口号
         SiemensS7Net siemens = new SiemensS7Net(SiemensPLCS.S1200, " 192.168.1.110");
 
@@ -31,14 +25,10 @@ public class SiemensS7NetExample {
         short M100 = siemens.ReadInt16("M100").Content;
 
         siemens.ConnectClose();
-
-        #endregion
     }
 
 
     public void ReadExample() {
-        #region ReadExample1
-
         SiemensS7Net siemensTcpNet = new SiemensS7Net(SiemensPLCS.S1200, " 192.168.1.110");
 
         // 此处以M100寄存器作为示例
@@ -62,13 +52,9 @@ public class SiemensS7NetExample {
         long[] long_M100_array = siemensTcpNet.ReadInt64("M100", 10).Content; // 读取M100-M107组成的大数据值
         ulong[] ulong_M100_array = siemensTcpNet.ReadUInt64("M100", 10).Content; // 读取M100-M107组成的无符号大数据
         double[] double_M100_array = siemensTcpNet.ReadDouble("M100", 10).Content; // 读取M100-M107组成的双精度值
-
-        #endregion
     }
 
     public void ReadExample2() {
-        #region ReadExample2
-
         SiemensS7Net siemens = new SiemensS7Net(SiemensPLCS.S1200, " 192.168.1.110");
 
         OperateResult<byte[]> read = siemens.Read("M100", 8);
@@ -82,13 +68,9 @@ public class SiemensS7NetExample {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteExample() {
-        #region WriteExample1
-
         SiemensS7Net siemens = new SiemensS7Net(SiemensPLCS.S1200, " 192.168.1.110");
 
         // 此处以M100寄存器作为示例
@@ -111,13 +93,9 @@ public class SiemensS7NetExample {
         siemens.Write("M100", new double[] { 12343.542312d, 213123.123d, -231232.53432d }); // 写入M100  double值
         siemens.Write("M100", new long[] { 1231231242312, 34312312323214, -1283862312631823 }); // 写入M100  long值
         siemens.Write("M100", new ulong[] { 1231231242312, 34312312323214, 9731283862312631823 }); // 写入M100  ulong值
-
-        #endregion
     }
 
     public void WriteExample2() {
-        #region WriteExample2
-
         SiemensS7Net siemens = new SiemensS7Net(SiemensPLCS.S1200, " 192.168.1.110");
 
         // 拼凑数据，这样的话，一次通讯就完成数据的全部写入
@@ -138,14 +116,10 @@ public class SiemensS7NetExample {
         //siemens.Write( "M100", (short)1234 );
         //siemens.Write( "M100", (short)2100 );
         //siemens.Write( "M100", 12353423 );
-
-        #endregion
     }
 
 
     public void ReadBool() {
-        #region ReadBool
-
         SiemensS7Net siemens = new SiemensS7Net(SiemensPLCS.S1200, " 192.168.1.110");
 
         // 以下是简单的读取，没有仔细校验的方式
@@ -160,13 +134,9 @@ public class SiemensS7NetExample {
         else {
             // failed
         }
-
-        #endregion
     }
 
     public void WriteBool() {
-        #region WriteBool
-
         SiemensS7Net siemens = new SiemensS7Net(SiemensPLCS.S1200, " 192.168.1.110");
 
         // 以下是简单的写入，没有仔细校验的方式
@@ -180,7 +150,5 @@ public class SiemensS7NetExample {
         else {
             // failed
         }
-
-        #endregion
     }
 }

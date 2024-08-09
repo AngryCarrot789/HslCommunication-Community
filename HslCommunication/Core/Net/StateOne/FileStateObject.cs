@@ -1,4 +1,4 @@
-﻿namespace HslCommunication.Core.Net;
+﻿namespace HslCommunication.Core.Net.StateOne;
 
 /// <summary>
 /// 文件传送的异步对象

@@ -13,14 +13,12 @@
  *********************************************************************************************************/
 
 
-namespace HslCommunication.Core;
+namespace HslCommunication.Core.Transfer;
 
 /// <summary>
 /// 支持转换器的基础接口
 /// </summary>
 public interface IByteTransform {
-    #region Get Value From Bytes
-
     /// <summary>
     /// 从缓存中提取出bool结果
     /// </summary>
@@ -207,10 +205,6 @@ public interface IByteTransform {
     /// <returns>string对象</returns>
     string TransString(byte[] buffer, int index, int length, Encoding encoding);
 
-    #endregion
-
-    #region Get Bytes From Value
-
     /// <summary>
     /// bool变量转化缓存数据
     /// </summary>
@@ -352,14 +346,8 @@ public interface IByteTransform {
     /// <returns>buffer数据</returns>
     byte[] TransByte(string value, Encoding encoding);
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 获取或设置数据解析的格式，默认ABCD，可选BADC，CDAB，DCBA格式
     /// </summary>
     DataFormat DataFormat { get; set; }
-
-    #endregion
 }

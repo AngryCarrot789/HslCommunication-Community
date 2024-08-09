@@ -1,20 +1,16 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.FileNet;
 
 /// <summary>
 /// 文件传输客户端基类，提供上传，下载，删除的基础服务
 /// </summary>
 public abstract class FileClientBase : NetworkXBase {
-    #region Private Member
-
     private IPEndPoint m_ipEndPoint = null;
-
-    #endregion
-
-    #region Public Member
 
     /// <summary>
     /// 服务器端的文件管理引擎终结点
@@ -28,10 +24,6 @@ public abstract class FileClientBase : NetworkXBase {
     /// 获取或设置连接的超时时间，默认10秒
     /// </summary>
     public int ConnectTimeOut { get; set; } = 10000;
-
-    #endregion
-
-    #region Private Method
 
     /// <summary>
     /// 发送三个文件分类到服务器端
@@ -64,10 +56,6 @@ public abstract class FileClientBase : NetworkXBase {
         return OperateResult.CreateSuccessResult();
         ;
     }
-
-    #endregion
-
-    #region Delete File
 
     /// <summary>
     /// 删除服务器上的文件
@@ -108,10 +96,6 @@ public abstract class FileClientBase : NetworkXBase {
         socketResult.Content?.Close();
         return result;
     }
-
-    #endregion
-
-    #region Download File
 
     /// <summary>
     /// 基础下载信息
@@ -167,10 +151,6 @@ public abstract class FileClientBase : NetworkXBase {
         socketResult.Content?.Close();
         return OperateResult.CreateSuccessResult();
     }
-
-    #endregion
-
-    #region Upload File
 
     /// <summary>
     /// 上传文件给服务器
@@ -244,10 +224,6 @@ public abstract class FileClientBase : NetworkXBase {
         }
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 获取本对象的字符串表示形式
     /// </summary>
@@ -255,6 +231,4 @@ public abstract class FileClientBase : NetworkXBase {
     public override string ToString() {
         return "FileClientBase";
     }
-
-    #endregion
 }

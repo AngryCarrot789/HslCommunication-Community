@@ -1,10 +1,13 @@
-﻿using HslCommunication.Core;
-using HslCommunication.Core.Net;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.ComplexNet;
 
 /// <summary>
 /// 高性能的异步网络服务器类，适合搭建局域网聊天程序，消息推送程序
@@ -17,8 +20,6 @@ namespace HslCommunication.Enthernet;
 /// <code lang="cs" source="TestProject\ComplexNetServer\FormServer.cs" region="NetComplexServer" title="NetComplexServer示例" />
 /// </example>
 public class NetComplexServer : NetworkServerBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个网络服务器类对象
     /// </summary>
@@ -27,17 +28,9 @@ public class NetComplexServer : NetworkServerBase {
         this.lockSessions = new SimpleHybirdLock();
     }
 
-    #endregion
-
-    #region Private Member
-
     private int connectMaxClient = 1000; // 允许同时登录的最大客户端数量
     private List<AppSession> appSessions = null; // 所有客户端连接的对象信息   
     private SimpleHybirdLock lockSessions = null; // 对象列表操作的锁
-
-    #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// 所支持的同时在线客户端的最大数量，商用限制1000个，最小10个
@@ -60,10 +53,6 @@ public class NetComplexServer : NetworkServerBase {
     /// 所有在线客户端的数量
     /// </summary>
     public int ClientCount => this.appSessions.Count;
-
-    #endregion
-
-    #region NetworkServerBase Override
 
     /// <summary>
     /// 初始化操作
@@ -114,10 +103,6 @@ public class NetComplexServer : NetworkServerBase {
         this.TcpStateDownLine(session, true);
     }
 
-    #endregion
-
-    #region Client Online Offline
-
     private void TcpStateUpLine(AppSession state) {
         this.lockSessions.Enter();
         this.appSessions.Add(state);
@@ -156,10 +141,6 @@ public class NetComplexServer : NetworkServerBase {
         }
     }
 
-    #endregion
-
-    #region Event Handle
-
     /// <summary>
     /// 客户端的上下限状态变更时触发，仅作为在线客户端识别
     /// </summary>
@@ -184,10 +165,6 @@ public class NetComplexServer : NetworkServerBase {
     /// 当接收到字节数据的时候,触发此事件
     /// </summary>
     public event Action<AppSession, NetHandle, byte[]> AcceptByte;
-
-    #endregion
-
-    #region Login Server
 
     /// <summary>
     /// 当接收到了新的请求的时候执行的操作
@@ -246,10 +223,6 @@ public class NetComplexServer : NetworkServerBase {
             this.LogNet?.WriteException(this.ToString(), StringResources.Language.NetClientLoginFailed, ex);
         }
     }
-
-    #endregion
-
-    #region SendAsync Support
 
     /// <summary>
     /// 服务器端用于数据发送文本的方法
@@ -327,10 +300,6 @@ public class NetComplexServer : NetworkServerBase {
         }
     }
 
-    #endregion
-
-    #region DataProcessingCenter
-
     /// <summary>
     /// 数据处理中心
     /// </summary>
@@ -360,10 +329,6 @@ public class NetComplexServer : NetworkServerBase {
             // 其他一概不处理
         }
     }
-
-    #endregion
-
-    #region Heart Check
 
     private Thread Thread_heart_check { get; set; } = null;
 
@@ -396,10 +361,6 @@ public class NetComplexServer : NetworkServerBase {
         }
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 获取本对象的字符串表示形式
     /// </summary>
@@ -407,6 +368,4 @@ public class NetComplexServer : NetworkServerBase {
     public override string ToString() {
         return "NetComplexServer";
     }
-
-    #endregion
 }

@@ -1,4 +1,6 @@
-﻿namespace HslCommunication.Core.Address;
+﻿using HslCommunication.Core.Types;
+
+namespace HslCommunication.Core.Address;
 
 /// <summary>
 /// 西门子的地址数据信息，当处于写入时，Length无效
@@ -28,8 +30,6 @@ public class S7AddressData : DeviceAddressDataBase {
             this.DbBlock = addressData.Content.DbBlock;
         }
     }
-
-    #region Static Method
 
     /// <summary>
     /// 计算特殊的地址信息 -> Calculate Special Address information
@@ -114,6 +114,4 @@ public class S7AddressData : DeviceAddressDataBase {
 
         return OperateResult.CreateSuccessResult(addressData);
     }
-
-    #endregion
 }

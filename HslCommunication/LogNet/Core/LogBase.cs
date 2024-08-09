@@ -1,7 +1,8 @@
-﻿using HslCommunication.Core;
-using System.Text;
+﻿using System.Text;
+using HslCommunication.Core.Thread;
+using HslCommunication.LogNet.Logs;
 
-namespace HslCommunication.LogNet;
+namespace HslCommunication.LogNet.Core;
 
 /// <summary>
 /// 日志存储类的基类，提供一些基础的服务
@@ -15,8 +16,6 @@ namespace HslCommunication.LogNet;
 /// </list>
 /// </remarks>
 public abstract class LogNetBase : IDisposable {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个日志对象
     /// </summary>
@@ -28,10 +27,6 @@ public abstract class LogNetBase : IDisposable {
         this.filtrateLock = new SimpleHybirdLock();
     }
 
-    #endregion
-
-    #region Private Member
-
     private HslMessageDegree m_messageDegree = HslMessageDegree.DEBUG; // 默认的存储规则
     private Queue<HslMessageItem> m_WaitForSave; // 待存储数据的缓存
     private SimpleHybirdLock m_simpleHybirdLock; // 缓存列表的锁
@@ -39,18 +34,10 @@ public abstract class LogNetBase : IDisposable {
     private List<string> filtrateKeyword; // 需要过滤的存储对象
     private SimpleHybirdLock filtrateLock; // 过滤列表的锁
 
-    #endregion
-
-    #region Protect Member
-
     /// <summary>
     /// 文件存储的锁
     /// </summary>
     protected SimpleHybirdLock m_fileSaveLock; // 文件的锁
-
-    #endregion
-
-    #region Event Handle
 
     /// <summary>
     /// 在存储到文件的时候将会触发的事件
@@ -61,18 +48,10 @@ public abstract class LogNetBase : IDisposable {
         this.BeforeSaveToFile?.Invoke(this, args);
     }
 
-    #endregion
-
-    #region Public Member
-
     /// <summary>
     /// 日志存储模式，1:单文件，2:按大小存储，3:按时间存储
     /// </summary>
     public int LogSaveMode { get; protected set; }
-
-    #endregion
-
-    #region Log Method
 
     /// <summary>
     /// 写入一条调试信息
@@ -262,10 +241,6 @@ public abstract class LogNetBase : IDisposable {
         this.m_messageDegree = degree;
     }
 
-    #endregion
-
-    #region Filtrate Keyword
-
     /// <summary>
     /// 过滤指定的关键字存储
     /// </summary>
@@ -278,10 +253,6 @@ public abstract class LogNetBase : IDisposable {
 
         this.filtrateLock.Leave();
     }
-
-    #endregion
-
-    #region File Write
 
     private void WriteToFile(HslMessageDegree degree, string keyWord, string text) {
         // 过滤事件
@@ -437,10 +408,6 @@ public abstract class LogNetBase : IDisposable {
         this.m_fileSaveLock.Leave();
     }
 
-    #endregion
-
-    #region Helper Method
-
     /// <summary>
     /// 获取要存储的文件的名称
     /// </summary>
@@ -501,10 +468,6 @@ public abstract class LogNetBase : IDisposable {
         }
     }
 
-    #endregion
-
-    #region IDisposable Support
-
     private bool disposedValue = false; // 要检测冗余调用
 
     /// <summary>
@@ -544,6 +507,4 @@ public abstract class LogNetBase : IDisposable {
         // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
         // GC.SuppressFinalize(this);
     }
-
-    #endregion
 }

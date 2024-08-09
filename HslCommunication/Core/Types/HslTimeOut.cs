@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
-using HslCommunication.Core;
+using HslCommunication.Core.Thread;
 
-namespace HslCommunication;
+namespace HslCommunication.Core.Types;
 /****************************************************************************
  *
  *    应用于一些操作超时请求的判断功能

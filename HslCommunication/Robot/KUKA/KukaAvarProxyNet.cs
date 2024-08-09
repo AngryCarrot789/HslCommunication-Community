@@ -3,6 +3,9 @@ using HslCommunication.Core;
 using HslCommunication.Core.IMessage;
 using HslCommunication.Core.Net;
 using System.Text;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.Robot.KUKA;
 
@@ -13,8 +16,6 @@ namespace HslCommunication.Robot.KUKA;
 /// 非常感谢 昆山-LT 网友的测试和意见反馈。
 /// </remarks>
 public class KukaAvarProxyNet : NetworkDoubleBase<KukaVarProxyMessage, ReverseWordTransform>, IRobotNet {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -33,10 +34,6 @@ public class KukaAvarProxyNet : NetworkDoubleBase<KukaVarProxyMessage, ReverseWo
 
         this.softIncrementCount = new SoftIncrementCount(ushort.MaxValue);
     }
-
-    #endregion
-
-    #region Read Write Support
 
     /// <summary>
     /// 读取埃夫特机器人的原始的字节数据信息，该地址参数是没有任何作用的，随便填什么
@@ -88,10 +85,6 @@ public class KukaAvarProxyNet : NetworkDoubleBase<KukaVarProxyMessage, ReverseWo
         return this.ExtractActualData(read.Content);
     }
 
-    #endregion
-
-    #region Command Build
-
     /// <summary>
     /// 将核心的指令打包成一个可用于发送的消息对象
     /// </summary>
@@ -141,15 +134,7 @@ public class KukaAvarProxyNet : NetworkDoubleBase<KukaVarProxyMessage, ReverseWo
         return this.BuildCommands(0x01, new string[] { address, value });
     }
 
-    #endregion
-
-    #region Private Member
-
     private SoftIncrementCount softIncrementCount; // 自增消息的对象
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -158,6 +143,4 @@ public class KukaAvarProxyNet : NetworkDoubleBase<KukaVarProxyMessage, ReverseWo
     public override string ToString() {
         return $"KukaAvarProxyNet Robot[{this.IpAddress}:{this.Port}]";
     }
-
-    #endregion
 }

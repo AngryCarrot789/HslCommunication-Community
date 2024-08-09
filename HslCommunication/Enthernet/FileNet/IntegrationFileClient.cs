@@ -1,7 +1,8 @@
 ﻿using System.Net.Sockets;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Types;
 
-
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.FileNet;
 
 /// <summary>
 /// 与服务器文件引擎交互的客户端类，支持操作Advanced引擎和Ultimate引擎
@@ -14,17 +15,11 @@ namespace HslCommunication.Enthernet;
 /// <code lang="cs" source="TestProject\HslCommunicationDemo\FormFileClient.cs" region="Intergration File Client" title="IntegrationFileClient示例" />
 /// </example>
 public class IntegrationFileClient : FileClientBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个对象
     /// </summary>
     public IntegrationFileClient() {
     }
-
-    #endregion
-
-    #region Delete File
 
     /// <summary>
     /// 删除服务器的文件操作
@@ -41,10 +36,6 @@ public class IntegrationFileClient : FileClientBase {
         string id) {
         return this.DeleteFileBase(fileName, factory, group, id);
     }
-
-    #endregion
-
-    #region Download File
 
     /// <summary>
     /// 下载服务器的文件到本地的文件操作
@@ -105,10 +96,6 @@ public class IntegrationFileClient : FileClientBase {
         Stream stream) {
         return this.DownloadFileBase(factory, group, id, fileName, processReport, stream);
     }
-
-    #endregion
-
-    #region Upload File
 
     /// <summary>
     /// 上传本地的文件到服务器操作
@@ -178,10 +165,6 @@ public class IntegrationFileClient : FileClientBase {
         return this.UploadFileBase(stream, serverName, factory, group, id, fileTag, fileUpload, processReport);
     }
 
-    #endregion
-
-    #region Private Method
-
     /// <summary>
     /// 根据三种分类信息，还原成在服务器的相对路径，包含文件
     /// </summary>
@@ -242,10 +225,6 @@ public class IntegrationFileClient : FileClientBase {
         return file_save_server_name;
     }
 
-    #endregion
-
-    #region Get FileNames
-
     /// <summary>
     /// 获取指定路径下的所有的文档
     /// </summary>
@@ -278,10 +257,6 @@ public class IntegrationFileClient : FileClientBase {
         );
     }
 
-    #endregion
-
-    #region Get FolderNames
-
     /// <summary>
     /// 获取指定路径下的所有的文档
     /// </summary>
@@ -312,10 +287,6 @@ public class IntegrationFileClient : FileClientBase {
             group,
             id);
     }
-
-    #endregion
-
-    #region Private Method
 
     /// <summary>
     /// 获取指定路径下的所有的文档
@@ -378,6 +349,4 @@ public class IntegrationFileClient : FileClientBase {
             };
         }
     }
-
-    #endregion
 }

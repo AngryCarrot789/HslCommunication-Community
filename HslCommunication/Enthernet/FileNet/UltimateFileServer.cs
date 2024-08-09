@@ -1,8 +1,11 @@
-﻿using System.Net.Sockets;
-using System.Net;
-using HslCommunication.Core;
+﻿using System.Net;
+using System.Net.Sockets;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.FileNet;
 
 /// <summary>
 /// 终极文件管理服务器，实现所有的文件分类管理，读写分离，不支持直接访问文件名
@@ -14,18 +17,12 @@ namespace HslCommunication.Enthernet;
 /// 以下的示例来自Demo项目，创建了一个简单的服务器对象。
 /// <code lang="cs" source="TestProject\FileNetServer\FormFileServer.cs" region="Ultimate Server" title="UltimateFileServer示例" />
 /// </example>
-public class UltimateFileServer : Core.Net.NetworkFileServerBase {
-    #region Constructor
-
+public class UltimateFileServer : NetworkFileServerBase {
     /// <summary>
     /// 实例化一个对象
     /// </summary>
     public UltimateFileServer() {
     }
-
-    #endregion
-
-    #region File list Container
 
     /// <summary>
     /// 所有文件组操作的词典锁
@@ -58,10 +55,6 @@ public class UltimateFileServer : Core.Net.NetworkFileServerBase {
         this.hybirdLock.Leave();
         return GroupFile;
     }
-
-    #endregion
-
-    #region Receive File And Updata List
 
     /// <summary>
     /// 从套接字接收文件并保存，更新文件列表
@@ -100,10 +93,6 @@ public class UltimateFileServer : Core.Net.NetworkFileServerBase {
         return this.SendStringAndCheckReceive(socket, 1, StringResources.Language.SuccessText);
     }
 
-    #endregion
-
-    #region Private Method
-
     /// <summary>
     /// 根据文件的显示名称转化为真实存储的名称
     /// </summary>
@@ -135,10 +124,6 @@ public class UltimateFileServer : Core.Net.NetworkFileServerBase {
             });
         }
     }
-
-    #endregion
-
-    #region Protect Override
 
     /// <summary>
     /// 当接收到了新的请求的时候执行的操作
@@ -264,10 +249,6 @@ public class UltimateFileServer : Core.Net.NetworkFileServerBase {
         }
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 获取本对象的字符串表示形式
     /// </summary>
@@ -275,6 +256,4 @@ public class UltimateFileServer : Core.Net.NetworkFileServerBase {
     public override string ToString() {
         return "UltimateFileServer";
     }
-
-    #endregion
 }

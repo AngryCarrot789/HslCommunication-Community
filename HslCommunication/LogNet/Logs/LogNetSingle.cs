@@ -1,6 +1,7 @@
 ﻿using System.Text;
+using HslCommunication.LogNet.Core;
 
-namespace HslCommunication.LogNet;
+namespace HslCommunication.LogNet.Logs;
 
 /// <summary>
 /// 单日志文件对象
@@ -9,13 +10,7 @@ namespace HslCommunication.LogNet;
 /// 此日志实例化需要指定一个完整的文件路径，当需要记录日志的时候调用方法，会使得日志越来越大，对于写入的性能没有太大影响，但是会影响文件读取。
 /// </remarks>
 public class LogNetSingle : LogNetBase, ILogNet {
-    #region Private Member
-
     private string m_fileName = string.Empty;
-
-    #endregion
-
-    #region Constructor
 
     /// <summary>
     /// 实例化一个单文件日志的对象
@@ -32,10 +27,6 @@ public class LogNetSingle : LogNetBase, ILogNet {
             Directory.CreateDirectory(fileInfo.DirectoryName);
         }
     }
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 单日志文件允许清空日志内容
@@ -78,10 +69,6 @@ public class LogNetSingle : LogNetBase, ILogNet {
         };
     }
 
-    #endregion
-
-    #region LogNetBase Override
-
     /// <summary>
     /// 获取存储的文件的名称
     /// </summary>
@@ -90,10 +77,6 @@ public class LogNetSingle : LogNetBase, ILogNet {
         return this.m_fileName;
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -101,6 +84,4 @@ public class LogNetSingle : LogNetBase, ILogNet {
     public override string ToString() {
         return $"LogNetSingle";
     }
-
-    #endregion
 }

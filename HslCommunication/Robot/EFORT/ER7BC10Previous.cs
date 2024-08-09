@@ -3,6 +3,9 @@ using HslCommunication.Core;
 using HslCommunication.Core.IMessage;
 using HslCommunication.Core.Net;
 using System.Text;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.Robot.EFORT;
 
@@ -10,8 +13,6 @@ namespace HslCommunication.Robot.EFORT;
 /// 埃夫特机器人对应型号为ER7B-C10，此协议为旧版的定制版，使用前请测试
 /// </summary>
 public class ER7BC10Previous : NetworkDoubleBase<EFORTMessagePrevious, RegularByteTransform>, IRobotNet {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象，并指定IP地址和端口号，端口号通常为8008
     /// </summary>
@@ -23,10 +24,6 @@ public class ER7BC10Previous : NetworkDoubleBase<EFORTMessagePrevious, RegularBy
 
         this.softIncrementCount = new SoftIncrementCount(ushort.MaxValue);
     }
-
-    #endregion
-
-    #region Request Create
 
     /// <summary>
     /// 获取发送的消息的命令
@@ -43,10 +40,6 @@ public class ER7BC10Previous : NetworkDoubleBase<EFORTMessagePrevious, RegularBy
 
         return command;
     }
-
-    #endregion
-
-    #region IRobotNet Support
 
     /// <summary>
     /// 读取埃夫特机器人的原始的字节数据信息，该地址参数是没有任何作用的，随便填什么
@@ -102,15 +95,7 @@ public class ER7BC10Previous : NetworkDoubleBase<EFORTMessagePrevious, RegularBy
         return EfortData.PraseFromPrevious(read.Content);
     }
 
-    #endregion
-
-    #region Private Member
-
     private SoftIncrementCount softIncrementCount; // 自增消息的对象
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -119,6 +104,4 @@ public class ER7BC10Previous : NetworkDoubleBase<EFORTMessagePrevious, RegularBy
     public override string ToString() {
         return $"ER7BC10 Pre Robot[{this.IpAddress}:{this.Port}]";
     }
-
-    #endregion
 }

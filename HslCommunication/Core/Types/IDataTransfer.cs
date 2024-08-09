@@ -1,4 +1,4 @@
-﻿namespace HslCommunication;
+﻿namespace HslCommunication.Core.Types;
 
 /// <summary>
 /// 用于PLC通讯及ModBus自定义数据类型的读写操作

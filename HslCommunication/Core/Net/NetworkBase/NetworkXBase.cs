@@ -1,28 +1,20 @@
 ﻿using System.Net.Sockets;
 using HslCommunication.BasicFramework;
-using HslCommunication.Enthernet;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Types;
+using HslCommunication.Enthernet.FileNet;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// 包含了主动异步接收的方法实现和文件类异步读写的实现
 /// </summary>
 public class NetworkXBase : NetworkBase {
-    #region Constractor
-
     /// <summary>
     /// 默认的无参构造方法
     /// </summary>
     public NetworkXBase() {
     }
-
-    #endregion
-
-    #region Protect Member
-
-    #endregion
-
-    #region Send Bytes Async
 
     /// <summary>
     /// 发送数据的方法
@@ -99,10 +91,6 @@ public class NetworkXBase : NetworkBase {
             }
         }
     }
-
-    #endregion
-
-    #region Receive Bytes Async
 
     /// <summary>
     /// 重新开始接收下一次的数据传递
@@ -262,10 +250,6 @@ public class NetworkXBase : NetworkBase {
         }
     }
 
-    #endregion
-
-    #region Special Bytes Send
-
     /// <summary>
     /// [自校验] 将文件数据发送至套接字，如果结果异常，则结束通讯
     /// </summary>
@@ -372,10 +356,6 @@ public class NetworkXBase : NetworkBase {
         return this.SendStream(socket, stream, stream.Length, sendReport, true);
     }
 
-    #endregion
-
-    #region Special Bytes Receive
-
     /// <summary>
     /// [自校验] 从套接字中接收文件头信息
     /// </summary>
@@ -477,10 +457,6 @@ public class NetworkXBase : NetworkBase {
         }
     }
 
-    #endregion
-
-    #region File Operate
-
     /// <summary>
     /// 删除文件的操作
     /// </summary>
@@ -513,10 +489,6 @@ public class NetworkXBase : NetworkBase {
         }
     }
 
-    #endregion
-
-    #region Virtual Method
-
     /// <summary>
     /// 数据处理中心，应该继承重写
     /// </summary>
@@ -542,10 +514,6 @@ public class NetworkXBase : NetworkBase {
     /// <param name="session">会话信息</param>
     internal virtual void AppSessionRemoteClose(AppSession session) {
     }
-
-    #endregion
-
-    #region StreamWriteRead
 
     /// <summary>
     /// 发送一个流的所有数据到网络套接字
@@ -646,10 +614,6 @@ public class NetworkXBase : NetworkBase {
         return OperateResult.CreateSuccessResult();
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 获取本对象的字符串表示形式
     /// </summary>
@@ -657,6 +621,4 @@ public class NetworkXBase : NetworkBase {
     public override string ToString() {
         return "NetworkXBase";
     }
-
-    #endregion
 }

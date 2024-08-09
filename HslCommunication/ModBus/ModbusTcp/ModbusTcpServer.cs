@@ -1,12 +1,15 @@
-﻿using HslCommunication.Core;
-using HslCommunication.Core.Net;
+﻿using System.IO.Ports;
 using System.Net.Sockets;
-using HslCommunication.Core.IMessage;
-using HslCommunication.Core.Address;
 using HslCommunication.BasicFramework;
-using System.IO.Ports;
+using HslCommunication.Core.Address;
+using HslCommunication.Core.IMessage;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.ModBus;
+namespace HslCommunication.ModBus.ModbusTcp;
 
 /// <summary>
 /// Modbus的虚拟服务器，同时支持Tcp和Rtu的机制，支持线圈，离散输入，寄存器和输入寄存器的读写操作，可以用来当做系统的数据交换池
@@ -25,8 +28,6 @@ namespace HslCommunication.ModBus;
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Modbus\ModbusTcpServer.cs" region="ModbusTcpServerExample" title="ModbusTcpServer示例" />
 /// </example>
 public class ModbusTcpServer : NetworkDataServerBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个Modbus Tcp的服务器，支持数据读写操作
     /// </summary>
@@ -44,10 +45,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
 
         this.serialPort = new SerialPort();
     }
-
-    #endregion
-
-    #region Public Members
 
     /// <summary>
     /// 获取或设置数据解析的格式，默认ABCD，可选BADC，CDAB，DCBA格式
@@ -76,10 +73,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
         set { this.station = value; }
     }
 
-    #endregion
-
-    #region Data Persistence
-
     /// <summary>
     /// 将数据源的内容生成原始数据，等待缓存
     /// </summary>
@@ -106,10 +99,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
         this.registerBuffer.SetBytes(content, DataPoolLength * 2, 0, DataPoolLength * 2);
         this.inputRegisterBuffer.SetBytes(content, DataPoolLength * 4, 0, DataPoolLength * 2);
     }
-
-    #endregion
-
-    #region Coil Read Write
 
     /// <summary>
     /// 读取地址的线圈的通断情况
@@ -161,10 +150,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
         this.coilBuffer.SetBytes(data.Select(m => (byte) (m ? 0x01 : 0x00)).ToArray(), add);
     }
 
-    #endregion
-
-    #region Discrete Read Write
-
     /// <summary>
     /// 读取地址的离散线圈的通断情况
     /// </summary>
@@ -212,10 +197,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
         ushort add = ushort.Parse(address);
         this.inputBuffer.SetBytes(data.Select(m => (byte) (m ? 0x01 : 0x00)).ToArray(), add);
     }
-
-    #endregion
-
-    #region NetworkDataServerBase Override
 
     /// <summary>
     /// 读取自定义的寄存器的值。按照字为单位
@@ -273,10 +254,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
     public void Write(string address, byte high, byte low) {
         this.Write(address, new byte[] { high, low });
     }
-
-    #endregion
-
-    #region NetServer Override
 
     /// <summary>
     /// 当客户端登录后，进行Ip信息的过滤，然后触发本方法，也就是说之后的客户端需要
@@ -336,10 +313,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
             }
         }
     }
-
-    #endregion
-
-    #region Function Process Center
 
     /// <summary>
     /// 创建特殊的功能标识，然后返回该信息
@@ -587,10 +560,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
         }
     }
 
-    #endregion
-
-    #region Subscription Support
-
     // 本服务器端支持指定地址的数据订阅器，目前仅支持寄存器操作
 
     private List<ModBusMonitorAddress> subscriptions; // 数据订阅集合
@@ -635,10 +604,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
 
         this.subcriptionHybirdLock.Leave();
     }
-
-    #endregion
-
-    #region Modbus Core Logic
 
     /// <summary>
     /// 检测当前的Modbus接收的指定是否是合法的
@@ -735,10 +700,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
         return buffer;
     }
 
-    #endregion
-
-    #region Serial Support
-
     private SerialPort serialPort; // 核心的串口对象
 
     /// <summary>
@@ -799,7 +760,7 @@ public class ModbusTcpServer : NetworkDataServerBase {
         byte[] receive = null;
 
         while (true) {
-            System.Threading.Thread.Sleep(20); // 此处做个微小的延时，等待数据接收完成
+            Thread.Sleep(20); // 此处做个微小的延时，等待数据接收完成
             int count = this.serialPort.Read(buffer, rCount, this.serialPort.BytesToRead);
             rCount += count;
             if (count == 0)
@@ -846,10 +807,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
         }
     }
 
-    #endregion
-
-    #region IDisposable Support
-
     /// <summary>
     /// 释放当前的对象
     /// </summary>
@@ -870,10 +827,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
         base.Dispose(disposing);
     }
 
-    #endregion
-
-    #region Private Member
-
     private SoftBuffer coilBuffer; // 线圈的数据池
     private SoftBuffer inputBuffer; // 离散输入的数据池
     private SoftBuffer registerBuffer; // 寄存器的数据池
@@ -882,10 +835,6 @@ public class ModbusTcpServer : NetworkDataServerBase {
     private const int DataPoolLength = 65536; // 数据的长度
     private int station = 1; // 服务器的站号数据，对于tcp无效，对于rtu来说，如果小于0，则忽略站号信息
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -893,6 +842,4 @@ public class ModbusTcpServer : NetworkDataServerBase {
     public override string ToString() {
         return $"ModbusTcpServer[{this.Port}]";
     }
-
-    #endregion
 }

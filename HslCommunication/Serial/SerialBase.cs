@@ -1,6 +1,9 @@
 ﻿using System.IO.Ports;
 using HslCommunication.Core;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Types;
 using HslCommunication.LogNet;
+using HslCommunication.LogNet.Core;
 
 namespace HslCommunication.Serial;
 
@@ -8,8 +11,13 @@ namespace HslCommunication.Serial;
 /// 所有串行通信类的基类，提供了一些基础的服务
 /// </summary>
 public class SerialBase : IDisposable {
-    #region Constructor
-
+    private SerialPort SP_ReadData = null; // 串口交互的核心
+    private SimpleHybirdLock hybirdLock; // 数据交互的锁
+    private ILogNet logNet; // 日志存储
+    private int receiveTimeout = 1000; // 接收数据的超时时间
+    private int sleepTime = 2; // 睡眠的时间
+    private bool isClearCacheBeforeRead = false; // 是否在发送前清除缓冲
+    
     /// <summary>
     /// 实例化一个无参的构造方法
     /// </summary>
@@ -17,10 +25,6 @@ public class SerialBase : IDisposable {
         this.SP_ReadData = new SerialPort();
         this.hybirdLock = new SimpleHybirdLock();
     }
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 初始化串口信息，9600波特率，8位数据位，1位停止位，无奇偶校验
@@ -141,10 +145,6 @@ public class SerialBase : IDisposable {
         return this.SPReceived(this.SP_ReadData, false);
     }
 
-    #endregion
-
-    #region virtual Method
-
     /// <summary>
     /// 检查当前接收的字节数据是否正确的
     /// </summary>
@@ -153,10 +153,6 @@ public class SerialBase : IDisposable {
     protected virtual bool CheckReceiveBytes(byte[] rBytes) {
         return true;
     }
-
-    #endregion
-
-    #region Initialization And Extra
 
     /// <summary>
     /// 在打开端口时的初始化方法，按照协议的需求进行必要的重写
@@ -173,10 +169,6 @@ public class SerialBase : IDisposable {
     protected virtual OperateResult ExtraOnClose() {
         return OperateResult.CreateSuccessResult();
     }
-
-    #endregion
-
-    #region Private Method
 
     /// <summary>
     /// 发送数据到串口里去
@@ -199,28 +191,23 @@ public class SerialBase : IDisposable {
         }
     }
 
-    /// <summary>
-    /// 从串口接收一串数据信息，可以指定是否一定要接收到数据
-    /// </summary>
-    /// <param name="serialPort">串口对象</param>
-    /// <param name="awaitData">是否必须要等待数据返回</param>
-    /// <returns>结果数据对象</returns>
-    protected virtual OperateResult<byte[]> SPReceived(SerialPort serialPort, bool awaitData) {
+    protected virtual OperateResult<byte[]> SPReceived(SerialPort serialPort, bool waitForData) {
         byte[] buffer = new byte[1024];
-        System.IO.MemoryStream ms = new System.IO.MemoryStream();
-        DateTime start = DateTime.Now; // 开始时间，用于确认是否超时的信息
-        while (true) {
-            Thread.Sleep(this.sleepTime);
+        using MemoryStream ms = new MemoryStream();
+
+        int i = 0;
+        DateTime start = DateTime.Now;
+        for (; ; i++) {
             try {
                 if (serialPort.BytesToRead < 1) {
                     if ((DateTime.Now - start).TotalMilliseconds > this.ReceiveTimeout) {
-                        ms.Dispose();
                         return new OperateResult<byte[]>($"Time out: {this.ReceiveTimeout}");
                     }
                     else if (ms.Length > 0) {
                         break;
                     }
-                    else if (awaitData) {
+                    else if (waitForData) {
+                        Thread.Sleep(0);
                         continue;
                     }
                     else {
@@ -228,25 +215,18 @@ public class SerialBase : IDisposable {
                     }
                 }
 
-                // 继续接收数据
-                int sp_receive = serialPort.Read(buffer, 0, buffer.Length);
-                ms.Write(buffer, 0, sp_receive);
+                int count = serialPort.Read(buffer, 0, buffer.Length);
+                ms.Write(buffer, 0, count);
             }
             catch (Exception ex) {
-                ms.Dispose();
                 return new OperateResult<byte[]>(ex.Message);
             }
+
+            Thread.Sleep(this.sleepTime);
         }
 
-        // resetEvent.Set( );
-        byte[] result = ms.ToArray();
-        ms.Dispose();
-        return OperateResult.CreateSuccessResult(result);
+        return OperateResult.CreateSuccessResult(ms.ToArray());
     }
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -255,10 +235,6 @@ public class SerialBase : IDisposable {
     public override string ToString() {
         return "SerialBase";
     }
-
-    #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// 当前的日志情况
@@ -282,8 +258,7 @@ public class SerialBase : IDisposable {
     public int SleepTime {
         get { return this.sleepTime; }
         set {
-            if (value > 0)
-                this.sleepTime = value;
+            this.sleepTime = value;
         }
     }
 
@@ -304,10 +279,6 @@ public class SerialBase : IDisposable {
     /// 本连接对象的波特率
     /// </summary>
     public int BaudRate { get; private set; }
-
-    #endregion
-
-    #region IDisposable Support
 
     private bool disposedValue = false; // 要检测冗余调用
 
@@ -347,18 +318,4 @@ public class SerialBase : IDisposable {
         // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
         // GC.SuppressFinalize(this);
     }
-
-    #endregion
-
-
-    #region Private Member
-
-    private SerialPort SP_ReadData = null; // 串口交互的核心
-    private SimpleHybirdLock hybirdLock; // 数据交互的锁
-    private ILogNet logNet; // 日志存储
-    private int receiveTimeout = 5000; // 接收数据的超时时间
-    private int sleepTime = 2; // 睡眠的时间
-    private bool isClearCacheBeforeRead = false; // 是否在发送前清除缓冲
-
-    #endregion
 }

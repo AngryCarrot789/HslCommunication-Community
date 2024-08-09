@@ -1,9 +1,12 @@
-﻿using System.Text;
-using HslCommunication.Core.Net;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.PushNet;
 
 /// <summary>
 /// 发布订阅类的客户端，使用指定的关键订阅相关的数据推送信息
@@ -16,8 +19,6 @@ namespace HslCommunication.Enthernet;
 /// <code lang="cs" source="TestProject\HslCommunicationDemo\FormPushNet.cs" region="FormPushNet" title="NetPushClient示例" />
 /// </example>
 public class NetPushClient : NetworkXBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个发布订阅类的客户端，需要指定ip地址，端口，及订阅关键字
     /// </summary>
@@ -33,10 +34,6 @@ public class NetPushClient : NetworkXBase {
         }
     }
 
-    #endregion
-
-    #region NetworkXBase Override
-
     internal override void DataProcessingCenter(AppSession session, int protocol, int customer, byte[] content) {
         if (protocol == HslProtocol.ProtocolUserString) {
             this.action?.Invoke(this, Encoding.Unicode.GetString(content));
@@ -49,7 +46,7 @@ public class NetPushClient : NetworkXBase {
         while (true) {
             Console.WriteLine(ex);
             Console.WriteLine(StringResources.Language.ReConnectServerAfterTenSeconds);
-            System.Threading.Thread.Sleep(this.reconnectTime);
+            Thread.Sleep(this.reconnectTime);
 
             if (this.CreatePush().IsSuccess) {
                 Console.WriteLine(StringResources.Language.ReConnectServerSuccess);
@@ -57,10 +54,6 @@ public class NetPushClient : NetworkXBase {
             }
         }
     }
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 创建数据推送服务
@@ -116,13 +109,9 @@ public class NetPushClient : NetworkXBase {
         this.action = null;
         if (this.CoreSocket != null && this.CoreSocket.Connected)
             this.CoreSocket?.Send(BitConverter.GetBytes(100));
-        System.Threading.Thread.Sleep(20);
+        Thread.Sleep(20);
         this.CoreSocket?.Close();
     }
-
-    #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// 本客户端的关键字
@@ -134,27 +123,15 @@ public class NetPushClient : NetworkXBase {
     /// </summary>
     public int ReConnectTime { set => this.reconnectTime = value; get => this.reconnectTime; }
 
-    #endregion
-
-    #region Public Event
-
     /// <summary>
     /// 当接收到数据的事件信息，接收到数据的时候触发。
     /// </summary>
     public event Action<NetPushClient, string> OnReceived;
 
-    #endregion
-
-    #region Private Member
-
     private IPEndPoint endPoint; // 服务器的地址及端口信息
     private string keyWord = string.Empty; // 缓存的订阅关键字
     private Action<NetPushClient, string> action; // 服务器推送后的回调方法
     private int reconnectTime = 10000; // 重连服务器的时间
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -163,6 +140,4 @@ public class NetPushClient : NetworkXBase {
     public override string ToString() {
         return $"NetPushClient[{this.endPoint}]";
     }
-
-    #endregion
 }

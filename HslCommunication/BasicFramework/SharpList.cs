@@ -1,4 +1,5 @@
 ﻿using HslCommunication.Core;
+using HslCommunication.Core.Thread;
 
 namespace HslCommunication.BasicFramework;
 
@@ -7,8 +8,6 @@ namespace HslCommunication.BasicFramework;
 /// </summary>
 /// <typeparam name="T">泛型类型</typeparam>
 public class SharpList<T> {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个对象，需要指定数组的最大数据对象
     /// </summary>
@@ -25,18 +24,10 @@ public class SharpList<T> {
             this.lastIndex = count;
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 获取数据的个数
     /// </summary>
     public int Count => this.count;
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 新增一个数据值
@@ -132,15 +123,9 @@ public class SharpList<T> {
         }
     }
 
-    #endregion
-
-    #region private Member
-
     private T[] array;
     private int capacity = 2048; // 整个数组的附加容量
     private int count = 0; // 数组的实际数据容量
     private int lastIndex = 0; // 最后一个数的索引位置
     private SimpleHybirdLock hybirdLock; // 数组的操作锁
-
-    #endregion
 }

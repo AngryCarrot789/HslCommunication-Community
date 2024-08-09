@@ -3,8 +3,6 @@
 namespace HslCommunication.Tests.Documentation.Samples.Core;
 
 public class ThreadLockExample {
-    #region SimpleHybirdLockExample1
-
     private SimpleHybirdLock simpleHybird = new SimpleHybirdLock();
 
     public void SimpleHybirdLockExample() {
@@ -33,6 +31,4 @@ public class ThreadLockExample {
 
         // 这样做的好处是既没有吞噬异常，锁又安全的离开了
     }
-
-    #endregion
 }

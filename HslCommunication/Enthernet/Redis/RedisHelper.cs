@@ -1,6 +1,8 @@
 ﻿using HslCommunication.Core;
 using System.Net.Sockets;
 using System.Text;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.Enthernet.Redis;
 
@@ -8,8 +10,6 @@ namespace HslCommunication.Enthernet.Redis;
 /// 提供了redis辅助类的一些方法
 /// </summary>
 public class RedisHelper {
-    #region Socket Helper
-
     /// <summary>
     /// 接收一行命令数据
     /// </summary>
@@ -97,10 +97,6 @@ public class RedisHelper {
             return new OperateResult<byte[]>("Not Supported HeadCode: " + readCommandLine.Content[0]);
         }
     }
-
-    #endregion
-
-    #region Prase Helper
 
     /// <summary>
     /// 将字符串数组打包成一个redis的报文信息
@@ -267,6 +263,4 @@ public class RedisHelper {
             return new OperateResult<string[]>(ex.Message);
         }
     }
-
-    #endregion
 }

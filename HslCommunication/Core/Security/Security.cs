@@ -1,8 +1,6 @@
-﻿namespace HslCommunication;
+﻿namespace HslCommunication.Core.Security;
 
 internal class HslSecurity {
-    #region Encryption and decryption
-
     /*******************************************************************************
      *
      *    用于加密解密的方法，为了性能考虑，使用了相对简单的加密解密方式，紧紧对当前的程序集开放
@@ -36,6 +34,4 @@ internal class HslSecurity {
     internal static byte[] ByteDecrypt(byte[] deBytes) {
         return ByteEncrypt(deBytes);
     }
-
-    #endregion
 }

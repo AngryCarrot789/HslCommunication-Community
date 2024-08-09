@@ -3,6 +3,9 @@ using System.Text;
 using HslCommunication.Core;
 using HslCommunication.Core.IMessage;
 using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.Robot.YASKAWA;
 
@@ -10,8 +13,6 @@ namespace HslCommunication.Robot.YASKAWA;
 /// 安川机器人的Ethernet 服务器功能的通讯类
 /// </summary>
 public class YRC1000TcpNet : NetworkDoubleBase<HslMessage, ReverseWordTransform>, IRobotNet {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -19,10 +20,6 @@ public class YRC1000TcpNet : NetworkDoubleBase<HslMessage, ReverseWordTransform>
     /// <param name="port">端口号</param>
     public YRC1000TcpNet(string ipAddress, int port) {
     }
-
-    #endregion
-
-    #region IRobot Interface
 
     /// <summary>
     /// 根据地址读取机器人的原始的字节数据信息
@@ -72,10 +69,6 @@ public class YRC1000TcpNet : NetworkDoubleBase<HslMessage, ReverseWordTransform>
         return this.ReadByCommand(address, value);
     }
 
-    #endregion
-
-    #region Initialization Override
-
     /// <summary>
     /// before read data , the connection should be Initialized
     /// </summary>
@@ -91,10 +84,6 @@ public class YRC1000TcpNet : NetworkDoubleBase<HslMessage, ReverseWordTransform>
 
         return OperateResult.CreateSuccessResult();
     }
-
-    #endregion
-
-    #region Override Read
 
     /// <summary>
     /// 重写父类的数据交互方法，接收的时候采用标识符来接收
@@ -230,10 +219,6 @@ public class YRC1000TcpNet : NetworkDoubleBase<HslMessage, ReverseWordTransform>
         }
     }
 
-    #endregion
-
-    #region Public Method
-
     /// <summary>
     /// 读取机器人的报警信息
     /// </summary>
@@ -250,10 +235,6 @@ public class YRC1000TcpNet : NetworkDoubleBase<HslMessage, ReverseWordTransform>
         return this.ReadByCommand("RPOSJ", null);
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -261,10 +242,4 @@ public class YRC1000TcpNet : NetworkDoubleBase<HslMessage, ReverseWordTransform>
     public override string ToString() {
         return $"YRC1000TcpNet Robot[{this.IpAddress}:{this.Port}]";
     }
-
-    #endregion
-
-    #region Static Member
-
-    #endregion
 }

@@ -1,5 +1,6 @@
 ﻿using HslCommunication.Core;
 using System.Text;
+using HslCommunication.Core.Thread;
 
 namespace HslCommunication.BasicFramework;
 /********************************************************************************************
@@ -24,8 +25,6 @@ namespace HslCommunication.BasicFramework;
 /// <code lang="cs" source="TestProject\HslCommunicationDemo\FormSeqCreate.cs" region="FormSeqCreate" title="示例代码" />
 /// </example>
 public sealed class SoftNumericalOrder : SoftFileSaveBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个流水号生成的对象
     /// </summary>
@@ -43,16 +42,12 @@ public sealed class SoftNumericalOrder : SoftFileSaveBase {
 
         this.AsyncCoordinator = new HslAsyncCoordinator(() => {
             if (!string.IsNullOrEmpty(this.FileSavePath)) {
-                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(this.FileSavePath, false, Encoding.Default)) {
+                using (StreamWriter sw = new StreamWriter(this.FileSavePath, false, Encoding.Default)) {
                     sw.Write(this.CurrentIndex);
                 }
             }
         });
     }
-
-    #endregion
-
-    #region Private Member
 
     /// <summary>
     /// 当前的生成序列号
@@ -73,10 +68,6 @@ public sealed class SoftNumericalOrder : SoftFileSaveBase {
     /// 流水号数字应该显示的长度
     /// </summary>
     private int NumberLength = 5;
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 获取流水号的值
@@ -143,24 +134,16 @@ public sealed class SoftNumericalOrder : SoftFileSaveBase {
         return number;
     }
 
-    #endregion
-
-    #region High Performance Save
-
     /// <summary>
     /// 高性能存储块
     /// </summary>
     private HslAsyncCoordinator AsyncCoordinator = null;
-
-    #endregion
 }
 
 /// <summary>
 /// 一个简单的不持久化的序号自增类，采用线程安全实现，并允许指定最大数字，将包含该最大值，到达后清空从指定数开始
 /// </summary>
 public sealed class SoftIncrementCount : IDisposable {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个自增信息的对象，包括最大值
     /// </summary>
@@ -173,18 +156,10 @@ public sealed class SoftIncrementCount : IDisposable {
         this.hybirdLock = new SimpleHybirdLock();
     }
 
-    #endregion
-
-    #region Private Member
-
     private long start = 0;
     private long current = 0;
     private long max = long.MaxValue;
     private SimpleHybirdLock hybirdLock;
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 获取自增信息
@@ -220,18 +195,10 @@ public sealed class SoftIncrementCount : IDisposable {
         this.hybirdLock.Leave();
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 增加的单元，如果设置为0，就是不增加。注意，不能小于0
     /// </summary>
     public int IncreaseTick { get; set; } = 1;
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -240,10 +207,6 @@ public sealed class SoftIncrementCount : IDisposable {
     public override string ToString() {
         return $"SoftIncrementCount[{this.current}]";
     }
-
-    #endregion
-
-    #region IDisposable Support
 
     private bool disposedValue = false; // 要检测冗余调用
 
@@ -279,6 +242,4 @@ public sealed class SoftIncrementCount : IDisposable {
         // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
         // GC.SuppressFinalize(this);
     }
-
-    #endregion
 }

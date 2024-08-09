@@ -1,7 +1,5 @@
 ﻿namespace HslCommunication.Tests.Documentation.Samples.BasicFramework;
 
-#region SoftFileSaveBase1
-
 // 要想使用该类进行一些数据的存储，必须继承实现下面的方法。
 
 /// <summary>
@@ -47,10 +45,6 @@ public class SoftSettings : HslCommunication.BasicFramework.SoftFileSaveBase {
     /// </summary>
     public int Port { get; set; }
 }
-
-#endregion
-
-#region SoftFileSaveBase2
 
 /// <summary>
 /// 这是一个软件的配置信息存储功能的示例，假设我要存储两个数据，服务器的ip地址和端口号，一个string，一个int，存储效果为加密
@@ -106,12 +100,8 @@ public class SoftSettings2 : HslCommunication.BasicFramework.SoftFileSaveBase {
     public int Port { get; set; }
 }
 
-#endregion
-
 public class Example2 {
     public Example2() {
-        #region Example
-
         // 初始化，需要加载一次数据
         SoftSettings softSettings = new SoftSettings();
         softSettings.FileSavePath = "settings.txt";
@@ -122,7 +112,5 @@ public class Example2 {
         softSettings.IpAddress = "192.168.0.100";
         softSettings.Port = 1000;
         softSettings.SaveToFile();
-
-        #endregion
     }
 }

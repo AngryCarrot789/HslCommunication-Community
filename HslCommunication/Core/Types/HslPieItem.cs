@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace HslCommunication.Core;
+namespace HslCommunication.Core.Types;
 
 /// <summary>
 /// 饼图的基本元素

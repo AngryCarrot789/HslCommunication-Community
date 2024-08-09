@@ -1,4 +1,6 @@
-﻿namespace HslCommunication.Core;
+﻿using HslCommunication.Core.Types;
+
+namespace HslCommunication.Core.Transfer;
 
 /// <summary>
 /// 所有数据转换类的静态辅助方法

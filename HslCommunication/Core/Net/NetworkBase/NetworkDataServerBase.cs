@@ -1,16 +1,18 @@
-﻿using HslCommunication.BasicFramework;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Net;
+using HslCommunication.BasicFramework;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// 所有虚拟的数据服务器的基类
 /// </summary>
 public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposable {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的数据服务器的对象
     /// </summary>
@@ -21,10 +23,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         this.lockOnlineClient = new SimpleHybirdLock();
         this.listsOnlineClient = new List<AppSession>();
     }
-
-    #endregion
-
-    #region Virtual Method
 
     /// <summary>
     /// 从设备读取原始数据
@@ -63,10 +61,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         return new byte[0];
     }
 
-    #endregion
-
-    #region File Load Save
-
     /// <summary>
     /// 将本系统的数据池数据存储到指定的文件
     /// </summary>
@@ -81,7 +75,7 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     /// <exception cref="System.Security.SecurityException"></exception>
     public void SaveDataPool(string path) {
         byte[] content = this.SaveToBytes();
-        System.IO.File.WriteAllBytes(path, content);
+        File.WriteAllBytes(path, content);
     }
 
     /// <summary>
@@ -98,15 +92,11 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     /// <exception cref="System.Security.SecurityException"></exception>
     /// <exception cref="System.IO.FileNotFoundException"></exception>
     public void LoadDataPool(string path) {
-        if (System.IO.File.Exists(path)) {
-            byte[] buffer = System.IO.File.ReadAllBytes(path);
+        if (File.Exists(path)) {
+            byte[] buffer = File.ReadAllBytes(path);
             this.LoadFromBytes(buffer);
         }
     }
-
-    #endregion
-
-    #region Public Members
 
     /// <summary>
     /// 系统的数据转换接口
@@ -153,19 +143,11 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         this.OnDataSend?.Invoke(this, receive);
     }
 
-    #endregion
-
-    #region Protect Member
-
     /// <summary>
     /// 单个数据字节的长度，西门子为2，三菱，欧姆龙，modbusTcp就为1，AB PLC无效
     /// </summary>
     /// <remarks>对设备来说，一个地址的数据对应的字节数，或是1个字节或是2个字节</remarks>
     protected ushort WordLength { get; set; } = 1;
-
-    #endregion
-
-    #region Trust Client Filter
 
     /// <summary>
     /// 当客户端登录后，进行Ip信息的过滤，然后触发本方法，也就是说之后的客户端需要
@@ -264,10 +246,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         return result;
     }
 
-    #endregion
-
-    #region Online Managment
-
     /// <summary>
     /// 在线的客户端的数量
     /// </summary>
@@ -315,10 +293,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         this.listsOnlineClient.Clear();
         this.lockOnlineClient.Leave();
     }
-
-    #endregion
-
-    #region Customer Support
 
     /// <summary>
     /// 读取自定义类型的数据，需要规定解析规则
@@ -371,10 +345,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     public OperateResult WriteCustomer<T>(string address, T data) where T : IDataTransfer, new() {
         return this.Write(address, data.ToSource());
     }
-
-    #endregion
-
-    #region Read Support
 
     /// <summary>
     /// 读取设备的short类型的数据
@@ -610,10 +580,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         return ByteTransformHelper.GetResultFromBytes(this.Read(address, length), m => this.ByteTransform.TransString(m, 0, m.Length, Encoding.ASCII));
     }
 
-    #endregion
-
-    #region Write Int16
-
     /// <summary>
     /// 向设备中写入short数组，返回是否写入成功
     /// </summary>
@@ -641,10 +607,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     public OperateResult Write(string address, short value) {
         return this.Write(address, new short[] { value });
     }
-
-    #endregion
-
-    #region Write UInt16
 
     /// <summary>
     /// 向设备中写入ushort数组，返回是否写入成功
@@ -675,10 +637,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         return this.Write(address, new ushort[] { value });
     }
 
-    #endregion
-
-    #region Write Int32
-
     /// <summary>
     /// 向设备中写入int数组，返回是否写入成功
     /// </summary>
@@ -706,10 +664,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     public OperateResult Write(string address, int value) {
         return this.Write(address, new int[] { value });
     }
-
-    #endregion
-
-    #region Write UInt32
 
     /// <summary>
     /// 向设备中写入uint数组，返回是否写入成功
@@ -739,10 +693,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         return this.Write(address, new uint[] { value });
     }
 
-    #endregion
-
-    #region Write Float
-
     /// <summary>
     /// 向设备中写入float数组，返回是否写入成功
     /// </summary>
@@ -770,10 +720,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     public OperateResult Write(string address, float value) {
         return this.Write(address, new float[] { value });
     }
-
-    #endregion
-
-    #region Write Int64
 
     /// <summary>
     /// 向设备中写入long数组，返回是否写入成功
@@ -803,10 +749,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         return this.Write(address, new long[] { value });
     }
 
-    #endregion
-
-    #region Write UInt64
-
     /// <summary>
     /// 向P设备中写入ulong数组，返回是否写入成功
     /// </summary>
@@ -835,10 +777,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         return this.Write(address, new ulong[] { value });
     }
 
-    #endregion
-
-    #region Write Double
-
     /// <summary>
     /// 向设备中写入double数组，返回是否写入成功
     /// </summary>
@@ -866,10 +804,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     public OperateResult Write(string address, double value) {
         return this.Write(address, new double[] { value });
     }
-
-    #endregion
-
-    #region Write String
 
     /// <summary>
     /// 向设备中写入字符串，编码格式为ASCII
@@ -931,10 +865,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         return this.Write(address, temp);
     }
 
-    #endregion
-
-    #region IDisposable Support
-
     /// <summary>
     /// 释放当前的对象
     /// </summary>
@@ -947,10 +877,6 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
         base.Dispose(disposing);
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -958,6 +884,4 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     public override string ToString() {
         return "NetworkDataServerBase";
     }
-
-    #endregion
 }

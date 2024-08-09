@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.DeviceNet;
 
 /// <summary>
 /// 通用设备的基础状态

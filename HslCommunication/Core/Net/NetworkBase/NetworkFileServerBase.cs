@@ -1,14 +1,14 @@
 ﻿using System.Net.Sockets;
-using HslCommunication.Enthernet;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Types;
+using HslCommunication.Enthernet.FileNet;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// 文件服务器类的基类，为直接映射文件模式和间接映射文件模式提供基础的方法支持
 /// </summary>
 public class NetworkFileServerBase : NetworkServerBase {
-    #region File Mark
-
     /// <summary>
     /// 所有文件操作的词典锁
     /// </summary>
@@ -40,10 +40,6 @@ public class NetworkFileServerBase : NetworkServerBase {
         this.dict_hybirdLock.Leave();
         return fileMarkId;
     }
-
-    #endregion
-
-    #region Receie File Head
 
     /// <summary>
     /// 接收本次操作的信息头数据
@@ -169,10 +165,6 @@ public class NetworkFileServerBase : NetworkServerBase {
         return result + fileName;
     }
 
-    #endregion
-
-    #region Clear File Mark
-
     //private Timer timer;
 
     //private void ClearDict(object obj)
@@ -198,10 +190,6 @@ public class NetworkFileServerBase : NetworkServerBase {
 
     //    hybirdLock.Leave();
     //}
-
-    #endregion
-
-    #region 临时文件复制块
 
     /// <summary>
     /// 移动一个文件到新的文件去
@@ -249,7 +237,7 @@ public class NetworkFileServerBase : NetworkServerBase {
                 break;
             }
             else {
-                Thread.Sleep(500);
+                System.Threading.Thread.Sleep(500);
             }
         }
 
@@ -257,15 +245,7 @@ public class NetworkFileServerBase : NetworkServerBase {
         return this.SendStringAndCheckReceive(socket, customer, StringResources.Language.SuccessText);
     }
 
-    #endregion
-
-    #region File Upload Event
-
     // 文件的上传事件
-
-    #endregion
-
-    #region Override Method
 
     /// <summary>
     /// 服务器启动时的操作
@@ -279,10 +259,6 @@ public class NetworkFileServerBase : NetworkServerBase {
         base.StartInitialization();
     }
 
-    #endregion
-
-    #region Protect Method
-
     /// <summary>
     /// 检查文件夹是否存在，不存在就创建
     /// </summary>
@@ -291,10 +267,6 @@ public class NetworkFileServerBase : NetworkServerBase {
             Directory.CreateDirectory(this.FilesDirectoryPath);
         }
     }
-
-    #endregion
-
-    #region Public Members
 
     /// <summary>
     /// 文件所存储的路径
@@ -345,16 +317,8 @@ public class NetworkFileServerBase : NetworkServerBase {
         return Directory.GetDirectories(absolutePath);
     }
 
-    #endregion
-
-    #region Private Members
-
     private string m_FilesDirectoryPath = null; // 文件的存储路径
     private Random m_random = new Random(); // 随机生成的文件名
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 获取本对象的字符串标识形式
@@ -363,6 +327,4 @@ public class NetworkFileServerBase : NetworkServerBase {
     public override string ToString() {
         return "NetworkFileServerBase";
     }
-
-    #endregion
 }

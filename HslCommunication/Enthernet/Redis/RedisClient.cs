@@ -3,6 +3,9 @@ using HslCommunication.Core.IMessage;
 using HslCommunication.Core.Net;
 using System.Net.Sockets;
 using System.Text;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.Enthernet.Redis;
 
@@ -10,8 +13,6 @@ namespace HslCommunication.Enthernet.Redis;
 /// 这是一个redis的客户端类，支持读取，写入，发布订阅，但是不支持订阅，如果需要订阅，请使用另一个类
 /// </summary>
 public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个客户端的对象，用于和服务器通信
     /// </summary>
@@ -33,10 +34,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
         this.ReceiveTimeOut = 30000;
         this.password = password;
     }
-
-    #endregion
-
-    #region Override
 
     /// <summary>
     /// 如果设置了密码，对密码进行验证
@@ -88,10 +85,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
         return RedisHelper.ReceiveCommand(socket);
     }
 
-    #endregion
-
-    #region Customer
-
     /// <summary>
     /// 自定义的指令交互方法，该指令用空格分割，举例：LTRIM AAAAA 0 999 就是收缩列表，GET AAA 就是获取键值，需要对返回的数据进行二次分析
     /// </summary>
@@ -106,10 +99,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
 
         return OperateResult.CreateSuccessResult(Encoding.UTF8.GetString(read.Content));
     }
-
-    #endregion
-
-    #region Base Operate
 
     /// <summary>
     /// 向服务器请求指定，并返回数字的结果对象
@@ -197,10 +186,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
 
         return OperateResult.CreateSuccessResult(msg.Substring(1).TrimEnd('\r', '\n'));
     }
-
-    #endregion
-
-    #region Key Operate
 
     /// <summary>
     /// 删除给定的一个或多个 key 。不存在的 key 会被忽略。
@@ -317,10 +302,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
     public OperateResult<string> ReadKeyType(string key) {
         return this.OperateStatusFromServer(new string[] { "TYPE", key });
     }
-
-    #endregion
-
-    #region String Operate
 
     /// <summary>
     /// 如果 key 已经存在并且是一个字符串， APPEND 命令将 value 追加到 key 原来的值的末尾。
@@ -533,10 +514,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
     public OperateResult<int> ReadKeyLength(string key) {
         return this.OperateNumberFromServer(new string[] { "STRLEN", key });
     }
-
-    #endregion
-
-    #region List Operate
 
     /// <summary>
     /// 将值 value 插入到列表 key 当中，位于值 pivot 之前。
@@ -758,10 +735,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
         return this.OperateNumberFromServer(new string[] { "RPUSHX", key, value });
     }
 
-    #endregion
-
-    #region Hash Operate
-
     /// <summary>
     /// 删除哈希表 key 中的一个或多个指定域，不存在的域将被忽略。
     /// </summary>
@@ -959,10 +932,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
         return this.OperateStringsFromServer(new string[] { "HVALS", key });
     }
 
-    #endregion
-
-    #region Server Operate
-
     /// <summary>
     /// SAVE 命令执行一个同步保存操作，将当前 Redis 实例的所有数据快照(snapshot)以 RDB 文件的形式保存到硬盘。
     /// </summary>
@@ -994,10 +963,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
         return OperateResult.CreateSuccessResult(dateTime);
     }
 
-    #endregion
-
-    #region Publish
-
     /// <summary>
     /// 将信息 message 发送到指定的频道 channel，返回接收到信息 message 的订阅者数量。
     /// </summary>
@@ -1008,10 +973,6 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
         return this.OperateNumberFromServer(new string[] { "PUBLISH", channel, message });
     }
 
-    #endregion
-
-    #region DB Block
-
     /// <summary>
     /// 切换到指定的数据库，数据库索引号 index 用数字值指定，以 0 作为起始索引值。默认使用 0 号数据库。
     /// </summary>
@@ -1021,15 +982,7 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
         return this.OperateStatusFromServer(new string[] { "SELECT", db.ToString() });
     }
 
-    #endregion
-
-    #region Private Member
-
     private string password = string.Empty; // 密码信息
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -1038,6 +991,4 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
     public override string ToString() {
         return $"RedisClient[{this.IpAddress}:{this.Port}]";
     }
-
-    #endregion
 }

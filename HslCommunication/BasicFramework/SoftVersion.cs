@@ -14,8 +14,6 @@ namespace HslCommunication.BasicFramework;
 /// </summary>
 [Serializable]
 public sealed class SystemVersion {
-    #region Constructor
-
     /// <summary>
     /// 根据格式化字符串的版本号初始化
     /// </summary>
@@ -65,18 +63,10 @@ public sealed class SystemVersion {
         this.m_InnerVersion = inner;
     }
 
-    #endregion
-
-    #region Private Member
-
     private int m_MainVersion = 2; // 主版本
     private int m_SecondaryVersion = 0; // 次版本
     private int m_EditVersion = 0; // 修订版
     private int m_InnerVersion = 0; // 内部版
-
-    #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// 主版本
@@ -112,10 +102,6 @@ public sealed class SystemVersion {
     public int InnerVersion {
         get { return this.m_InnerVersion; }
     }
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 根据格式化为支持返回的不同信息的版本号
@@ -172,10 +158,6 @@ public sealed class SystemVersion {
     public override int GetHashCode() {
         return base.GetHashCode();
     }
-
-    #endregion
-
-    #region operator implementation
 
     /// <summary>
     /// 判断是否相等
@@ -316,8 +298,6 @@ public sealed class SystemVersion {
 
         return false;
     }
-
-    #endregion
 }
 
 /// <summary>

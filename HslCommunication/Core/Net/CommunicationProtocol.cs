@@ -1,7 +1,8 @@
-﻿using HslCommunication.BasicFramework;
-using System.Text;
+﻿using System.Text;
+using HslCommunication.BasicFramework;
+using HslCommunication.Core.Security;
 
-namespace HslCommunication;
+namespace HslCommunication.Core.Net;
 
 /*******************************************************************************
  *

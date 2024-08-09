@@ -1,11 +1,14 @@
 ﻿using System.Text;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.UdpNet;
 
 /// <summary>
 /// UDP客户端的类，只负责发送数据到服务器，该数据经过封装
 /// </summary>
-public class NetUdpClient : Core.Net.NetworkUdpBase {
+public class NetUdpClient : NetworkUdpBase {
     /// <summary>
     /// 实例化对象，指定发送的服务器地址和端口号
     /// </summary>
@@ -101,8 +104,6 @@ public class NetUdpClient : Core.Net.NetworkUdpBase {
         return OperateResult.CreateSuccessResult((NetHandle) customer, contentBytes);
     }
 
-    #region Object Override
-
     /// <summary>
     /// 获取本对象的字符串表示形式
     /// </summary>
@@ -110,6 +111,4 @@ public class NetUdpClient : Core.Net.NetworkUdpBase {
     public override string ToString() {
         return $"NetUdpClient[{this.IpAddress}:{this.Port}]";
     }
-
-    #endregion
 }

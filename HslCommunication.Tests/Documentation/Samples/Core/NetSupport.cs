@@ -6,8 +6,6 @@ namespace HslCommunication.Tests.Documentation.Samples.Core;
 
 public class NetSupportExample {
     public void ReadBytesFromSocketExample1() {
-        #region ReadBytesFromSocketExample1
-
         // 创建socket
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         socket.Connect(IPAddress.Parse("192.168.0.7"), 1000);
@@ -19,13 +17,9 @@ public class NetSupportExample {
         socket.Close();
 
         // 接下来就可以对receive进行操作了
-
-        #endregion
     }
 
     public void ReadBytesFromSocketExample2() {
-        #region ReadBytesFromSocketExample2
-
         // 创建socket
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         socket.Connect(IPAddress.Parse("192.168.0.7"), 1000);
@@ -40,13 +34,9 @@ public class NetSupportExample {
         socket.Close();
 
         // 接下来就可以对receive进行操作了
-
-        #endregion
     }
 
     public void ReadBytesFromSocketExample3() {
-        #region ReadBytesFromSocketExample3
-
         // 创建socket
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         socket.Connect(IPAddress.Parse("192.168.0.7"), 1000);
@@ -61,13 +51,9 @@ public class NetSupportExample {
         socket.Close();
 
         // 接下来就可以对content进行操作了
-
-        #endregion
     }
 
     public void WriteStreamFromSocketExample() {
-        #region WriteStreamFromSocketExample
-
         // 创建socket
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         socket.Connect(IPAddress.Parse("192.168.0.7"), 1000);
@@ -84,13 +70,9 @@ public class NetSupportExample {
         socket.Close();
 
         // 上述的代码是从套接字接收了1234567长度的字节，然后写入到了文件中
-
-        #endregion
     }
 
     public void WriteSocketFromStreamExample() {
-        #region WriteSocketFromStreamExample
-
         // 创建socket
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         socket.Connect(IPAddress.Parse("192.168.0.7"), 1000);
@@ -107,7 +89,5 @@ public class NetSupportExample {
         socket.Close();
 
         // 上述的代码是从文件中读取数据内容，然后写入socket发送到远程
-
-        #endregion
     }
 }

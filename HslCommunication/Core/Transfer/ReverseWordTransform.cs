@@ -1,13 +1,11 @@
 ﻿using System.Text;
 
-namespace HslCommunication.Core;
+namespace HslCommunication.Core.Transfer;
 
 /// <summary>
 /// 按照字节错位的数据转换类
 /// </summary>
 public class ReverseWordTransform : ByteTransformBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -21,10 +19,6 @@ public class ReverseWordTransform : ByteTransformBase {
     /// <param name="dataFormat">数据规则</param>
     public ReverseWordTransform(DataFormat dataFormat) : base(dataFormat) {
     }
-
-    #endregion
-
-    #region Private Method
 
     /// <summary>
     /// 按照字节错位的方法
@@ -57,18 +51,10 @@ public class ReverseWordTransform : ByteTransformBase {
         return this.ReverseBytesByWord(buffer, 0, buffer.Length);
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 字符串数据是否按照字来反转
     /// </summary>
     public bool IsStringReverse { get; set; }
-
-    #endregion
-
-    #region Get Value From Bytes
 
     /// <summary>
     /// 从缓存中提取short结果
@@ -111,10 +97,6 @@ public class ReverseWordTransform : ByteTransformBase {
         }
     }
 
-    #endregion
-
-    #region Get Bytes From Value
-
     /// <summary>
     /// short数组变量转化缓存数据
     /// </summary>
@@ -155,6 +137,4 @@ public class ReverseWordTransform : ByteTransformBase {
             return buffer;
         }
     }
-
-    #endregion
 }

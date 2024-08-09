@@ -1,27 +1,24 @@
-﻿using HslCommunication.BasicFramework;
-using System.Text;
+﻿using System.Text;
+using HslCommunication.BasicFramework;
+using HslCommunication.Core.Reflection;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 #if !NET35
 #endif
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// Udp报文协议的内容传送
 /// </summary>
 /// <typeparam name="TTransform">数据转换类型对象</typeparam>
 public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet where TTransform : IByteTransform, new() {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
     public NetworkUdpDeviceBase() {
         this.ByteTransform = new TTransform();
     }
-
-    #endregion
-
-    #region Virtual Method
 
     /**************************************************************************************************
      *
@@ -53,19 +50,11 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         return new OperateResult();
     }
 
-    #endregion
-
-    #region Protect Member
-
     /// <summary>
     /// 单个数据字节的长度，西门子为2，三菱，欧姆龙，modbusTcp就为1
     /// </summary>
     /// <remarks>对设备来说，一个地址的数据对应的字节数，或是1个字节或是2个字节</remarks>
     protected ushort WordLength { get; set; } = 1;
-
-    #endregion
-
-    #region Public Member
 
     /// <summary>
     /// 当前客户端的数据变换机制，当你需要从字节数据转换类型数据的时候需要。
@@ -78,10 +67,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         get { return this.byteTransform; }
         set { this.byteTransform = value; }
     }
-
-    #endregion
-
-    #region Customer Support
 
     /// <summary>
     /// 读取自定义类型的数据，需要规定解析规则
@@ -123,10 +108,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         return this.Write(address, data.ToSource());
     }
 
-    #endregion
-
-    #region Reflection Read
-
     /// <summary>
     /// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="HslDeviceAddressAttribute"/>，详细参考论坛的操作说明。
     /// </summary>
@@ -148,10 +129,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
 
         return HslReflectionHelper.Write<T>(data, this);
     }
-
-    #endregion
-
-    #region Read Support
 
     /// <summary>
     /// 读取设备的short类型的数据
@@ -316,10 +293,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         return ByteTransformHelper.GetResultFromBytes(this.Read(address, length), m => this.ByteTransform.TransString(m, 0, m.Length, Encoding.ASCII));
     }
 
-    #endregion
-
-    #region Bool Support
-
     // Bool类型的读写，不一定所有的设备都实现，比如西门子，就没有实现bool[]的读写，Siemens的fetch/write没有实现bool操作
 
     /// <summary>
@@ -365,10 +338,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         return this.Write(address, new bool[] { value });
     }
 
-    #endregion
-
-    #region Write Int16
-
     /// <summary>
     /// 向设备中写入short数组，返回是否写入成功
     /// </summary>
@@ -388,10 +357,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
     public virtual OperateResult Write(string address, short value) {
         return this.Write(address, new short[] { value });
     }
-
-    #endregion
-
-    #region Write UInt16
 
     /// <summary>
     /// 向设备中写入ushort数组，返回是否写入成功
@@ -414,10 +379,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         return this.Write(address, new ushort[] { value });
     }
 
-    #endregion
-
-    #region Write Int32
-
     /// <summary>
     /// 向设备中写入int数组，返回是否写入成功
     /// </summary>
@@ -437,10 +398,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
     public virtual OperateResult Write(string address, int value) {
         return this.Write(address, new int[] { value });
     }
-
-    #endregion
-
-    #region Write UInt32
 
     /// <summary>
     /// 向设备中写入uint数组，返回是否写入成功
@@ -462,10 +419,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         return this.Write(address, new uint[] { value });
     }
 
-    #endregion
-
-    #region Write Float
-
     /// <summary>
     /// 向设备中写入float数组，返回是否写入成功
     /// </summary>
@@ -485,10 +438,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
     public virtual OperateResult Write(string address, float value) {
         return this.Write(address, new float[] { value });
     }
-
-    #endregion
-
-    #region Write Int64
 
     /// <summary>
     /// 向设备中写入long数组，返回是否写入成功
@@ -510,10 +459,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         return this.Write(address, new long[] { value });
     }
 
-    #endregion
-
-    #region Write UInt64
-
     /// <summary>
     /// 向P设备中写入ulong数组，返回是否写入成功
     /// </summary>
@@ -534,10 +479,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         return this.Write(address, new ulong[] { value });
     }
 
-    #endregion
-
-    #region Write Double
-
     /// <summary>
     /// 向设备中写入double数组，返回是否写入成功
     /// </summary>
@@ -557,10 +498,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
     public virtual OperateResult Write(string address, double value) {
         return this.Write(address, new double[] { value });
     }
-
-    #endregion
-
-    #region Write String
 
     /// <summary>
     /// 向设备中写入字符串，编码格式为ASCII
@@ -618,15 +555,7 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
         return this.Write(address, temp);
     }
 
-    #endregion
-
-    #region Private Member
-
     private TTransform byteTransform; // 数据变换的接口
-
-    #endregion
-
-    #region Read Write Async Support
 
 #if !NET35
 
@@ -1262,10 +1191,6 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
     }
 #endif
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -1273,6 +1198,4 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
     public override string ToString() {
         return $"NetworkUdpDeviceBase<{typeof(TTransform)}>";
     }
-
-    #endregion
 }

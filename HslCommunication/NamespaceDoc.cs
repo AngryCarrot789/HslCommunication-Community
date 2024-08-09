@@ -1,4 +1,5 @@
 ﻿using HslCommunication.Core;
+using HslCommunication.Core.Net;
 
 namespace HslCommunication;
 

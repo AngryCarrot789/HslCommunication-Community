@@ -8,13 +8,16 @@
  *************************************************************************************/
 
 
-namespace HslCommunication;
+using HslCommunication.Enthernet.ComplexNet;
+using HslCommunication.Enthernet.SimplifyNet;
+
+namespace HslCommunication.Core.Net;
 
 /// <summary>
 /// 用于网络传递的信息头，使用上等同于int
 /// </summary>
 /// <remarks>
-/// 通常用于<see cref="Enthernet.NetComplexServer"/>和<see cref="Enthernet.NetComplexClient"/>之间的通信，以及<see cref="Enthernet.NetSimplifyServer"/>和<see cref="Enthernet.NetSimplifyClient"/>通讯
+/// 通常用于<see cref="NetComplexServer"/>和<see cref="NetComplexClient"/>之间的通信，以及<see cref="NetSimplifyServer"/>和<see cref="NetSimplifyClient"/>通讯
 /// </remarks>
 /// <example>
 /// 使用上等同于int，只是本结构体允许将4字节的int拆分成3部分单独访问
@@ -22,8 +25,6 @@ namespace HslCommunication;
 /// </example>
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
 public struct NetHandle {
-    #region Implicit Support
-
     /// <summary>
     /// 赋值操作，可以直接赋值int数据
     /// </summary>
@@ -41,10 +42,6 @@ public struct NetHandle {
     public static implicit operator int(NetHandle netHandle) {
         return netHandle.m_CodeValue;
     }
-
-    #endregion
-
-    #region Operator Support
 
     /// <summary>
     /// 判断是否相等
@@ -106,10 +103,6 @@ public struct NetHandle {
         return netHandle1.CodeValue > netHandle2.CodeValue;
     }
 
-    #endregion
-
-    #region Constructor
-
     /// <summary>
     /// 初始化一个暗号对象
     /// </summary>
@@ -137,10 +130,6 @@ public struct NetHandle {
         this.m_CodeIdentifier = identifier;
     }
 
-    #endregion
-
-    #region Private Members
-
     /// <summary>
     /// 完整的暗号值
     /// </summary>
@@ -165,10 +154,6 @@ public struct NetHandle {
     [System.Runtime.InteropServices.FieldOffset(0)]
     private ushort m_CodeIdentifier;
 
-    #endregion
-
-    #region Public Members
-
     /// <summary>
     /// 完整的暗号值
     /// </summary>
@@ -188,10 +173,6 @@ public struct NetHandle {
     /// 暗号的编号分类0-65535
     /// </summary>
     public ushort CodeIdentifier { get => this.m_CodeIdentifier; private set => this.m_CodeIdentifier = value; }
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 获取完整的暗号数据
@@ -222,6 +203,4 @@ public struct NetHandle {
     public override int GetHashCode() {
         return base.GetHashCode();
     }
-
-    #endregion
 }

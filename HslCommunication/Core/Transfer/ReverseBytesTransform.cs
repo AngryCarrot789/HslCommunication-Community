@@ -5,14 +5,12 @@
  *
  **********************************************************************************************/
 
-namespace HslCommunication.Core;
+namespace HslCommunication.Core.Transfer;
 
 /// <summary>
 /// 字节倒序的转换类
 /// </summary>
 public class ReverseBytesTransform : ByteTransformBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -25,10 +23,6 @@ public class ReverseBytesTransform : ByteTransformBase {
     /// <param name="dataFormat">数据规则</param>
     public ReverseBytesTransform(DataFormat dataFormat) : base(dataFormat) {
     }
-
-    #endregion
-
-    #region Get Value From Bytes
 
     /// <summary>
     /// 从缓存中提取short结果
@@ -160,10 +154,6 @@ public class ReverseBytesTransform : ByteTransformBase {
         return BitConverter.ToDouble(this.ByteTransDataFormat8(tmp), 0);
     }
 
-    #endregion
-
-
-    #region Get Bytes From Value
 
     /// <summary>
     /// short数组变量转化缓存数据
@@ -317,6 +307,4 @@ public class ReverseBytesTransform : ByteTransformBase {
 
         return buffer;
     }
-
-    #endregion
 }

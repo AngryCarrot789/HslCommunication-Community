@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Core;
+namespace HslCommunication.Core.Net;
 /*******************************************************************************
  *
  *    网络通信类的基础类，提供所有相关的基础方法和功能
@@ -8,8 +9,6 @@ namespace HslCommunication.Core;
  *    Network communication base class of the class, provides the basis of all relevant methods and functions
  *
  *******************************************************************************/
-
-#region Network Helper
 
 /// <summary>
 /// 静态的方法支持类，提供一些网络的静态支持，支持从套接字从同步接收指定长度的字节数据，并支持报告进度。
@@ -41,7 +40,7 @@ public static class NetSupport {
                 break;
             }
 
-            Thread.Sleep(100);
+            System.Threading.Thread.Sleep(100);
         }
     }
 
@@ -286,5 +285,3 @@ public static class NetSupport {
         }
     }
 }
-
-#endregion

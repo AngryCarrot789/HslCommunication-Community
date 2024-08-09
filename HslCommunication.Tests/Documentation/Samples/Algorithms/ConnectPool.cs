@@ -3,8 +3,6 @@ using HslCommunication.ModBus;
 
 namespace HslCommunication.Tests.Documentation.Samples.Algorithms;
 
-#region ConnectPoolExample
-
 public class ConnectPoolExample {
     public ConnectPoolExample() {
         this.connectPool = new ConnectPool<ModbusConnector>(() => new ModbusConnector("192.168.0.100", 502));
@@ -42,10 +40,6 @@ public class ConnectPoolExample {
     // 其他的接口实现类似
 }
 
-#endregion
-
-#region IConnector Example
-
 /// <summary>
 /// 此处示例实现一个modbus-tcp连接对象，事实上这里可以实现任何的连接对象，PLC的，数据库的，redis的等等操作
 /// </summary>
@@ -79,5 +73,3 @@ public class ModbusConnector : IConnector {
         this.modbusTcp.SetPersistentConnection();
     }
 }
-
-#endregion

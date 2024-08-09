@@ -1,12 +1,14 @@
-﻿using System.Text;
-using HslCommunication.Core.Net;
+﻿using System.Net.Sockets;
+using System.Text;
 using HslCommunication.Core.IMessage;
-using HslCommunication.Core;
-using System.Net.Sockets;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 #if !NET35
 #endif
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.SimplifyNet;
 
 /// <summary>
 /// 同步访问数据的客户端类，用于向服务器请求一些确定的数据信息
@@ -19,8 +21,6 @@ namespace HslCommunication.Enthernet;
 /// <code lang="cs" source="TestProject\HslCommunicationDemo\FormSimplifyNet.cs" region="FormSimplifyNet" title="FormSimplifyNet示例" />
 /// </example>
 public class NetSimplifyClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个客户端的对象，用于和服务器通信
     /// </summary>
@@ -37,10 +37,6 @@ public class NetSimplifyClient : NetworkDoubleBase<HslMessage, RegularByteTransf
     public NetSimplifyClient() {
     }
 
-    #endregion
-
-    #region Override NetworkDoubleBase
-
     /// <summary>
     /// 连接上服务器后需要进行的初始化操作，无论是否允许操作都要进行验证
     /// </summary>
@@ -53,8 +49,6 @@ public class NetSimplifyClient : NetworkDoubleBase<HslMessage, RegularByteTransf
 
         return OperateResult.CreateSuccessResult();
     }
-
-    #endregion
 
     /// <summary>
     /// 客户端向服务器进行请求，请求字符串数据，忽略了自定义消息反馈
@@ -235,8 +229,6 @@ public class NetSimplifyClient : NetworkDoubleBase<HslMessage, RegularByteTransf
 
 #endif
 
-    #region Object Override
-
     /// <summary>
     /// 获取本对象的字符串表示形式
     /// </summary>
@@ -244,6 +236,4 @@ public class NetSimplifyClient : NetworkDoubleBase<HslMessage, RegularByteTransf
     public override string ToString() {
         return $"NetSimplifyClient[{this.IpAddress}:{this.Port}]";
     }
-
-    #endregion
 }

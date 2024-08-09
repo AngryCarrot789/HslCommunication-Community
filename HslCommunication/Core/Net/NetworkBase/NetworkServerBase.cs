@@ -1,16 +1,15 @@
-﻿using HslCommunication.Core.IMessage;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using HslCommunication.Core.IMessage;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// 服务器程序的基础类
 /// </summary>
 public class NetworkServerBase : NetworkXBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -18,10 +17,6 @@ public class NetworkServerBase : NetworkXBase {
         this.IsStarted = false;
         this.Port = 0;
     }
-
-    #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// 服务器引擎是否启动
@@ -33,10 +28,6 @@ public class NetworkServerBase : NetworkXBase {
     /// </summary>
     /// <remarks>需要在服务器启动之前设置为有效</remarks>
     public int Port { get; set; }
-
-    #endregion
-
-    #region Protect Method
 
     /// <summary>
     /// 异步传入的连接申请请求
@@ -69,7 +60,7 @@ public class NetworkServerBase : NetworkXBase {
                     break;
                 }
                 catch (Exception ex) {
-                    Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(1000);
                     this.LogNet?.WriteException(this.ToString(), StringResources.Language.SocketReAcceptCallbackException, ex);
                     i++;
                 }
@@ -109,10 +100,6 @@ public class NetworkServerBase : NetworkXBase {
     protected virtual void ThreadPoolLogin(Socket socket, IPEndPoint endPoint) {
         socket?.Close();
     }
-
-    #endregion
-
-    #region Start And Close
 
     /// <summary>
     /// 当客户端的socket登录的时候额外检查的信息
@@ -177,10 +164,6 @@ public class NetworkServerBase : NetworkXBase {
         }
     }
 
-    #endregion
-
-    #region Create Alien Connection
-
     /**************************************************************************************************
      *
      *    此处实现了连接Hsl异形客户端的协议，特殊的协议实现定制请联系作者
@@ -240,6 +223,4 @@ public class NetworkServerBase : NetworkXBase {
         this.ThreadPoolLogin(connect.Content);
         return OperateResult.CreateSuccessResult();
     }
-
-    #endregion
 }

@@ -1,15 +1,13 @@
-﻿using HslCommunication.Core;
-using HslCommunication.LogNet;
-using System.Text;
+﻿using System.Text;
+using HslCommunication.Core.Thread;
+using HslCommunication.LogNet.Core;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.FileNet;
 
 /// <summary>
 /// 文件集容器，绑定一个文件夹的文件信息组
 /// </summary>
 public class GroupFileContainer {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个新的数据管理容器
     /// </summary>
@@ -19,10 +17,6 @@ public class GroupFileContainer {
         this.LogNet = logNet;
         this.GroupFileContainerLoadByPath(path);
     }
-
-    #endregion
-
-    #region Public Members
 
     /// <summary>
     /// 包含所有文件列表信息的json文本缓存
@@ -38,10 +32,6 @@ public class GroupFileContainer {
         get { return this.m_filesCount; }
     }
 
-    #endregion
-
-    #region Event Handle
-
     private void OnFileCountChanged() {
         this.FileCountChanged?.Invoke(this.m_filesCount);
     }
@@ -50,10 +40,6 @@ public class GroupFileContainer {
     /// 当文件数量发生变化的时候触发的事件
     /// </summary>
     public event Action<int> FileCountChanged;
-
-    #endregion
-
-    #region Upload Download Delete
 
     /// <summary>
     /// 下载文件时调用
@@ -147,10 +133,6 @@ public class GroupFileContainer {
         return source;
     }
 
-    #endregion
-
-    #region Private Method
-
     /// <summary>
     /// 缓存JSON文本的方法，该机制使用乐观并发模型完成
     /// </summary>
@@ -200,10 +182,6 @@ public class GroupFileContainer {
         this.CacheJsonArrayContent();
     }
 
-    #endregion
-
-    #region Private Members
-
     private const string FileListResources = "\\list.txt"; // 文件名
     private ILogNet LogNet; // 日志对象
     private string m_JsonArrayContent = "[]"; // 缓存数据
@@ -212,6 +190,4 @@ public class GroupFileContainer {
     private HslAsyncCoordinator coordinatorCacheJsonArray; // 乐观并发模型
     private List<GroupFileItem> m_files; // 文件队列
     private string m_filePath; // 文件路径
-
-    #endregion
 }

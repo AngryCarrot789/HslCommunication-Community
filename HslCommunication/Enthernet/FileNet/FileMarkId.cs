@@ -1,7 +1,7 @@
-﻿using HslCommunication.Core;
-using HslCommunication.LogNet;
+﻿using HslCommunication.Core.Thread;
+using HslCommunication.LogNet.Core;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.FileNet;
 
 /// <summary>
 /// 文件标记对象类

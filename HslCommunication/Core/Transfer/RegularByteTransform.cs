@@ -8,14 +8,12 @@
  **********************************************************************************************/
 
 
-namespace HslCommunication.Core;
+namespace HslCommunication.Core.Transfer;
 
 /// <summary>
 /// 常规的字节转换类
 /// </summary>
 public class RegularByteTransform : ByteTransformBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -28,6 +26,4 @@ public class RegularByteTransform : ByteTransformBase {
     /// <param name="dataFormat">解析规则</param>
     public RegularByteTransform(DataFormat dataFormat) : base(dataFormat) {
     }
-
-    #endregion
 }

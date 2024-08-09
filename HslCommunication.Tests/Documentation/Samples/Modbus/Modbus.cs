@@ -3,8 +3,6 @@
 namespace HslCommunication.Tests.Documentation.Samples.Modbus;
 
 public class ModbusTcpNetExample {
-    #region Example1
-
     // 本类支持的读写操作提供了非常多的重载方法，总有你想要的方法
     private ModbusTcpNet modbus = new ModbusTcpNet("192.168.0.1"); // 实例化
 
@@ -110,11 +108,7 @@ public class ModbusTcpNetExample {
         string input_str100 = this.modbus.ReadString("x=4;100", 5).Content; // 读取100到104共10个字符的字符串
     }
 
-    #endregion
-
     private void ReadExample() {
-        #region ReadExample1
-
         ModbusTcpNet modbus = new ModbusTcpNet("192.168.0.1"); // 实例化
 
         // 假设100存储了short的报警，101,102存储了float的温度，103，104存储了int的产量
@@ -128,13 +122,9 @@ public class ModbusTcpNetExample {
         else {
             // failed
         }
-
-        #endregion
     }
 
     private void WriteExample() {
-        #region WriteExample1
-
         ModbusTcpNet modbus = new ModbusTcpNet("192.168.0.1"); // 实例化
 
         // 假设100存储了short的报警，101,102存储了float的温度，103，104存储了int的产量
@@ -150,14 +140,10 @@ public class ModbusTcpNetExample {
         else {
             // failed
         }
-
-        #endregion
     }
 }
 
 public class ModbusRtuExample {
-    #region Example2
-
     // 本类支持的读写操作提供了非常多的重载方法，总有你想要的方法
     private ModbusRtu modbus = new ModbusRtu(); // 实例化
 
@@ -263,11 +249,7 @@ public class ModbusRtuExample {
         string input_str100 = this.modbus.ReadString("x=4;100", 5).Content; // 读取100到104共10个字符的字符串
     }
 
-    #endregion
-
     private void ReadExample() {
-        #region ReadExample2
-
         ModbusRtu modbus = new ModbusRtu(); // 实例化
         // 此处忽略初始化
         // modbus.SerialPortInni( "COM3" );
@@ -283,13 +265,9 @@ public class ModbusRtuExample {
         else {
             // failed
         }
-
-        #endregion
     }
 
     private void WriteExample() {
-        #region WriteExample2
-
         ModbusRtu modbus = new ModbusRtu(); // 实例化
         // 此处忽略初始化
         // modbus.SerialPortInni( "COM3" );
@@ -307,7 +285,5 @@ public class ModbusRtuExample {
         else {
             // failed
         }
-
-        #endregion
     }
 }

@@ -8,8 +8,6 @@ namespace HslCommunication.Core.Address;
 /// Modbus协议地址格式，可以携带站号，功能码，地址信息
 /// </summary>
 public class ModbusAddress : DeviceAddressBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -54,10 +52,6 @@ public class ModbusAddress : DeviceAddressBase {
         this.Address = 0;
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 站号信息
     /// </summary>
@@ -67,10 +61,6 @@ public class ModbusAddress : DeviceAddressBase {
     /// 功能码
     /// </summary>
     public int Function { get; set; }
-
-    #endregion
-
-    #region Analysis Address
 
     /// <summary>
     /// 解析Modbus的地址码
@@ -98,10 +88,6 @@ public class ModbusAddress : DeviceAddressBase {
             }
         }
     }
-
-    #endregion
-
-    #region Create Read Write Command
 
     /// <summary>
     /// 创建一个读取线圈的字节对象
@@ -245,10 +231,6 @@ public class ModbusAddress : DeviceAddressBase {
         return buffer;
     }
 
-    #endregion
-
-    #region Address Operate
-
     /// <summary>
     /// 地址新增指定的数
     /// </summary>
@@ -270,10 +252,6 @@ public class ModbusAddress : DeviceAddressBase {
         return this.AddressAdd(1);
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -288,6 +266,4 @@ public class ModbusAddress : DeviceAddressBase {
 
         return sb.ToString();
     }
-
-    #endregion
 }

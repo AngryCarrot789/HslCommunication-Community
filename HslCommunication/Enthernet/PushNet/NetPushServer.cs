@@ -1,7 +1,10 @@
-﻿using HslCommunication.Core.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using HslCommunication.Core;
-using System.Net;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Types;
 
 
 /**********************************************************************************
@@ -13,7 +16,7 @@ using System.Net;
  *********************************************************************************/
 
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.PushNet;
 
 /// <summary>
 /// 发布订阅服务器的类，支持按照关键字进行数据信息的订阅
@@ -26,8 +29,6 @@ namespace HslCommunication.Enthernet;
 /// <code lang="cs" source="TestProject\PushNetServer\FormServer.cs" region="NetPushServer" title="NetPushServer示例" />
 /// </example>
 public class NetPushServer : NetworkServerBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个对象
     /// </summary>
@@ -41,10 +42,6 @@ public class NetPushServer : NetworkServerBase {
         this.hybirdLock = new SimpleHybirdLock();
         this.pushClients = new List<NetPushClient>();
     }
-
-    #endregion
-
-    #region Server Override
 
     /// <summary>
     /// 当接收到了新的请求的时候执行的操作
@@ -98,7 +95,7 @@ public class NetPushServer : NetworkServerBase {
         this.LogNet?.WriteDebug(this.ToString(), string.Format(StringResources.Language.ClientOnlineInfo, session.IpEndPoint));
         PushGroupClient push = this.GetPushGroupClient(receive.Content2);
         if (push != null) {
-            System.Threading.Interlocked.Increment(ref this.onlineCount);
+            Interlocked.Increment(ref this.onlineCount);
             push.AddPushClient(session);
 
             this.dicSendCacheLock.Enter();
@@ -117,10 +114,6 @@ public class NetPushServer : NetworkServerBase {
     public override void ServerClose() {
         base.ServerClose();
     }
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 主动推送数据内容
@@ -153,7 +146,7 @@ public class NetPushServer : NetworkServerBase {
         if (this.dictPushClients.ContainsKey(key)) {
             int count = this.dictPushClients[key].RemoveAllClient();
             for (int i = 0; i < count; i++) {
-                System.Threading.Interlocked.Decrement(ref this.onlineCount);
+                Interlocked.Decrement(ref this.onlineCount);
             }
         }
 
@@ -187,10 +180,6 @@ public class NetPushServer : NetworkServerBase {
         return result;
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 在线客户端的数量
     /// </summary>
@@ -205,10 +194,6 @@ public class NetPushServer : NetworkServerBase {
         get { return this.isPushCacheAfterConnect; }
         set { this.isPushCacheAfterConnect = value; }
     }
-
-    #endregion
-
-    #region Private Method
 
     private void ReceiveCallback(IAsyncResult ar) {
         if (ar.AsyncState is AppSession session) {
@@ -290,20 +275,18 @@ public class NetPushServer : NetworkServerBase {
         if (push != null) {
             if (push.RemovePushClient(clientID)) {
                 // 移除成功
-                System.Threading.Interlocked.Decrement(ref this.onlineCount);
+                Interlocked.Decrement(ref this.onlineCount);
             }
         }
     }
 
 
     private void SendString(AppSession appSession, string content) {
-        System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(m => {
+        ThreadPool.QueueUserWorkItem(new WaitCallback(m => {
             this.PushSendAsync(appSession, HslProtocol.CommandBytes(0, this.Token, content));
         }), null);
     }
 
-
-    #region Send Bytes Async
 
     /// <summary>
     /// 发送数据的方法
@@ -383,17 +366,11 @@ public class NetPushServer : NetworkServerBase {
         }
     }
 
-    #endregion
-
 
     private void GetPushFromServer(NetPushClient pushClient, string data) {
         // 推送给其他的客户端，当然也有可能是工作站
         this.PushString(pushClient.KeyWord, data);
     }
-
-    #endregion
-
-    #region Private Member
 
     private Dictionary<string, string> dictSendHistory; // 词典缓存的数据发送对象
     private Dictionary<string, PushGroupClient> dictPushClients; // 系统的数据词典
@@ -405,10 +382,6 @@ public class NetPushServer : NetworkServerBase {
     private SimpleHybirdLock hybirdLock; // 客户端列表的锁
     private bool isPushCacheAfterConnect = true; // 在客户端上线之后，是否推送缓存的数据
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -416,6 +389,4 @@ public class NetPushServer : NetworkServerBase {
     public override string ToString() {
         return "NetPushServer";
     }
-
-    #endregion
 }

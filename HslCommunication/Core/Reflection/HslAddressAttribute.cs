@@ -1,4 +1,4 @@
-﻿namespace HslCommunication;
+﻿namespace HslCommunication.Core.Reflection;
 
 /// <summary>
 /// 应用于Hsl组件库读取的动态地址解析

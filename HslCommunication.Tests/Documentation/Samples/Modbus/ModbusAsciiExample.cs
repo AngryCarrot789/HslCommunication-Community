@@ -3,8 +3,6 @@
 namespace HslCommunication.Tests.Documentation.Samples.Modbus;
 
 public class ModbusAsciiExample {
-    #region Example
-
     // 本类支持的读写操作提供了非常多的重载方法，总有你想要的方法
     private ModbusAscii modbus = new ModbusAscii(); // 实例化
 
@@ -110,11 +108,7 @@ public class ModbusAsciiExample {
         string input_str100 = this.modbus.ReadString("x=4;100", 5).Content; // 读取100到104共10个字符的字符串
     }
 
-    #endregion
-
     private void ReadExample() {
-        #region ReadExample
-
         ModbusRtu modbus = new ModbusRtu(); // 实例化
         // 此处忽略初始化
         // modbus.SerialPortInni( "COM3" );
@@ -130,13 +124,9 @@ public class ModbusAsciiExample {
         else {
             // failed
         }
-
-        #endregion
     }
 
     private void WriteExample() {
-        #region WriteExample
-
         ModbusRtu modbus = new ModbusRtu(); // 实例化
         // 此处忽略初始化
         // modbus.SerialPortInni( "COM3" );
@@ -154,7 +144,5 @@ public class ModbusAsciiExample {
         else {
             // failed
         }
-
-        #endregion
     }
 }

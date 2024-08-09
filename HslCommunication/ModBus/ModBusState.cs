@@ -1,6 +1,7 @@
 ﻿using HslCommunication.Core;
 using System.Net;
 using System.Net.Sockets;
+using HslCommunication.Core.Thread;
 
 namespace HslCommunication.ModBus;
 
@@ -8,8 +9,6 @@ namespace HslCommunication.ModBus;
 /// ModBus的异步状态信息
 /// </summary>
 internal class ModBusState {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个对象
     /// </summary>
@@ -18,8 +17,6 @@ internal class ModBusState {
         this.ConnectTime = DateTime.Now;
         this.HeadByte = new byte[6];
     }
-
-    #endregion
 
     /// <summary>
     /// 连接的时间
@@ -77,7 +74,7 @@ internal class ModBusState {
     /// </summary>
     /// <returns></returns>
     public bool IsModbusOffline() {
-        int tmp = System.Threading.Interlocked.CompareExchange(ref this.isSocketOffline, 1, 0);
+        int tmp = Interlocked.CompareExchange(ref this.isSocketOffline, 1, 0);
         return tmp == 0;
     }
 

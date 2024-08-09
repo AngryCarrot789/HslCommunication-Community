@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.Enthernet.Redis;
 
@@ -9,8 +11,6 @@ namespace HslCommunication.Enthernet.Redis;
 /// Redis协议的订阅操作，一个对象订阅一个或是多个频道的信息
 /// </summary>
 public class RedisSubscribe : NetworkXBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个发布订阅类的客户端，需要指定ip地址，端口，及订阅关键字
     /// </summary>
@@ -40,10 +40,6 @@ public class RedisSubscribe : NetworkXBase {
             throw new Exception(StringResources.Language.KeyIsNotAllowedNull);
         }
     }
-
-    #endregion
-
-    #region Private Method
 
     private OperateResult CreatePush() {
         this.CoreSocket?.Close();
@@ -134,7 +130,7 @@ public class RedisSubscribe : NetworkXBase {
                 this.LogNet?.WriteException("Offline", ex);
 
             Console.WriteLine(StringResources.Language.ReConnectServerAfterTenSeconds);
-            System.Threading.Thread.Sleep(this.reconnectTime);
+            Thread.Sleep(this.reconnectTime);
 
             if (this.CreatePush().IsSuccess) {
                 Console.WriteLine(StringResources.Language.ReConnectServerSuccess);
@@ -143,18 +139,10 @@ public class RedisSubscribe : NetworkXBase {
         }
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 如果Redis服务器设置了密码，此处就需要进行设置。必须在CreatePush方法调用前设置
     /// </summary>
     public string Password { get; set; }
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 创建数据推送服务
@@ -174,18 +162,10 @@ public class RedisSubscribe : NetworkXBase {
         this.CoreSocket?.Close();
     }
 
-    #endregion
-
-    #region Private Member
-
     private IPEndPoint endPoint; // 服务器的地址及端口信息
     private string[] keyWords = null; // 缓存的订阅关键字
     private Action<string, string> action; // 服务器推送后的回调方法
     private int reconnectTime = 10000; // 重连服务器的时间
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -194,6 +174,4 @@ public class RedisSubscribe : NetworkXBase {
     public override string ToString() {
         return $"RedisSubscribe[{this.endPoint}]";
     }
-
-    #endregion
 }

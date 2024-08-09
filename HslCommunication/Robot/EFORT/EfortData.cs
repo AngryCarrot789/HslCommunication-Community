@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.Robot.EFORT;
 
@@ -6,8 +7,6 @@ namespace HslCommunication.Robot.EFORT;
 /// 埃夫特机器人的数据结构
 /// </summary>
 public class EfortData {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -25,8 +24,6 @@ public class EfortData {
         this.DbAxisDirCnt = new int[7];
         this.DbAxisTime = new int[7];
     }
-
-    #endregion
 
 
     /// <summary>
@@ -182,8 +179,6 @@ public class EfortData {
     /// 报文结束标记
     /// </summary>
     public string PacketEnd { get; set; }
-
-    #region Static Method
 
     /// <summary>
     /// 从之前的版本数据构造一个埃夫特机器人的数据类型
@@ -355,6 +350,4 @@ public class EfortData {
 
         return OperateResult.CreateSuccessResult(efortData);
     }
-
-    #endregion
 }

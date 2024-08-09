@@ -7,8 +7,6 @@ namespace HslCommunication.Tests.Documentation.Samples.Core;
 
 public class IReadWriteNetExample {
     public void IReadWriteNet() {
-        #region IReadWriteNetExample
-
         List<IReadWriteNet> devices = new List<IReadWriteNet>();
         devices.Add(new ModbusTcpNet("192.168.0.7")); // 新增modbus的设备
         devices.Add(new MelsecMcNet("192.168.0.8", 2000)); // 新增三菱的设备
@@ -26,7 +24,5 @@ public class IReadWriteNetExample {
         }
 
         // values即包含了多种设备的值，实际上如果想要开发一个完善的系统，还要更加复杂点
-
-        #endregion
     }
 }

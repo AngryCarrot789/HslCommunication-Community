@@ -1,4 +1,7 @@
 ﻿using HslCommunication.Core;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.BasicFramework;
 
@@ -14,8 +17,6 @@ namespace HslCommunication.BasicFramework;
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\BasicFramework\SoftBufferExample.cs" region="SoftBufferExample1" title="SoftBuffer示例" />
 /// </example>
 public class SoftBuffer : IDisposable {
-    #region Constructor
-
     /// <summary>
     /// 使用默认的大小初始化缓存空间
     /// </summary>
@@ -35,10 +36,6 @@ public class SoftBuffer : IDisposable {
         this.hybirdLock = new SimpleHybirdLock();
         this.byteTransform = new RegularByteTransform();
     }
-
-    #endregion
-
-    #region Bool Operate Support
 
     /// <summary>
     /// 设置指定的位置的数据块，如果超出，则丢弃数据
@@ -148,10 +145,6 @@ public class SoftBuffer : IDisposable {
         }
     }
 
-    #endregion
-
-    #region Byte Operate Support
-
     /// <summary>
     /// 设置指定的位置的数据块，如果超出，则丢弃数据
     /// </summary>
@@ -244,10 +237,6 @@ public class SoftBuffer : IDisposable {
     public byte[] GetBytes() {
         return this.GetBytes(0, this.capacity);
     }
-
-    #endregion
-
-    #region BCL Set Support
 
     /// <summary>
     /// 设置byte类型的数据到缓存区
@@ -401,10 +390,6 @@ public class SoftBuffer : IDisposable {
     public void SetValue(double value, int index) {
         this.SetValue(new double[] { value }, index);
     }
-
-    #endregion
-
-    #region BCL Get Support
 
     /// <summary>
     /// 获取byte类型的数据
@@ -575,10 +560,6 @@ public class SoftBuffer : IDisposable {
         return this.GetDouble(index, 1)[0];
     }
 
-    #endregion
-
-    #region Customer Support
-
     /// <summary>
     /// 读取自定义类型的数据，需要规定解析规则
     /// </summary>
@@ -602,10 +583,6 @@ public class SoftBuffer : IDisposable {
         this.SetBytes(data.ToSource(), index);
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 获取或设置当前的数据缓存类的解析规则
     /// </summary>
@@ -614,18 +591,10 @@ public class SoftBuffer : IDisposable {
         set => this.byteTransform = value;
     }
 
-    #endregion
-
-    #region Private Member
-
     private int capacity = 10; // 缓存的容量
     private byte[] buffer; // 缓存的数据
     private SimpleHybirdLock hybirdLock; // 高效的混合锁
     private IByteTransform byteTransform; // 数据转换类
-
-    #endregion
-
-    #region IDisposable Support
 
     private bool disposedValue = false; // 要检测冗余调用
 
@@ -666,6 +635,4 @@ public class SoftBuffer : IDisposable {
         // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
         // GC.SuppressFinalize(this);
     }
-
-    #endregion
 }

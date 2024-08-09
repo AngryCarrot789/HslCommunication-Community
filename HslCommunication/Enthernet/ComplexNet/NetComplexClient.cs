@@ -1,9 +1,12 @@
-﻿using System.Text;
-using HslCommunication.Core.Net;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.ComplexNet;
 
 /// <summary>
 /// 一个基于异步高性能的客户端网络类，支持主动接收服务器的消息
@@ -16,8 +19,6 @@ namespace HslCommunication.Enthernet;
 /// <code lang="cs" source="TestProject\HslCommunicationDemo\FormComplexNet.cs" region="NetComplexClient" title="NetComplexClient示例" />
 /// </example>
 public class NetComplexClient : NetworkXBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个对象
     /// </summary>
@@ -27,18 +28,10 @@ public class NetComplexClient : NetworkXBase {
         this.EndPointServer = new IPEndPoint(IPAddress.Any, 0);
     }
 
-    #endregion
-
-    #region Private Member
-
     private AppSession session; // 客户端的核心连接对象
     private int isConnecting = 0; // 指示客户端是否处于连接服务器中，0代表未连接，1代表连接中
     private bool IsQuie = false; // 指示系统是否准备退出
     private Thread? thread_heart_check = null; // 心跳线程
-
-    #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// 客户端系统是否启动
@@ -70,10 +63,6 @@ public class NetComplexClient : NetworkXBase {
     /// </summary>
     public int DelayTime { get; private set; }
 
-    #endregion
-
-    #region Event Handle
-
     /// <summary>
     /// 客户端启动成功的事件，重连成功也将触发此事件
     /// </summary>
@@ -103,10 +92,6 @@ public class NetComplexClient : NetworkXBase {
     /// 当接收到字节数据的时候,触发此事件
     /// </summary>
     public event Action<AppSession, NetHandle, byte[]> AcceptByte;
-
-    #endregion
-
-    #region Start Close Support
 
     /// <summary>
     /// 关闭该客户端引擎
@@ -252,10 +237,6 @@ public class NetComplexClient : NetworkXBase {
         this.ClientStart();
     }
 
-    #endregion
-
-    #region Send Message Support
-
     /// <summary>
     /// 通信出错后的处理
     /// </summary>
@@ -300,10 +281,6 @@ public class NetComplexClient : NetworkXBase {
         this.SendBytesAsync(stateone, content);
     }
 
-    #endregion
-
-    #region Data Process Center
-
     /// <summary>
     /// 客户端的数据处理中心
     /// </summary>
@@ -332,10 +309,6 @@ public class NetComplexClient : NetworkXBase {
             this.AcceptString?.Invoke(this.session, customer, str);
         }
     }
-
-    #endregion
-
-    #region Heart Check
 
     /// <summary>
     /// 心跳线程的方法
@@ -366,10 +339,6 @@ public class NetComplexClient : NetworkXBase {
         }
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回对象的字符串表示形式
     /// </summary>
@@ -377,6 +346,4 @@ public class NetComplexClient : NetworkXBase {
     public override string ToString() {
         return "NetComplexClient";
     }
-
-    #endregion
 }

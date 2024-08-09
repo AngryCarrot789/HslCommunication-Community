@@ -1,6 +1,4 @@
-﻿namespace HslCommunication.LogNet;
-
-#region Log EventArgs
+﻿namespace HslCommunication.LogNet.Core;
 
 /// <summary>
 /// 带有日志消息的事件
@@ -23,10 +21,6 @@ public class LogNetException : Exception {
     public LogNetException(Exception innerException) : base(innerException.Message, innerException) {
     }
 }
-
-#endregion
-
-#region Log Output Format
 
 /// <summary>
 /// 日志文件输出模式
@@ -63,10 +57,6 @@ public enum GenerateMode {
     ByEveryYear = 6,
 }
 
-#endregion
-
-#region Message Degree
-
 /// <summary>
 /// 记录消息的等级
 /// </summary>
@@ -101,10 +91,6 @@ public enum HslMessageDegree {
     /// </summary>
     DEBUG = 6
 }
-
-#endregion
-
-#region LogMessage
 
 /// <summary>
 /// 单个日志的记录信息
@@ -186,5 +172,3 @@ public class HslMessageItem {
         }
     }
 }
-
-#endregion

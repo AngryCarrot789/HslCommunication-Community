@@ -7,16 +7,12 @@ namespace HslCommunication.BasicFramework;
 /// </summary>
 /// <typeparam name="T">类型</typeparam>
 public class SoftMsgQueue<T> : SoftFileSaveBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个对象
     /// </summary>
     public SoftMsgQueue() {
         this.LogHeaderText = "SoftMsgQueue<" + typeof(T).ToString() + ">";
     }
-
-    #endregion
 
 
     /// <summary>

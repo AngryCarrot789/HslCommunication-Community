@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
+using HslCommunication.LogNet.Core;
 
-namespace HslCommunication.LogNet;
+namespace HslCommunication.LogNet.Logs;
 
 /// <summary>
 /// 一个日志组件，可以根据时间来区分不同的文件存储
@@ -17,8 +18,6 @@ namespace HslCommunication.LogNet;
 /// </list>
 /// </remarks>
 public class LogNetDateTime : LogNetBase, ILogNet {
-    #region Contructor
-
     /// <summary>
     /// 实例化一个根据时间存储的日志组件
     /// </summary>
@@ -32,10 +31,6 @@ public class LogNetDateTime : LogNetBase, ILogNet {
 
         this.m_filePath = this.CheckPathEndWithSprit(this.m_filePath);
     }
-
-    #endregion
-
-    #region LogNetBase Override
 
     /// <summary>
     /// 获取需要保存的日志文件
@@ -70,10 +65,6 @@ public class LogNetDateTime : LogNetBase, ILogNet {
         }
     }
 
-    #endregion
-
-    #region Public Method
-
     /// <summary>
     /// 获取所有的文件夹中的日志文件
     /// </summary>
@@ -87,17 +78,9 @@ public class LogNetDateTime : LogNetBase, ILogNet {
         }
     }
 
-    #endregion
-
-    #region Private Member
-
     private string m_fileName = string.Empty; // 当前正在存储的文件名称
     private string m_filePath = string.Empty; // 文件的路径
     private GenerateMode generateMode = GenerateMode.ByEveryYear; // 文件的存储模式，默认按照年份来存储
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -106,6 +89,4 @@ public class LogNetDateTime : LogNetBase, ILogNet {
     public override string ToString() {
         return $"LogNetDateTime[{this.generateMode}]";
     }
-
-    #endregion
 }

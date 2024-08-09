@@ -1,4 +1,4 @@
-﻿namespace HslCommunication.Enthernet;
+﻿namespace HslCommunication.Enthernet.FileNet;
 
 /// <summary>
 /// 文件的基础信息

@@ -13,8 +13,6 @@ namespace HslCommunication.BasicFramework;
 /// A software-based class that provides some common static methods
 /// </summary>
 public class SoftBasic {
-    #region MD5 Calculate
-
     /// <summary>
     /// 获取文件的md5码 -> Get the MD5 code of the file
     /// </summary>
@@ -76,10 +74,6 @@ public class SoftBasic {
         return str_md5;
     }
 
-    #endregion
-
-    #region DataSize Format
-
     /// <summary>
     /// 从一个字节大小返回带单位的描述
     /// </summary>
@@ -107,10 +101,6 @@ public class SoftBasic {
         }
     }
 
-    #endregion
-
-    #region TimeSpan Format
-
     /// <summary>
     /// 从一个时间差返回带单位的描述
     /// </summary>
@@ -134,10 +124,6 @@ public class SoftBasic {
             return ts.TotalDays.ToString("F1") + " 天";
         }
     }
-
-    #endregion
-
-    #region Array Expaned
 
     /// <summary>
     /// 一个通用的数组新增个数方法，会自动判断越界情况，越界的情况下，会自动的截断或是填充 -> 
@@ -295,10 +281,6 @@ public class SoftBasic {
         return result;
     }
 
-    #endregion
-
-    #region Byte Array compare
-
     /// <summary>
     /// 判断两个字节的指定部分是否相同 ->
     /// Determines whether the specified portion of a two-byte is the same
@@ -370,10 +352,6 @@ public class SoftBasic {
         return IsTwoBytesEquel(token1.ToByteArray(), 0, token2.ToByteArray(), 0, 16);
     }
 
-    #endregion
-
-    #region Enum About
-
     /// <summary>
     /// 获取一个枚举类型的所有枚举值，可直接应用于组合框数据 ->
     /// Gets all the enumeration values of an enumeration type that can be applied directly to the combo box data
@@ -400,10 +378,6 @@ public class SoftBasic {
     public static TEnum GetEnumFromString<TEnum>(string value) where TEnum : struct {
         return (TEnum) Enum.Parse(typeof(TEnum), value);
     }
-
-    #endregion
-
-    #region JSON Data Get
 
     /// <summary>
     /// 一个泛型方法，提供json对象的数据读取 ->
@@ -447,10 +421,6 @@ public class SoftBasic {
         }
     }
 
-    #endregion
-
-    #region Exception Message Format
-
     /// <summary>
     /// 获取一个异常的完整错误信息 ->
     /// Gets the complete error message for an exception
@@ -487,10 +457,6 @@ public class SoftBasic {
             return extraMsg + Environment.NewLine + GetExceptionMessage(ex);
         }
     }
-
-    #endregion
-
-    #region Hex string and Byte[] transform
 
     /// <summary>
     /// 字节数据转化成16进制表示的字符串 ->
@@ -580,10 +546,6 @@ public class SoftBasic {
         return result;
     }
 
-    #endregion
-
-    #region Byte Reverse By Word
-
     /// <summary>
     /// 将byte数组按照双字节进行反转，如果为单数的情况，则自动补齐 ->
     /// Reverses the byte array by double byte, or if the singular is the case, automatically
@@ -606,10 +568,6 @@ public class SoftBasic {
 
         return buffer;
     }
-
-    #endregion
-
-    #region Byte[] and AsciiByte[] transform
 
     /// <summary>
     /// 将原始的byte数组转换成ascii格式的byte数组 ->
@@ -671,10 +629,6 @@ public class SoftBasic {
 
         return buffer;
     }
-
-    #endregion
-
-    #region Bool[] and byte[] transform
 
     /// <summary>
     /// 将bool数组转换到byte数组 ->
@@ -807,10 +761,6 @@ public class SoftBasic {
         return ByteToBoolArray(InBytes, InBytes.Length * 8);
     }
 
-    #endregion
-
-    #region Byte[] Splice
-
     /// <summary>
     /// 拼接2个字节数组成一个数组 ->
     /// Splicing 2 bytes to to an array
@@ -898,10 +848,6 @@ public class SoftBasic {
         return buffer;
     }
 
-    #endregion
-
-    #region Basic Framework
-
     /// <summary>
     /// 设置或获取系统框架的版本号 ->
     /// Set or get the version number of the system framework
@@ -910,10 +856,6 @@ public class SoftBasic {
     /// 当你要显示本组件框架的版本号的时候，就可以用这个属性来显示
     /// </remarks>
     public static SystemVersion FrameworkVersion { get; set; } = new SystemVersion("7.0.1");
-
-    #endregion
-
-    #region Deep Clone
 
     /// <summary>
     /// 使用序列化反序列化深度克隆一个对象，该对象需要支持序列化特性 ->
@@ -943,10 +885,6 @@ public class SoftBasic {
         }
     }
 
-    #endregion
-
-    #region Unique String Get
-
     /// <summary>
     /// 获取一串唯一的随机字符串，长度为20，由Guid码和4位数的随机数组成，保证字符串的唯一性 ->
     /// Gets a string of unique random strings with a length of 20, consisting of a GUID code and a 4-digit random number to guarantee the uniqueness of the string
@@ -959,6 +897,4 @@ public class SoftBasic {
         Random random = new Random();
         return Guid.NewGuid().ToString("N") + random.Next(1000, 10000);
     }
-
-    #endregion
 }

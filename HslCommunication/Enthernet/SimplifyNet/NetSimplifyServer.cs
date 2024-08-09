@@ -1,9 +1,11 @@
-﻿using HslCommunication.Core.Net;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Net.StateOne;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.SimplifyNet;
 
 /// <summary>
 /// 异步消息处理服务器，主要用来实现接收客户端信息并进行消息反馈的操作，适用于客户端进行远程的调用，要求服务器反馈数据。
@@ -16,17 +18,11 @@ namespace HslCommunication.Enthernet;
 /// <code lang="cs" source="TestProject\SimplifyNetTest\FormServer.cs" region="Simplify Net" title="NetSimplifyServer示例" />
 /// </example>
 public class NetSimplifyServer : NetworkAuthenticationServerBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个服务器消息请求的信息
     /// </summary>
     public NetSimplifyServer() {
     }
-
-    #endregion
-
-    #region Event Handle
 
     /// <summary>
     /// 接收字符串信息的事件
@@ -55,10 +51,6 @@ public class NetSimplifyServer : NetworkAuthenticationServerBase {
     private void OnReceiveStringArrayEvent(AppSession session, int customer, string[] str) {
         this.ReceiveStringArrayEvent?.Invoke(session, customer, str);
     }
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 向指定的通信对象发送字符串数据
@@ -90,10 +82,6 @@ public class NetSimplifyServer : NetworkAuthenticationServerBase {
         this.SendBytesAsync(session, HslProtocol.CommandBytes(customer, this.Token, bytes));
     }
 
-    #endregion
-
-    #region Start Close
-
     /// <summary>
     /// 关闭网络的操作
     /// </summary>
@@ -122,7 +110,7 @@ public class NetSimplifyServer : NetworkAuthenticationServerBase {
         }
 
         this.LogNet?.WriteDebug(this.ToString(), string.Format(StringResources.Language.ClientOnlineInfo, session.IpEndPoint));
-        System.Threading.Interlocked.Increment(ref this.clientCount);
+        Interlocked.Increment(ref this.clientCount);
         this.ReBeginReceiveHead(session, false);
     }
 
@@ -133,7 +121,7 @@ public class NetSimplifyServer : NetworkAuthenticationServerBase {
     /// <param name="ex">异常信息</param>
     internal override void SocketReceiveException(AppSession session, Exception ex) {
         session.WorkSocket?.Close();
-        System.Threading.Interlocked.Decrement(ref this.clientCount);
+        Interlocked.Decrement(ref this.clientCount);
         this.LogNet?.WriteDebug(this.ToString(), string.Format(StringResources.Language.ClientOfflineInfo, session.IpEndPoint));
     }
 
@@ -143,7 +131,7 @@ public class NetSimplifyServer : NetworkAuthenticationServerBase {
     /// <param name="session">会话</param>
     internal override void AppSessionRemoteClose(AppSession session) {
         session.WorkSocket?.Close();
-        System.Threading.Interlocked.Decrement(ref this.clientCount);
+        Interlocked.Decrement(ref this.clientCount);
         this.LogNet?.WriteDebug(this.ToString(), string.Format(StringResources.Language.ClientOfflineInfo, session.IpEndPoint));
     }
 
@@ -179,24 +167,12 @@ public class NetSimplifyServer : NetworkAuthenticationServerBase {
         }
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 当前在线的客户端数量
     /// </summary>
     public int ClientCount => this.clientCount;
 
-    #endregion
-
-    #region Private Member
-
     private int clientCount = 0; // 在线客户端的数量
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -205,6 +181,4 @@ public class NetSimplifyServer : NetworkAuthenticationServerBase {
     public override string ToString() {
         return "NetSimplifyServer";
     }
-
-    #endregion
 }

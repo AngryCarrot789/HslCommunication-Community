@@ -2,8 +2,10 @@
 using System.Net.Sockets;
 using System.Text;
 using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Net.StateOne;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.UdpNet;
 
 /// <summary>
 /// Udp网络的服务器端类
@@ -188,8 +190,6 @@ public class NetUdpServer : NetworkServerBase {
     //    }
     //}
 
-    #region Data Process Center
-
     /// <summary>
     /// 数据处理中心
     /// </summary>
@@ -237,10 +237,6 @@ public class NetUdpServer : NetworkServerBase {
         }
     }
 
-    #endregion
-
-    #region Event Handle
-
     /// <summary>
     /// 当接收到文本数据的时候,触发此事件
     /// </summary>
@@ -252,10 +248,6 @@ public class NetUdpServer : NetworkServerBase {
     /// </summary>
     public event Action<AppSession, NetHandle, byte[]> AcceptByte;
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 获取本对象的字符串表示形式
     /// </summary>
@@ -263,6 +255,4 @@ public class NetUdpServer : NetworkServerBase {
     public override string ToString() {
         return "NetUdpServer";
     }
-
-    #endregion
 }

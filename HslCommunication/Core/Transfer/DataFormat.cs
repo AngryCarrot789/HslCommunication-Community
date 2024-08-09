@@ -1,4 +1,4 @@
-﻿namespace HslCommunication.Core;
+﻿namespace HslCommunication.Core.Transfer;
 
 /// <summary>
 /// 应用于多字节数据的解析或是生成格式

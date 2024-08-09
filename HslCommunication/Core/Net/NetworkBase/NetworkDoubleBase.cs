@@ -1,8 +1,12 @@
-﻿using System.Net.Sockets;
-using System.Net;
+﻿using System.Net;
+using System.Net.Sockets;
 using HslCommunication.Core.IMessage;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// 支持长连接，短连接两个模式的通用客户端基类 ->
@@ -12,8 +16,6 @@ namespace HslCommunication.Core.Net;
 /// 无，请使用继承类实例化，然后进行数据交互，当前的类并没有具体的实现。
 /// </example>
 public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposable where TNetMessage : INetMessage, new() where TTransform : IByteTransform, new() {
-    #region Constructor
-
     /// <summary>
     /// 默认的无参构造函数 -> Default no-parameter constructor
     /// </summary>
@@ -22,10 +24,6 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
         this.InteractiveLock = new SimpleHybirdLock(); // 实例化数据访问锁
         this.connectionId = BasicFramework.SoftBasic.GetUniqueStringByGuidAndRandom(); // 设备的唯一的编号
     }
-
-    #endregion
-
-    #region Private Member
 
     private TTransform byteTransform; // 数据变换的接口
     private string ipAddress = "127.0.0.1"; // 连接的IP地址
@@ -53,10 +51,6 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
     /// 当前的socket是否发生了错误
     /// </summary>
     protected bool IsSocketError = false; // 指示长连接的套接字是否处于错误的状态
-
-    #endregion
-
-    #region Public Member
 
     /// <summary>
     /// 当前客户端的数据变换机制，当你需要从字节数据转换类型数据的时候需要。->
@@ -170,10 +164,6 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
     /// </remarks>
     public AlienSession AlienSession { get; set; }
 
-    #endregion
-
-    #region Public Method
-
     /// <summary>
     /// 在读取数据之前可以调用本方法将客户端设置为长连接模式，相当于跳过了ConnectServer的结果验证，对异形客户端无效
     /// </summary>
@@ -184,10 +174,6 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
     public void SetPersistentConnection() {
         this.isPersistentConn = true;
     }
-
-    #endregion
-
-    #region Connect Close
 
     /// <summary>
     /// 切换短连接模式到长连接模式，后面的每次请求都共享一个通道
@@ -289,10 +275,6 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
         return result;
     }
 
-    #endregion
-
-    #region Initialization And Extra
-
     /// <summary>
     /// 连接上服务器后需要进行的初始化操作
     /// </summary>
@@ -324,10 +306,6 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
     /// <param name="read">读取结果</param>
     protected virtual void ExtraAfterReadFromCoreServer(OperateResult read) {
     }
-
-    #endregion
-
-    #region Account Control
 
     /************************************************************************************************
      *
@@ -384,10 +362,6 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
             return new OperateResult(read.Content2[0]);
         return OperateResult.CreateSuccessResult();
     }
-
-    #endregion
-
-    #region Core Communication
 
     /***************************************************************************************
      *
@@ -557,10 +531,6 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
         return result;
     }
 
-    #endregion
-
-    #region IDisposable Support
-
     private bool disposedValue = false; // 要检测冗余调用
 
     /// <summary>
@@ -600,10 +570,6 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
         // GC.SuppressFinalize(this);
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -611,6 +577,4 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
     public override string ToString() {
         return $"NetworkDoubleBase<{typeof(TNetMessage)}, {typeof(TTransform)}>";
     }
-
-    #endregion
 }

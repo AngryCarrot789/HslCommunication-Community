@@ -6,17 +6,11 @@ namespace HslCommunication.Tests.Core.Transfer;
 
 [TestClass]
 public class ReverseBytesTransformTest {
-    #region Constructor
-
     public ReverseBytesTransformTest() {
         this.byteTransform = new ReverseBytesTransform();
     }
 
     private ReverseBytesTransform byteTransform;
-
-    #endregion
-
-    #region Bool Test
 
     [TestMethod]
     public void BoolTransferTest() {
@@ -50,10 +44,6 @@ public class ReverseBytesTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, value));
     }
 
-    #endregion
-
-    #region Int16 Test
-
     [TestMethod]
     public void BytesToInt16TransferTest() {
         byte[] data = new byte[4];
@@ -79,10 +69,6 @@ public class ReverseBytesTransformTest {
         byte[] buffer = this.byteTransform.TransByte(new short[] { 1234, -9876 });
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
-
-    #region UInt16 Test
 
     [TestMethod]
     public void BytesToUInt16TransferTest() {
@@ -110,10 +96,6 @@ public class ReverseBytesTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, buffer));
     }
 
-    #endregion
-
-    #region Int32 Test
-
     [TestMethod]
     public void BytesToInt32TransferTest() {
         byte[] data = new byte[8];
@@ -138,10 +120,6 @@ public class ReverseBytesTransformTest {
         byte[] buffer = this.byteTransform.TransByte(new int[] { 12345678, -9876654 });
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
-
-    #region UInt32 Test
 
     [TestMethod]
     public void BytesToUInt32TransferTest() {
@@ -169,10 +147,6 @@ public class ReverseBytesTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, buffer));
     }
 
-    #endregion
-
-    #region Int64 Test
-
     [TestMethod]
     public void BytesToInt64TransferTest() {
         byte[] data = new byte[16];
@@ -197,10 +171,6 @@ public class ReverseBytesTransformTest {
         byte[] buffer = this.byteTransform.TransByte(new long[] { 12345678911234L, -987665434123245L });
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
-
-    #region UInt64 Test
 
     [TestMethod]
     public void BytesToUInt64TransferTest() {
@@ -228,10 +198,6 @@ public class ReverseBytesTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, buffer));
     }
 
-    #endregion
-
-    #region Float Test
-
     [TestMethod]
     public void BytesToFloatTransferTest() {
         byte[] data = new byte[8];
@@ -256,10 +222,6 @@ public class ReverseBytesTransformTest {
         byte[] buffer = this.byteTransform.TransByte(new float[] { 123.456f, -0.001234f });
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
-
-    #region Double Test
 
     [TestMethod]
     public void BytesToDoubleTransferTest() {
@@ -286,10 +248,6 @@ public class ReverseBytesTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, buffer));
     }
 
-    #endregion
-
-    #region String Test
-
     [TestMethod]
     public void BytesToStringTransferTest() {
         byte[] data = Encoding.ASCII.GetBytes("ABCDEFG5");
@@ -306,6 +264,4 @@ public class ReverseBytesTransformTest {
         byte[] buffer = this.byteTransform.TransByte("ABCDEFG5", Encoding.ASCII);
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
 }

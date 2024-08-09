@@ -1,16 +1,15 @@
-﻿using System.Text;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Net;
-using HslCommunication.Core.Net;
+using System.Text;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.SoftUpdateNet;
 
 /// <summary>
 /// 用于服务器支持软件全自动更新升级的类
 /// </summary>
 public sealed class NetSoftUpdateServer : NetworkServerBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个对象
     /// </summary>
@@ -19,14 +18,8 @@ public sealed class NetSoftUpdateServer : NetworkServerBase {
         this.updateExeFileName = updateExeFileName;
     }
 
-    #endregion
-
-    #region Private Member
-
     private string m_FilePath = @"C:\HslCommunication";
     private string updateExeFileName; // 软件更新的声明
-
-    #endregion
 
     /// <summary>
     /// 系统升级时客户端所在的目录，默认为C:\HslCommunication
@@ -146,8 +139,6 @@ public sealed class NetSoftUpdateServer : NetworkServerBase {
     }
 
 
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -155,6 +146,4 @@ public sealed class NetSoftUpdateServer : NetworkServerBase {
     public override string ToString() {
         return "NetSoftUpdateServer";
     }
-
-    #endregion
 }

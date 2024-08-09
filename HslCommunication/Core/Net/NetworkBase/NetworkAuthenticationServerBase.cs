@@ -1,8 +1,9 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Types;
 
-
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// 带登录认证的服务器类
@@ -39,8 +40,6 @@ public class NetworkAuthenticationServerBase : NetworkServerBase, IDisposable {
 
         return OperateResult.CreateSuccessResult();
     }
-
-    #region Account Certification
 
     /// <summary>
     /// 获取或设置是否对客户端启动账号认证
@@ -103,10 +102,6 @@ public class NetworkAuthenticationServerBase : NetworkServerBase, IDisposable {
         return ret;
     }
 
-    #endregion
-
-    #region IDisposable Support
-
     private bool disposedValue = false; // 要检测冗余调用
 
     /// <summary>
@@ -146,6 +141,4 @@ public class NetworkAuthenticationServerBase : NetworkServerBase, IDisposable {
         // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
         // GC.SuppressFinalize(this);
     }
-
-    #endregion
 }

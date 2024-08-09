@@ -1,10 +1,12 @@
-﻿using System.Text;
-using HslCommunication.LogNet;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Net;
-using HslCommunication.Core.IMessage;
+using System.Text;
 using HslCommunication.BasicFramework;
-
+using HslCommunication.Core.IMessage;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Types;
+using HslCommunication.Enthernet.SimplifyNet;
+using HslCommunication.LogNet.Core;
 #if !NET35
 #endif
 
@@ -17,7 +19,7 @@ using HslCommunication.BasicFramework;
  *
  *************************************************************************************/
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// 本系统所有网络类的基类，该类为抽象类，无法进行实例化
@@ -26,8 +28,6 @@ namespace HslCommunication.Core.Net;
 /// network base class, support basic operation with socket
 /// </remarks>
 public abstract class NetworkBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个NetworkBase对象
     /// </summary>
@@ -37,10 +37,6 @@ public abstract class NetworkBase {
     public NetworkBase() {
         this.Token = Guid.Empty;
     }
-
-    #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// 组件的日志工具，支持日志记录
@@ -61,7 +57,7 @@ public abstract class NetworkBase {
     /// 适用于Hsl协议相关的网络通信类，不适用于设备交互类。
     /// </remarks>
     /// <example>
-    /// 此处以 <see cref="Enthernet.NetSimplifyServer"/> 服务器类及 <see cref="Enthernet.NetSimplifyClient"/> 客户端类的令牌设置举例
+    /// 此处以 <see cref="NetSimplifyServer"/> 服务器类及 <see cref="NetSimplifyClient"/> 客户端类的令牌设置举例
     /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Core\NetworkBase.cs" region="TokenClientExample" title="Client示例" />
     /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Core\NetworkBase.cs" region="TokenServerExample" title="Server示例" />
     /// </example>
@@ -72,18 +68,10 @@ public abstract class NetworkBase {
     /// </summary>
     public bool UseSynchronousNet { get; set; } = false;
 
-    #endregion
-
-    #region Potect Member
-
     /// <summary>
     /// 通讯类的核心套接字
     /// </summary>
     protected Socket CoreSocket = null;
-
-    #endregion
-
-    #region Protect Method
 
     /// <summary>
     /// 检查网络套接字是否操作超时，需要对套接字进行封装
@@ -92,7 +80,7 @@ public abstract class NetworkBase {
     protected void ThreadPoolCheckTimeOut(object obj) {
         if (obj is HslTimeOut timeout) {
             while (!timeout.IsSuccessful) {
-                Thread.Sleep(100);
+                System.Threading.Thread.Sleep(100);
                 if ((DateTime.Now - timeout.StartTime).TotalMilliseconds > timeout.DelayTime) {
                     // 连接超时或是验证超时
                     if (!timeout.IsSuccessful) {
@@ -107,16 +95,12 @@ public abstract class NetworkBase {
         }
     }
 
-    #endregion
-
     /*****************************************************************************
      *
      *    说明：
      *    下面的三个模块代码指示了如何接收数据，如何发送数据，如何连接网络
      *
      ********************************************************************************/
-
-    #region Reveive Content
 
     /// <summary>
     /// 接收固定长度的字节数组
@@ -312,10 +296,6 @@ public abstract class NetworkBase {
 
 #endif
 
-    #endregion
-
-    #region Receive Message
-
     /// <summary>
     /// 接收一条完整的 <seealso cref="INetMessage"/> 数据内容 ->
     /// Receive a complete <seealso cref="INetMessage"/> data content
@@ -356,10 +336,6 @@ public abstract class NetworkBase {
         netMessage.ContentBytes = contentResult.Content;
         return OperateResult.CreateSuccessResult(SoftBasic.SpliceTwoByteArray(headResult.Content, contentResult.Content));
     }
-
-    #endregion
-
-    #region Send Content
 
     /// <summary>
     /// 发送消息给套接字，直到完成的时候返回
@@ -515,10 +491,6 @@ public abstract class NetworkBase {
     }
 
 #endif
-
-    #endregion
-
-    #region Socket Connect
 
     /// <summary>
     /// 创建一个新的socket对象并连接到远程的地址，默认超时时间为10秒钟
@@ -702,8 +674,6 @@ public abstract class NetworkBase {
 
 #endif
 
-    #endregion
-
 
     /*****************************************************************************
      *
@@ -711,8 +681,6 @@ public abstract class NetworkBase {
      *    下面的两个模块代码指示了如何读写文件
      *
      ********************************************************************************/
-
-    #region Read Stream
 
     /// <summary>
     /// 读取流中的数据到缓存区
@@ -767,10 +735,6 @@ public abstract class NetworkBase {
         }
     }
 
-    #endregion
-
-    #region Write Stream
-
     /// <summary>
     /// 将缓冲区的数据写入到流里面去
     /// </summary>
@@ -822,10 +786,6 @@ public abstract class NetworkBase {
         }
     }
 
-    #endregion
-
-    #region Token Check
-
     /// <summary>
     /// 检查当前的头子节信息的令牌是否是正确的
     /// </summary>
@@ -834,10 +794,6 @@ public abstract class NetworkBase {
     protected bool CheckRemoteToken(byte[] headBytes) {
         return SoftBasic.IsByteTokenEquel(headBytes, this.Token);
     }
-
-    #endregion
-
-    #region Special Bytes Send
 
     /// <summary>
     /// [自校验] 发送字节数据并确认对方接收完成数据，如果结果异常，则结束通讯
@@ -1064,10 +1020,6 @@ public abstract class NetworkBase {
         return this.Send(socket, BitConverter.GetBytes(value));
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -1075,6 +1027,4 @@ public abstract class NetworkBase {
     public override string ToString() {
         return "NetworkBase";
     }
-
-    #endregion
 }

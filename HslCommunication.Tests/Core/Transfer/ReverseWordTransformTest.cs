@@ -7,8 +7,6 @@ namespace HslCommunication.Tests.Core.Transfer;
 
 [TestClass]
 public class ReverseWordTransformTest {
-    #region Constructor
-
     public ReverseWordTransformTest() {
         this.byteTransform = new ReverseWordTransform();
     }
@@ -132,10 +130,6 @@ public class ReverseWordTransformTest {
         return this.ReverseBytesByWord(buffer, 0, buffer.Length, dataFormat);
     }
 
-    #endregion
-
-    #region ReverseByteByWordTest
-
     [TestMethod]
     public void ReverseBytesByWordTest1() {
         byte[] data = new byte[4] { 0x46, 0x38, 0xA0, 0xB0 };
@@ -177,10 +171,6 @@ public class ReverseWordTransformTest {
             "Data:" + SoftBasic.ByteToHexString(buffer) + " Actual:" + SoftBasic.ByteToHexString(new byte[] { 0x08, 0xC1, 0x3D, 0xFF, 0xB0, 0xA0, 0x38, 0x46 }));
     }
 
-    #endregion
-
-    #region Bool Test
-
     [TestMethod]
     public void BoolTransferTest() {
         byte[] data = new byte[2] { 0x01, 0x00 };
@@ -213,10 +203,6 @@ public class ReverseWordTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, value));
     }
 
-    #endregion
-
-    #region Int16 Test
-
     [TestMethod]
     public void BytesToInt16TransferTest() {
         byte[] data = new byte[4];
@@ -240,10 +226,6 @@ public class ReverseWordTransformTest {
         byte[] buffer = this.byteTransform.TransByte(new short[] { 1234, -9876 });
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
-
-    #region UInt16 Test
 
     [TestMethod]
     public void BytesToUInt16TransferTest() {
@@ -269,10 +251,6 @@ public class ReverseWordTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, buffer));
     }
 
-    #endregion
-
-    #region Int32 Test
-
     [TestMethod]
     public void BytesToInt32TransferTest() {
         byte[] data = new byte[8];
@@ -293,10 +271,6 @@ public class ReverseWordTransformTest {
         byte[] buffer = this.byteTransform.TransByte(new int[] { 12345678, -9876654 });
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
-
-    #region UInt32 Test
 
     [TestMethod]
     public void BytesToUInt32TransferTest() {
@@ -320,10 +294,6 @@ public class ReverseWordTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, buffer));
     }
 
-    #endregion
-
-    #region Int64 Test
-
     [TestMethod]
     public void BytesToInt64TransferTest() {
         byte[] data = new byte[16];
@@ -344,10 +314,6 @@ public class ReverseWordTransformTest {
         byte[] buffer = this.byteTransform.TransByte(new long[] { 12345678911234L, -987665434123245L });
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
-
-    #region UInt64 Test
 
     [TestMethod]
     public void BytesToUInt64TransferTest() {
@@ -371,10 +337,6 @@ public class ReverseWordTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, buffer));
     }
 
-    #endregion
-
-    #region Float Test
-
     [TestMethod]
     public void BytesToFloatTransferTest() {
         byte[] data = new byte[8];
@@ -395,10 +357,6 @@ public class ReverseWordTransformTest {
         byte[] buffer = this.byteTransform.TransByte(new float[] { 123.456f, -0.001234f });
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
-
-    #region Double Test
 
     [TestMethod]
     public void BytesToDoubleTransferTest() {
@@ -421,10 +379,6 @@ public class ReverseWordTransformTest {
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, buffer));
     }
 
-    #endregion
-
-    #region String Test
-
     [TestMethod]
     public void BytesToStringTransferTest() {
         byte[] data = Encoding.ASCII.GetBytes("ABCDEFG5");
@@ -441,6 +395,4 @@ public class ReverseWordTransformTest {
         byte[] buffer = this.byteTransform.TransByte("ABCDEFG5", Encoding.ASCII);
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(SoftBasic.IsTwoBytesEquel(data, buffer));
     }
-
-    #endregion
 }

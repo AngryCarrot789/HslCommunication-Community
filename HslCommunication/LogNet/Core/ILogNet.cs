@@ -1,4 +1,4 @@
-﻿namespace HslCommunication.LogNet;
+﻿namespace HslCommunication.LogNet.Core;
 
 /// <summary>
 /// 一个通用的日志接口

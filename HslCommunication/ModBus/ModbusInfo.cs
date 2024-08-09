@@ -1,4 +1,5 @@
 ﻿using HslCommunication.Core.Address;
+using HslCommunication.Core.Types;
 
 namespace HslCommunication.ModBus;
 
@@ -6,8 +7,6 @@ namespace HslCommunication.ModBus;
 /// Modbus协议相关的一些信息
 /// </summary>
 public class ModbusInfo {
-    #region Function Declaration
-
     /// <summary>
     /// 读取线圈
     /// </summary>
@@ -48,10 +47,6 @@ public class ModbusInfo {
     /// </summary>
     public const byte WriteRegister = 0x10;
 
-    #endregion
-
-    #region ErrCode Declaration
-
     /// <summary>
     /// 不支持该功能码
     /// </summary>
@@ -71,10 +66,6 @@ public class ModbusInfo {
     /// 读写异常
     /// </summary>
     public const byte FunctionCodeReadWriteException = 0x04;
-
-    #endregion
-
-    #region Static Helper Method
 
     /// <summary>
     /// 将modbus指令打包成Modbus-Tcp指令
@@ -187,6 +178,4 @@ public class ModbusInfo {
             default: return StringResources.Language.UnknownError;
         }
     }
-
-    #endregion
 }

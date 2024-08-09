@@ -2,8 +2,6 @@
 
 namespace HslCommunication.Tests.Documentation.Samples.Modbus;
 
-#region ModbusTcpServerExample
-
 public class ModbusTcpServerExample {
     public ModbusTcpServerExample() {
         // 简单的创建一个modbus的服务器
@@ -96,5 +94,3 @@ public class ModbusTcpServerExample {
         // 此处仅仅用于显示，提取指令信息可以实现更加复杂的功能。
     }
 }
-
-#endregion

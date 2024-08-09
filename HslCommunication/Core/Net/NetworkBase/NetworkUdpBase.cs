@@ -1,7 +1,9 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// 基础的Udp的通信对象

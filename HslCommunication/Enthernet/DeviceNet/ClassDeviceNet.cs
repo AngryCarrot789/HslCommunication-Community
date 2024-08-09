@@ -1,17 +1,15 @@
-﻿using HslCommunication.Core;
-using System.Text;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using HslCommunication.Core.Net;
+using System.Text;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Thread;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.DeviceNet;
 
 /// <summary>
 /// 通用设备的基础网络信息
 /// </summary>
 public class DeviceNet : NetworkServerBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个通用的设备类
     /// </summary>
@@ -19,10 +17,6 @@ public class DeviceNet : NetworkServerBase {
         this.list = new List<DeviceState>();
         this.lock_list = new SimpleHybirdLock();
     }
-
-    #endregion
-
-    #region Connection Management
 
     private List<DeviceState> list; // 所有客户端的连接对象
     private SimpleHybirdLock lock_list; // 列表锁
@@ -43,10 +37,6 @@ public class DeviceNet : NetworkServerBase {
 
         this.ClientOffline?.Invoke(device);
     }
-
-    #endregion
-
-    #region Event Handle
 
     /// <summary>
     /// 当客户端上线的时候，触发此事件
@@ -69,13 +59,7 @@ public class DeviceNet : NetworkServerBase {
     /// </summary>
     public event Action<DeviceState, byte[]> AcceptBytes;
 
-    #endregion
-
-    #region Private Member
-
     private readonly byte endByte = 0x0D; // 结束的指令
-
-    #endregion
 
     /// <summary>
     /// 当接收到了新的请求的时候执行的操作

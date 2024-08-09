@@ -1,14 +1,12 @@
-﻿using HslCommunication.BasicFramework;
-using System.Text;
+﻿using System.Text;
+using HslCommunication.BasicFramework;
 
-namespace HslCommunication.Core;
+namespace HslCommunication.Core.Transfer;
 
 /// <summary>
 /// 数据转换类的基础，提供了一些基础的方法实现.
 /// </summary>
 public class ByteTransformBase : IByteTransform {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -23,10 +21,6 @@ public class ByteTransformBase : IByteTransform {
     public ByteTransformBase(DataFormat dataFormat) {
         this.DataFormat = dataFormat;
     }
-
-    #endregion
-
-    #region Get Value From Bytes
 
     /// <summary>
     /// 从缓存中提取出bool结果
@@ -303,10 +297,6 @@ public class ByteTransformBase : IByteTransform {
         return encoding.GetString(tmp);
     }
 
-    #endregion
-
-    #region Get Bytes From Value
-
     /// <summary>
     /// bool变量转化缓存数据
     /// </summary>
@@ -566,10 +556,6 @@ public class ByteTransformBase : IByteTransform {
         return encoding.GetBytes(value);
     }
 
-    #endregion
-
-    #region DataFormat Support
-
     /// <summary>
     /// 反转双字节的数据信息
     /// </summary>
@@ -699,14 +685,8 @@ public class ByteTransformBase : IByteTransform {
         return buffer;
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 获取或设置数据解析的格式，默认DCBA，也即是无修改，可选ABCD,BADC，CDAB，DCBA格式，对于Modbus协议来说，默认ABCD
     /// </summary>
     public DataFormat DataFormat { get; set; }
-
-    #endregion
 }

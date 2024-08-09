@@ -1,4 +1,6 @@
-﻿namespace HslCommunication.ModBus;
+﻿using HslCommunication.Core.Types;
+
+namespace HslCommunication.ModBus.ModbusAscii;
 
 /// <summary>
 /// Modbus-Ascii通讯协议的类库，基于rtu类库完善过来
@@ -46,9 +48,7 @@
 /// 写入数据的代码如下：
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Modbus\ModbusAsciiExample.cs" region="WriteExample" title="write示例" />
 /// </example>
-public class ModbusAscii : ModbusRtu {
-    #region Constructor
-
+public class ModbusAscii : ModbusRtu.ModbusRtu {
     /// <summary>
     /// 实例化一个Modbus-ascii协议的客户端对象
     /// </summary>
@@ -61,10 +61,6 @@ public class ModbusAscii : ModbusRtu {
     /// <param name="station">站号</param>
     public ModbusAscii(byte station = 0x01) : base(station) {
     }
-
-    #endregion
-
-    #region Modbus Rtu Override
 
     /// <summary>
     /// 检查当前的Modbus-Ascii响应是否是正确的
@@ -93,10 +89,6 @@ public class ModbusAscii : ModbusRtu {
         return OperateResult.CreateSuccessResult(modbus_core.Content);
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -104,6 +96,4 @@ public class ModbusAscii : ModbusRtu {
     public override string ToString() {
         return $"ModbusAscii[{this.PortName}:{this.BaudRate}]";
     }
-
-    #endregion
 }

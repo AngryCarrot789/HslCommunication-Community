@@ -1,11 +1,12 @@
-﻿using HslCommunication.BasicFramework;
-using HslCommunication.Core;
-using HslCommunication.Core.IMessage;
-using HslCommunication.Core.Net;
+﻿using System.Net.Sockets;
+using HslCommunication.BasicFramework;
 using HslCommunication.Core.Address;
-using System.Net.Sockets;
+using HslCommunication.Core.IMessage;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.ModBus;
+namespace HslCommunication.ModBus.ModbusTcp;
 
 /// <summary>
 /// Modbus-Tcp协议的客户端通讯类，方便的和服务器进行数据交互
@@ -50,8 +51,6 @@ namespace HslCommunication.ModBus;
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Modbus\Modbus.cs" region="Example1" title="Modbus示例" />
 /// </example>
 public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTransform> {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个MOdbus-Tcp协议的客户端对象
     /// </summary>
@@ -76,17 +75,9 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
         this.station = station;
     }
 
-    #endregion
-
-    #region Private Member
-
     private byte station = 0x01; // 本客户端的站号
     private SoftIncrementCount softIncrementCount; // 自增消息的对象
     private bool isAddressStartWithZero = true; // 线圈值的地址值是否从零开始
-
-    #endregion
-
-    #region Override Method
 
     /// <summary>
     /// 重写网络连接时的初始化，如果配置了账户信息，就强制启动登录操作
@@ -100,10 +91,6 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
 
         return base.InitializationOnConnect(socket);
     }
-
-    #endregion
-
-    #region Public Member
 
     /// <summary>
     /// 获取或设置起始的地址是否从0开始，默认为True
@@ -155,10 +142,6 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
     public SoftIncrementCount MessageId {
         get { return this.softIncrementCount; }
     }
-
-    #endregion
-
-    #region Build Command
 
     /// <summary>
     /// 生成一个读取线圈的指令头
@@ -335,10 +318,6 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
         return OperateResult.CreateSuccessResult(buffer);
     }
 
-    #endregion
-
-    #region Core Interative
-
     /// <summary>
     /// 检查当前的Modbus-Tcp响应是否是正确的
     /// </summary>
@@ -357,10 +336,6 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
 
         return resultBytes;
     }
-
-    #endregion
-
-    #region Read Support
 
     /// <summary>
     /// 读取服务器的数据，需要指定不同的功能码
@@ -520,10 +495,6 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
         return OperateResult.CreateSuccessResult(lists.ToArray());
     }
 
-    #endregion
-
-    #region Write One Register
-
     /// <summary>
     /// 写一个寄存器数据
     /// </summary>
@@ -561,10 +532,6 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
         return this.WriteOneRegister(address, buffer[1], buffer[0]);
     }
 
-    #endregion
-
-    #region Write Base
-
     /// <summary>
     /// 将数据写入到Modbus的寄存器上去，需要指定起始地址和数据内容
     /// </summary>
@@ -585,10 +552,6 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
 
         return this.CheckModbusTcpResponse(command.Content);
     }
-
-    #endregion
-
-    #region Write Coil
 
     /// <summary>
     /// 写一个线圈信息，指定是否通断
@@ -618,10 +581,6 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
         return this.CheckModbusTcpResponse(command.Content);
     }
 
-    #endregion
-
-    #region Bool Support
-
     /// <summary>
     /// 批量读取线圈或是离散的数据信息，需要指定地址和长度，具体的结果取决于实现
     /// </summary>
@@ -650,10 +609,6 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
         return this.WriteCoil(address, values);
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -661,6 +616,4 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
     public override string ToString() {
         return $"ModbusTcpNet[{this.IpAddress}:{this.Port}]";
     }
-
-    #endregion
 }

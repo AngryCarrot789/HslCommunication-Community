@@ -1,4 +1,6 @@
-﻿using HslCommunication.ModBus;
+﻿using HslCommunication.Core.Thread;
+using HslCommunication.ModBus;
+using HslCommunication.ModBus.ModbusTcp;
 
 namespace HslCommunication.Algorithms.ConnectPool;
 
@@ -17,23 +19,17 @@ namespace HslCommunication.Algorithms.ConnectPool;
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Algorithms\ConnectPool.cs" region="ConnectPoolExample" title="ConnectPool示例" />
 /// </example>
 public class ConnectPool<TConnector> where TConnector : IConnector {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个连接池对象，需要指定如果创建新实例的方法
     /// </summary>
     /// <param name="createConnector">创建连接对象的委托</param>
     public ConnectPool(Func<TConnector> createConnector) {
         this.CreateConnector = createConnector;
-        this.hybirdLock = new Core.SimpleHybirdLock();
+        this.hybirdLock = new SimpleHybirdLock();
         this.connectors = new List<TConnector>();
 
-        this.timerCheck = new System.Threading.Timer(this.TimerCheckBackground, null, 10000, 30000);
+        this.timerCheck = new Timer(this.TimerCheckBackground, null, 10000, 30000);
     }
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 获取可用的对象
@@ -41,7 +37,7 @@ public class ConnectPool<TConnector> where TConnector : IConnector {
     /// <returns>可用的连接对象</returns>
     public TConnector GetAvailableConnector() {
         while (!this.canGetConnector) {
-            System.Threading.Thread.Sleep(100);
+            Thread.Sleep(100);
         }
 
         TConnector result = default(TConnector);
@@ -91,10 +87,6 @@ public class ConnectPool<TConnector> where TConnector : IConnector {
         this.hybirdLock.Leave();
     }
 
-    #endregion
-
-    #region Public Properties
-
     /// <summary>
     /// 获取或设置最大的连接数
     /// </summary>
@@ -120,10 +112,6 @@ public class ConnectPool<TConnector> where TConnector : IConnector {
         get { return this.usedConnector; }
     }
 
-    #endregion
-
-    #region Clear Timer
-
     private void TimerCheckBackground(object obj) {
         // 清理长久不用的连接对象
         this.hybirdLock.Enter();
@@ -143,18 +131,12 @@ public class ConnectPool<TConnector> where TConnector : IConnector {
         this.hybirdLock.Leave();
     }
 
-    #endregion
-
-    #region Private Member
-
     private Func<TConnector> CreateConnector = null; // 创建新的连接对象的委托
     private int maxConnector = 10; // 最大的连接数
     private int usedConnector = 0; // 已经使用的连接
     private int expireTime = 30; // 连接的过期时间，单位秒
     private bool canGetConnector = true; // 是否可以获取连接
-    private System.Threading.Timer timerCheck = null; // 对象列表检查的时间间隔
-    private Core.SimpleHybirdLock hybirdLock = null; // 列表操作的锁
+    private Timer timerCheck = null; // 对象列表检查的时间间隔
+    private SimpleHybirdLock hybirdLock = null; // 列表操作的锁
     private List<TConnector> connectors = null; // 所有连接的列表
-
-    #endregion
 }

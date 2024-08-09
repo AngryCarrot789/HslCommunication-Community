@@ -1,4 +1,6 @@
-﻿namespace HslCommunication.Core.Net;
+﻿using HslCommunication.Core.Types;
+
+namespace HslCommunication.Core.Net;
 
 /// <summary>
 /// 所有的机器人的统一读写标准

@@ -2,15 +2,16 @@
 using System.Net.Sockets;
 using System.Text;
 using HslCommunication.Core.IMessage;
+using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Thread;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.NetworkBase;
 
 /// <summary>
 /// 异形客户端的基类，提供了基础的异形操作
 /// </summary>
 public class NetworkAlienClient : NetworkServerBase {
-    #region Constructor
-
     /// <summary>
     /// 默认的无参构造方法
     /// </summary>
@@ -22,10 +23,6 @@ public class NetworkAlienClient : NetworkServerBase {
         this.trustLock = new SimpleHybirdLock();
         this.ThreadCheckStart();
     }
-
-    #endregion
-
-    #region NetworkServerBase Override
 
     /// <summary>
     /// 当接收到了新的请求的时候执行的操作
@@ -112,18 +109,10 @@ public class NetworkAlienClient : NetworkServerBase {
         this.OnClientConnected?.Invoke(this, session);
     }
 
-    #endregion
-
-    #region Client Event
-
     /// <summary>
     /// 当有服务器连接上来的时候触发
     /// </summary>
     public event Action<NetworkAlienClient, AlienSession> OnClientConnected = null;
-
-    #endregion
-
-    #region Private Method
 
     /// <summary>
     /// 获取返回的命令信息
@@ -210,10 +199,6 @@ public class NetworkAlienClient : NetworkServerBase {
         return result;
     }
 
-    #endregion
-
-    #region Public Method
-
     /// <summary>
     /// 设置密码，长度为6
     /// </summary>
@@ -249,21 +234,17 @@ public class NetworkAlienClient : NetworkServerBase {
         this.alreadyLock.Leave();
     }
 
-    #endregion
-
-    #region Thread Check Client
-
     private void ThreadCheckStart() {
-        this.threadCheck = new Thread(new ThreadStart(this.ThreadCheckAlienClient));
+        this.threadCheck = new System.Threading.Thread(new ThreadStart(this.ThreadCheckAlienClient));
         this.threadCheck.IsBackground = true;
         this.threadCheck.Priority = ThreadPriority.AboveNormal;
         this.threadCheck.Start();
     }
 
     private void ThreadCheckAlienClient() {
-        Thread.Sleep(1000);
+        System.Threading.Thread.Sleep(1000);
         while (true) {
-            Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(1000);
 
             this.alreadyLock.Enter();
 
@@ -278,20 +259,12 @@ public class NetworkAlienClient : NetworkServerBase {
         }
     }
 
-    #endregion
-
-    #region Private Member
-
     private byte[] password; // 密码设置
     private List<AlienSession> alreadyOnline; // 所有在线信息
     private SimpleHybirdLock alreadyLock; // 列表的同步锁
     private List<string> trustOnline; // 禁止登录的客户端信息
     private SimpleHybirdLock trustLock; // 禁止登录的锁
-    private Thread threadCheck; // 后台检测在线情况的
-
-    #endregion
-
-    #region Object Override
+    private System.Threading.Thread threadCheck; // 后台检测在线情况的
 
     /// <summary>
     /// 获取本对象的字符串表示形式
@@ -300,6 +273,4 @@ public class NetworkAlienClient : NetworkServerBase {
     public override string ToString() {
         return "NetworkAlienBase";
     }
-
-    #endregion
 }

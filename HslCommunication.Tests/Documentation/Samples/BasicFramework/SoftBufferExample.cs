@@ -2,8 +2,6 @@
 
 namespace HslCommunication.Tests.Documentation.Samples.BasicFramework;
 
-#region SoftBufferExample1
-
 public class SoftBufferExample {
     private SoftBuffer softBuffer = new SoftBuffer(1000); // 实例化个1000个byte长度的缓冲区
     private Random random = new Random();
@@ -74,5 +72,3 @@ public class SoftBufferExample {
         UserData data = this.softBuffer.GetCustomer<UserData>(100);
     }
 }
-
-#endregion

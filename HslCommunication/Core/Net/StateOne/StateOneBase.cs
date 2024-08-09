@@ -1,4 +1,4 @@
-﻿namespace HslCommunication.Core.Net;
+﻿namespace HslCommunication.Core.Net.StateOne;
 
 /// <summary>
 /// 异步消息的对象

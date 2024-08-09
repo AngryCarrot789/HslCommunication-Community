@@ -1,7 +1,10 @@
-﻿using System.Net.Sockets;
-using System.Net;
+﻿using System.Net;
+using System.Net.Sockets;
+using HslCommunication.Core.Net;
+using HslCommunication.Core.Net.NetworkBase;
+using HslCommunication.Core.Types;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.FileNet;
 
 /// <summary>
 /// 文件管理类服务器，负责服务器所有分类文件的管理，特点是不支持文件附加数据，但是支持直接访问文件名
@@ -13,18 +16,12 @@ namespace HslCommunication.Enthernet;
 /// 以下的示例来自Demo项目，创建了一个简单的服务器对象。
 /// <code lang="cs" source="TestProject\FileNetServer\FormFileServer.cs" region="Advanced Server" title="AdvancedFileServer示例" />
 /// </example>
-public class AdvancedFileServer : Core.Net.NetworkFileServerBase {
-    #region Constructor
-
+public class AdvancedFileServer : NetworkFileServerBase {
     /// <summary>
     /// 实例化一个对象
     /// </summary>
     public AdvancedFileServer() {
     }
-
-    #endregion
-
-    #region Override Method
 
     /// <summary>
     /// 当接收到了新的请求的时候执行的操作
@@ -243,10 +240,6 @@ public class AdvancedFileServer : Core.Net.NetworkFileServerBase {
         return sendString;
     }
 
-    #endregion
-
-    #region Public Method
-
     /// <summary>
     /// 用于接收上传文件时的临时文件夹，临时文件使用结束后会被删除
     /// </summary>
@@ -255,15 +248,7 @@ public class AdvancedFileServer : Core.Net.NetworkFileServerBase {
         set { this.m_FilesDirectoryPathTemp = this.PreprocessFolderName(value); }
     }
 
-    #endregion
-
-    #region Private Member
-
     private string m_FilesDirectoryPathTemp = null;
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 获取本对象的字符串标识形式
@@ -272,6 +257,4 @@ public class AdvancedFileServer : Core.Net.NetworkFileServerBase {
     public override string ToString() {
         return "AdvancedFileServer";
     }
-
-    #endregion
 }

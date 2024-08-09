@@ -1,4 +1,6 @@
-﻿namespace HslCommunication.LogNet;
+﻿using HslCommunication.LogNet.Core;
+
+namespace HslCommunication.LogNet.Logs;
 
 /// <summary>
 /// 根据文件的大小来存储日志信息
@@ -7,8 +9,6 @@
 /// 此日志的实例是根据文件的大小储存，例如设置了2M，每隔2M，系统将生成一个新的日志文件。
 /// </remarks>
 public class LogNetFileSize : LogNetBase, ILogNet {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个根据文件大小生成新文件的
     /// </summary>
@@ -20,10 +20,6 @@ public class LogNetFileSize : LogNetBase, ILogNet {
         this.LogSaveMode = LogNetManagment.LogSaveModeByFileSize;
         this.m_filePath = this.CheckPathEndWithSprit(this.m_filePath);
     }
-
-    #endregion
-
-    #region LogNetBase Override
 
     /// <summary>
     /// 获取需要保存的日志文件
@@ -51,10 +47,6 @@ public class LogNetFileSize : LogNetBase, ILogNet {
         return this.m_fileName;
     }
 
-    #endregion
-
-    #region Public Method
-
     /// <summary>
     /// 返回所有的日志文件
     /// </summary>
@@ -67,10 +59,6 @@ public class LogNetFileSize : LogNetBase, ILogNet {
             return new string[] { };
         }
     }
-
-    #endregion
-
-    #region Private Method
 
     /// <summary>
     /// 获取之前保存的日志文件
@@ -98,18 +86,10 @@ public class LogNetFileSize : LogNetBase, ILogNet {
         return this.m_filePath + LogNetManagment.LogFileHeadString + DateTime.Now.ToString("yyyyMMddHHmmss") + ".txt";
     }
 
-    #endregion
-
-    #region Private Member
-
     private string m_fileName = string.Empty; // 当前正在存储的文件名
     private string m_filePath = string.Empty; // 存储文件的路径
     private int m_fileMaxSize = 2 * 1024 * 1024; //2M
     private int m_CurrentFileSize = 0;
-
-    #endregion
-
-    #region Object Override
 
     /// <summary>
     /// 返回表示当前对象的字符串
@@ -118,6 +98,4 @@ public class LogNetFileSize : LogNetBase, ILogNet {
     public override string ToString() {
         return $"LogNetFileSize[{this.m_fileMaxSize}]";
     }
-
-    #endregion
 }

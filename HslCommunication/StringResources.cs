@@ -13,8 +13,6 @@
 /// System string resource and multi-language management Center
 /// </summary>
 public static class StringResources {
-    #region Constractor
-
     static StringResources() {
         if (System.Globalization.CultureInfo.CurrentCulture.ToString().StartsWith("zh")) {
             SetLanguageChinese();
@@ -24,14 +22,12 @@ public static class StringResources {
         }
     }
 
-    #endregion
-
 
     /// <summary>
     /// 获取或设置系统的语言选项 ->
     /// Gets or sets the language options for the system
     /// </summary>
-    public static Language.DefaultLanguage Language = new Language.DefaultLanguage();
+    public static Language.DefaultLanguage Language = new Language.English();
 
     /// <summary>
     /// 将语言设置为中文 ->

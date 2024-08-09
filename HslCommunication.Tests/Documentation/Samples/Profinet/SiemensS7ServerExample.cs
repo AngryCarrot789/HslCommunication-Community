@@ -3,8 +3,6 @@
 namespace HslCommunication.Tests.Documentation.Samples.Profinet;
 
 public class SiemensS7ServerExample {
-    #region UseExample1
-
     private SiemensS7Server s7NetServer;
 
     public void S7Start() {
@@ -17,10 +15,6 @@ public class SiemensS7ServerExample {
         }
     }
 
-    #endregion
-
-    #region UseExample2
-
     public void S7Start2() {
         try {
             this.s7NetServer = new SiemensS7Server();
@@ -32,10 +26,6 @@ public class SiemensS7ServerExample {
         }
     }
 
-    #endregion
-
-
-    #region UseExample3
 
     public void S7Start3() {
         try {
@@ -49,10 +39,6 @@ public class SiemensS7ServerExample {
         }
     }
 
-    #endregion
-
-
-    #region UseExample4
 
     public void S7Start4() {
         try {
@@ -70,10 +56,6 @@ public class SiemensS7ServerExample {
     private void S7NetServer_OnDataReceived(object sender, byte[] data) {
         Console.WriteLine(HslCommunication.BasicFramework.SoftBasic.ByteToHexString(data, ' ')); // 打印客户端发送的数据
     }
-
-    #endregion
-
-    #region ReadWriteExample
 
     private void ReadExample() {
         // 此处以M100寄存器作为示例
@@ -125,10 +107,6 @@ public class SiemensS7ServerExample {
         this.s7NetServer.Write("M100", new ulong[] { 1231231242312, 34312312323214, 9731283862312631823 }); // 写入M100  ulong值
     }
 
-    #endregion
-
-    #region BytesReadWrite
-
     public void ReadExample2() {
         OperateResult<byte[]> read = this.s7NetServer.Read("M100", 8);
         if (read.IsSuccess) {
@@ -163,6 +141,4 @@ public class SiemensS7ServerExample {
         // s7NetServer.Write( "M100", (short)2100 );
         // s7NetServer.Write( "M100", 12353423 );
     }
-
-    #endregion
 }

@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.StateOne;
 
 /// <summary>
 /// 异形客户端的异步对象

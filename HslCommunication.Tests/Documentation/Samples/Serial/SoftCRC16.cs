@@ -5,8 +5,6 @@ public class SoftCRC16Example {
         // 01 03 00 00 00 02 C4 0B
         // 01 03 04 00 00 00 00 FA 33
 
-        #region Example1
-
         // 进行CRC校验，例如从modbus接收的数据 01 03 00 00 00 02 C4 0B
 
         bool check = HslCommunication.Serial.SoftCRC16.CheckCRC16(
@@ -30,10 +28,6 @@ public class SoftCRC16Example {
             Console.WriteLine("check failed!"); // 此处failed
         }
 
-        #endregion
-
-        #region Example2
-
         // 计算CRC码，比如我要给"01 03 00 00 00 02"增加crc校验
 
         byte[] buffer = HslCommunication.Serial.SoftCRC16.CRC16(
@@ -44,7 +38,5 @@ public class SoftCRC16Example {
         // 如果需要自己指定多项式码 B8 08
         buffer = HslCommunication.Serial.SoftCRC16.CRC16(
             HslCommunication.BasicFramework.SoftBasic.HexStringToBytes("01 03 00 00 00 02"), 0xB8, 0x08);
-
-        #endregion
     }
 }

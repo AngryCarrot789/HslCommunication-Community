@@ -1,4 +1,7 @@
-﻿namespace HslCommunication.Core;
+﻿using HslCommunication.Core.Reflection;
+using HslCommunication.Core.Types;
+
+namespace HslCommunication.Core.Net;
 
 /// <summary>
 /// 所有的和设备或是交互类统一读写标准
@@ -11,8 +14,6 @@
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Core\IReadWriteNet.cs" region="IReadWriteNetExample" title="IReadWriteNet示例" />
 /// </example>
 public interface IReadWriteNet {
-    #region Read Support
-
     /// <summary>
     /// 批量读取底层的数据信息，需要指定地址和长度，具体的结果取决于实现
     /// </summary>
@@ -163,10 +164,6 @@ public interface IReadWriteNet {
     /// <typeparam name="T">自定义的数据类型对象</typeparam>
     /// <returns>包含是否成功的结果对象</returns>
     OperateResult<T> Read<T>() where T : class, new();
-
-    #endregion
-
-    #region Write Support
 
     /// <summary>
     /// 写入byte数组数据
@@ -338,10 +335,6 @@ public interface IReadWriteNet {
     /// <exception cref="ArgumentNullException"></exception>
     OperateResult Write<T>(T data) where T : class, new();
 
-    #endregion
-
-    #region Bool Support
-
     // Bool类型的读写，不一定所有的设备都实现，比如西门子，就没有实现bool[]的读写，Siemens的fetch/write没有实现bool操作
 
     /// <summary>
@@ -374,6 +367,4 @@ public interface IReadWriteNet {
     /// <param name="value">写入值</param>
     /// <returns>带有成功标识的结果类对象</returns>
     OperateResult Write(string address, bool value);
-
-    #endregion
 }

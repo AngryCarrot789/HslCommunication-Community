@@ -1,15 +1,12 @@
-﻿using HslCommunication.Core.Net;
-using HslCommunication.Core;
+﻿using HslCommunication.Core.Net.StateOne;
+using HslCommunication.Core.Thread;
 
-
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.PushNet;
 
 /// <summary>
 /// 订阅分类的核心组织对象
 /// </summary>
 public class PushGroupClient : IDisposable {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的对象
     /// </summary>
@@ -17,10 +14,6 @@ public class PushGroupClient : IDisposable {
         this.appSessions = new List<AppSession>();
         this.simpleHybird = new SimpleHybirdLock();
     }
-
-    #endregion
-
-    #region Public Method
 
     /// <summary>
     /// 新增一个订阅的会话
@@ -61,7 +54,7 @@ public class PushGroupClient : IDisposable {
     public void PushString(string content, Action<AppSession, string> send) {
         this.simpleHybird.Enter();
 
-        System.Threading.Interlocked.Increment(ref this.pushTimesCount);
+        Interlocked.Increment(ref this.pushTimesCount);
         for (int i = 0; i < this.appSessions.Count; i++) {
             send(this.appSessions[i], content);
         }
@@ -96,17 +89,9 @@ public class PushGroupClient : IDisposable {
         return this.pushTimesCount > 0L;
     }
 
-    #endregion
-
-    #region Private Member
-
     private List<AppSession> appSessions; // 所有的客户端信息
     private SimpleHybirdLock simpleHybird; // 列表的锁
     private long pushTimesCount = 0L; // 推送的次数总和
-
-    #endregion
-
-    #region IDisposable Support
 
     private bool disposedValue = false; // 要检测冗余调用
 
@@ -154,10 +139,6 @@ public class PushGroupClient : IDisposable {
         // GC.SuppressFinalize(this);
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 获取本对象的字符串表示形式
     /// </summary>
@@ -165,6 +146,4 @@ public class PushGroupClient : IDisposable {
     public override string ToString() {
         return "PushGroupClient";
     }
-
-    #endregion
 }

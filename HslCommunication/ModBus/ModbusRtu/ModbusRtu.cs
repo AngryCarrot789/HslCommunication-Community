@@ -1,9 +1,10 @@
 ﻿using HslCommunication.BasicFramework;
-using HslCommunication.Serial;
-using HslCommunication.Core;
 using HslCommunication.Core.Address;
+using HslCommunication.Core.Transfer;
+using HslCommunication.Core.Types;
+using HslCommunication.Serial;
 
-namespace HslCommunication.ModBus;
+namespace HslCommunication.ModBus.ModbusRtu;
 
 /// <summary>
 /// Modbus-Rtu通讯协议的类库，多项式码0xA001
@@ -48,8 +49,6 @@ namespace HslCommunication.ModBus;
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Modbus\Modbus.cs" region="Example2" title="Modbus示例" />
 /// </example>
 public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个Modbus-Rtu协议的客户端对象
     /// </summary>
@@ -67,16 +66,8 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         this.station = station;
     }
 
-    #endregion
-
-    #region Private Member
-
     private byte station = ModbusInfo.ReadCoil; // 本客户端的站号
     private bool isAddressStartWithZero = true; // 线圈值的地址值是否从零开始
-
-    #endregion
-
-    #region Public Member
 
     /// <summary>
     /// 获取或设置起始的地址是否从0开始，默认为True
@@ -121,10 +112,6 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         get { return this.ByteTransform.IsStringReverse; }
         set { this.ByteTransform.IsStringReverse = value; }
     }
-
-    #endregion
-
-    #region Build Command
 
     /// <summary>
     /// 生成一个读取线圈的指令头
@@ -267,10 +254,6 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         return OperateResult.CreateSuccessResult(buffer);
     }
 
-    #endregion
-
-    #region Core Interative
-
     /// <summary>
     /// 检查当前的Modbus-Rtu响应是否是正确的
     /// </summary>
@@ -304,10 +287,6 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         return OperateResult.CreateSuccessResult(buffer);
     }
 
-    #endregion
-
-    #region Protect Override
-
     /// <summary>
     /// 检查当前接收的字节数据是否正确的
     /// </summary>
@@ -316,10 +295,6 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
     protected override bool CheckReceiveBytes(byte[] rBytes) {
         return SoftCRC16.CheckCRC16(rBytes);
     }
-
-    #endregion
-
-    #region Read Support
 
     /// <summary>
     /// 读取服务器的数据，需要指定不同的功能码
@@ -476,10 +451,6 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         return OperateResult.CreateSuccessResult(lists.ToArray());
     }
 
-    #endregion
-
-    #region Write One Register
-
     /// <summary>
     /// 写一个寄存器数据
     /// </summary>
@@ -517,10 +488,6 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         return this.WriteOneRegister(address, buffer[1], buffer[0]);
     }
 
-    #endregion
-
-    #region Write Base
-
     /// <summary>
     /// 将数据写入到Modbus的寄存器上去，需要指定起始地址和数据内容
     /// </summary>
@@ -543,10 +510,6 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         // 核心交互
         return this.CheckModbusTcpResponse(command.Content);
     }
-
-    #endregion
-
-    #region Write Coil
 
     /// <summary>
     /// 写一个线圈信息，指定是否通断
@@ -580,10 +543,6 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         return this.CheckModbusTcpResponse(command.Content);
     }
 
-    #endregion
-
-    #region Bool Support
-
     /// <summary>
     /// 批量读取线圈或是离散的数据信息，需要指定地址和长度，具体的结果取决于实现
     /// </summary>
@@ -612,10 +571,6 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         return this.WriteCoil(address, values);
     }
 
-    #endregion
-
-    #region Object Override
-
     /// <summary>
     /// 返回表示当前对象的字符串
     /// </summary>
@@ -623,6 +578,4 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
     public override string ToString() {
         return $"ModbusRtu[{this.PortName}:{this.BaudRate}]";
     }
-
-    #endregion
 }

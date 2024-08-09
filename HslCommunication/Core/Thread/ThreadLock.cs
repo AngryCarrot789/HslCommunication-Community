@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 
-namespace HslCommunication.Core;
-
-#region 多线程同步协调类
+namespace HslCommunication.Core.Thread;
 
 /// <summary>
 /// 线程的协调逻辑状态
@@ -106,10 +104,6 @@ internal sealed class AsyncCoordinator {
     }
 }
 
-#endregion
-
-#region 乐观并发模型的协调类
-
 /// <summary>
 /// 一个用于高性能，乐观并发模型控制操作的类，允许一个方法(隔离方法)的安全单次执行
 /// </summary>
@@ -164,18 +158,12 @@ public sealed class HslAsyncCoordinator {
     }
 }
 
-#endregion
-
-#region 高性能的读写锁
-
 // 一个高性能的读写锁，由《CLR Via C#》作者Jeffrey Richter提供
 
 /// <summary>
 /// 一个高性能的读写锁，支持写锁定，读灵活，读时写锁定，写时读锁定
 /// </summary>
 public sealed class HslReadWriteLock : IDisposable {
-    #region Lock State Management
-
 #if false
               private struct BitField {
                  private int m_mask, m_1, m_startBit;
@@ -254,10 +242,6 @@ public sealed class HslReadWriteLock : IDisposable {
     /// <returns>对象的描述字符串</returns>
     public override string ToString() { return DebugState(this.m_LockState); }
 
-    #endregion
-
-    #region State Fields
-
     private int m_LockState = (int) OneManyLockStates.Free;
 
     // Readers wait on this if a writer owns the lock
@@ -266,18 +250,10 @@ public sealed class HslReadWriteLock : IDisposable {
     // Writers wait on this if a reader owns the lock
     private Semaphore m_WritersLock = new Semaphore(0, int.MaxValue);
 
-    #endregion
-
-    #region Construction
-
     /// <summary>
     /// 实例化一个读写锁的对象
     /// </summary>
     public HslReadWriteLock() : base() { }
-
-    #endregion
-
-    #region IDisposable Support
 
     private bool disposedValue = false; // 要检测冗余调用
 
@@ -313,10 +289,6 @@ public sealed class HslReadWriteLock : IDisposable {
         // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
         // GC.SuppressFinalize(this);
     }
-
-    #endregion
-
-    #region Writer members
 
     private bool m_exclusive;
 
@@ -435,10 +407,6 @@ public sealed class HslReadWriteLock : IDisposable {
         return wakeup;
     }
 
-    #endregion
-
-    #region Reader members
-
     private static bool WaitToRead(ref int target) {
         int start, current = target;
         bool wait;
@@ -501,13 +469,7 @@ public sealed class HslReadWriteLock : IDisposable {
 
         return wakeup;
     }
-
-    #endregion
 }
-
-#endregion
-
-#region 简单的混合锁
 
 /// <summary>
 /// 一个简单的混合线程同步锁，采用了基元用户加基元内核同步构造实现
@@ -517,8 +479,6 @@ public sealed class HslReadWriteLock : IDisposable {
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Core\ThreadLock.cs" region="SimpleHybirdLockExample1" title="SimpleHybirdLock示例" />
 /// </example>
 public sealed class SimpleHybirdLock : IDisposable {
-    #region IDisposable Support
-
     private bool disposedValue = false; // 要检测冗余调用
 
     void Dispose(bool disposing) {
@@ -551,8 +511,6 @@ public sealed class SimpleHybirdLock : IDisposable {
         // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
         // GC.SuppressFinalize(this);
     }
-
-    #endregion
 
     /// <summary>
     /// 基元用户模式构造同步锁
@@ -588,10 +546,6 @@ public sealed class SimpleHybirdLock : IDisposable {
     /// </summary>
     public bool IsWaitting => this.m_waiters != 0;
 }
-
-#endregion
-
-#region 多线程并发处理数据的类
 
 /*******************************************************************************
  *
@@ -718,15 +672,13 @@ public sealed class SoftMultiTask<T> {
     private bool m_isQuitAfterException = false;
 
 
-    #region Start Stop Method
-
     /// <summary>
     /// 启动多线程进行数据处理
     /// </summary>
     public void StartOperater() {
         if (Interlocked.CompareExchange(ref this.m_runStatus, 0, 1) == 0) {
             for (int i = 0; i < this.m_threadCount; i++) {
-                Thread thread = new Thread(new ThreadStart(this.ThreadBackground));
+                System.Threading.Thread thread = new System.Threading.Thread(new ThreadStart(this.ThreadBackground));
                 thread.IsBackground = true;
                 thread.Start();
             }
@@ -771,8 +723,6 @@ public sealed class SoftMultiTask<T> {
             this.m_isQuitAfterException = value;
         }
     }
-
-    #endregion
 
 
     private void ThreadBackground() {
@@ -841,10 +791,6 @@ public sealed class SoftMultiTask<T> {
     }
 }
 
-#endregion
-
-#region 双检锁
-
 #if !NET35
 
 /// <summary>
@@ -878,18 +824,12 @@ internal sealed class Singleton {
 
 #endif
 
-#endregion
-
-#region 高级混合锁
-
 #if !NET35
 
 /// <summary>
 /// 一个高级的混合线程同步锁，采用了基元用户加基元内核同步构造实现，并包含了自旋和线程所有权
 /// </summary>
 internal sealed class AdvancedHybirdLock : IDisposable {
-    #region IDisposable Support
-
     private bool disposedValue = false; // 要检测冗余调用
 
     void Dispose(bool disposing) {
@@ -923,8 +863,6 @@ internal sealed class AdvancedHybirdLock : IDisposable {
         // GC.SuppressFinalize(this);
     }
 
-    #endregion
-
     /// <summary>
     /// 基元用户模式构造同步锁
     /// </summary>
@@ -954,7 +892,7 @@ internal sealed class AdvancedHybirdLock : IDisposable {
     /// 获取锁
     /// </summary>
     public void Enter() {
-        int threadId = Thread.CurrentThread.ManagedThreadId;
+        int threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
         if (threadId == this.m_owningThreadId) {
             this.m_recursion++;
             return; //如果调用线程已经拥有锁，就返回
@@ -978,5 +916,3 @@ internal sealed class AdvancedHybirdLock : IDisposable {
 }
 
 #endif
-
-#endregion

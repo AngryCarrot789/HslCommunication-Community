@@ -7,17 +7,11 @@ namespace HslCommunication.Tests.Documentation.Samples.Core;
 
 public class NetworkBaseExample {
     public void TokenClientExample() {
-        #region TokenClientExample
-
         NetSimplifyClient simplifyClient = new NetSimplifyClient("127.0.0.1", 12345);
 
         // 这个toeken需要和服务器的设置的token相匹配才可以
         simplifyClient.Token = new Guid("787f9607-dd7a-4ba7-9f98-769d24de05df");
-
-        #endregion
     }
-
-    #region TokenServerExample
 
     private NetSimplifyServer simplifyServer = null;
 
@@ -34,20 +28,12 @@ public class NetworkBaseExample {
         this.simplifyServer.SendMessage(session, handle, "Back:" + data);
     }
 
-    #endregion
-
     public void LogNetExample() {
-        #region LogNetExample1
-
         // 设备连接对象的日志
         MelsecMcNet melsec = new MelsecMcNet("192.168.0.100", 6000);
 
         // 举例实现日志文件为单日志文件
         melsec.LogNet = new HslCommunication.LogNet.LogNetSingle("D://123.txt");
-
-        #endregion
-
-        #region LogNetExample2
 
         // 一般服务器对象的
         NetSimplifyServer simplifyServer = new NetSimplifyServer();
@@ -56,11 +42,7 @@ public class NetworkBaseExample {
             simplifyServer.SendMessage(session, handle, "Back:" + data);
         };
         simplifyServer.ServerStart(45678);
-
-        #endregion
     }
-
-    #region CreateSocketAndConnectExample
 
     public class NetworkMy : NetworkBase {
         public void CreateSocketAndConnectExample1() {
@@ -96,6 +78,4 @@ public class NetworkBaseExample {
             }
         }
     }
-
-    #endregion
 }

@@ -1,13 +1,11 @@
 ﻿using System.Net.Sockets;
 
-namespace HslCommunication.Core.Net;
+namespace HslCommunication.Core.Net.StateOne;
 
 /// <summary>
 /// 网络中的异步对象
 /// </summary>
 internal class StateObject : StateOneBase {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个对象
     /// </summary>
@@ -22,10 +20,6 @@ internal class StateObject : StateOneBase {
         this.DataLength = length;
         this.Buffer = new byte[length];
     }
-
-    #endregion
-
-    #region Public Member
 
     /// <summary>
     /// 唯一的一串信息
@@ -42,10 +36,6 @@ internal class StateObject : StateOneBase {
     /// </summary>
     public bool IsClose { get; set; }
 
-    #endregion
-
-    #region Public Method
-
     /// <summary>
     /// 清空旧的数据
     /// </summary>
@@ -55,8 +45,6 @@ internal class StateObject : StateOneBase {
         this.AlreadyDealLength = 0;
         this.Buffer = null;
     }
-
-    #endregion
 }
 
 #if !NET35
@@ -66,8 +54,6 @@ internal class StateObject : StateOneBase {
 /// </summary>
 /// <typeparam name="T">类型</typeparam>
 internal class StateObjectAsync<T> : StateObject {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个对象
     /// </summary>
@@ -81,9 +67,7 @@ internal class StateObjectAsync<T> : StateObject {
     public StateObjectAsync(int length) : base(length) {
     }
 
-    #endregion
-
-    public System.Threading.Tasks.TaskCompletionSource<T> Tcs { get; set; }
+    public TaskCompletionSource<T> Tcs { get; set; }
 }
 
 #endif

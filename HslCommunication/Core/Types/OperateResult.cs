@@ -1,4 +1,4 @@
-﻿namespace HslCommunication;
+﻿namespace HslCommunication.Core.Types;
 
 /*******************************************************************************
  *
@@ -24,8 +24,21 @@
 /// 当 <see cref="IsSuccess"/> 为 True 时，忽略 <see cref="Message"/> 及 <see cref="ErrorCode"/> 的值
 /// </remarks>
 public class OperateResult {
-    #region Constructor
+    /// <summary>
+    /// 指示本次访问是否成功
+    /// </summary>
+    public bool IsSuccess { get; set; }
 
+    /// <summary>
+    /// 具体的错误描述
+    /// </summary>
+    public string Message { get; set; } = StringResources.Language.UnknownError;
+
+    /// <summary>
+    /// 具体的错误代码
+    /// </summary>
+    public int ErrorCode { get; set; } = 10000;
+    
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -50,23 +63,6 @@ public class OperateResult {
         this.Message = msg;
     }
 
-    #endregion
-
-    /// <summary>
-    /// 指示本次访问是否成功
-    /// </summary>
-    public bool IsSuccess { get; set; }
-
-    /// <summary>
-    /// 具体的错误描述
-    /// </summary>
-    public string Message { get; set; } = StringResources.Language.UnknownError;
-
-    /// <summary>
-    /// 具体的错误代码
-    /// </summary>
-    public int ErrorCode { get; set; } = 10000;
-
     /// <summary>
     /// 获取错误代号及文本描述
     /// </summary>
@@ -87,8 +83,6 @@ public class OperateResult {
             this.Message = result.Message;
         }
     }
-
-    #region Static Method
 
     /*****************************************************************************************************
      *
@@ -580,8 +574,6 @@ public class OperateResult {
             Content10 = value10,
         };
     }
-
-    #endregion
 }
 
 /// <summary>
@@ -589,8 +581,6 @@ public class OperateResult {
 /// </summary>
 /// <typeparam name="T">泛型类</typeparam>
 public class OperateResult<T> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -611,8 +601,6 @@ public class OperateResult<T> : OperateResult {
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据
@@ -626,8 +614,6 @@ public class OperateResult<T> : OperateResult {
 /// <typeparam name="T1">泛型类</typeparam>
 /// <typeparam name="T2">泛型类</typeparam>
 public class OperateResult<T1, T2> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -648,8 +634,6 @@ public class OperateResult<T1, T2> : OperateResult {
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据1
@@ -669,8 +653,6 @@ public class OperateResult<T1, T2> : OperateResult {
 /// <typeparam name="T2">泛型类</typeparam>
 /// <typeparam name="T3">泛型类</typeparam>
 public class OperateResult<T1, T2, T3> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -691,8 +673,6 @@ public class OperateResult<T1, T2, T3> : OperateResult {
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据1
@@ -718,8 +698,6 @@ public class OperateResult<T1, T2, T3> : OperateResult {
 /// <typeparam name="T3">泛型类</typeparam>
 /// <typeparam name="T4">泛型类</typeparam>
 public class OperateResult<T1, T2, T3, T4> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -740,8 +718,6 @@ public class OperateResult<T1, T2, T3, T4> : OperateResult {
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据1
@@ -773,8 +749,6 @@ public class OperateResult<T1, T2, T3, T4> : OperateResult {
 /// <typeparam name="T4">泛型类</typeparam>
 /// <typeparam name="T5">泛型类</typeparam>
 public class OperateResult<T1, T2, T3, T4, T5> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -795,8 +769,6 @@ public class OperateResult<T1, T2, T3, T4, T5> : OperateResult {
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据1
@@ -834,8 +806,6 @@ public class OperateResult<T1, T2, T3, T4, T5> : OperateResult {
 /// <typeparam name="T5">泛型类</typeparam>
 /// <typeparam name="T6">泛型类</typeparam>
 public class OperateResult<T1, T2, T3, T4, T5, T6> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -856,8 +826,6 @@ public class OperateResult<T1, T2, T3, T4, T5, T6> : OperateResult {
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据1
@@ -901,8 +869,6 @@ public class OperateResult<T1, T2, T3, T4, T5, T6> : OperateResult {
 /// <typeparam name="T6">泛型类</typeparam>
 /// <typeparam name="T7">泛型类</typeparam>
 public class OperateResult<T1, T2, T3, T4, T5, T6, T7> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -923,8 +889,6 @@ public class OperateResult<T1, T2, T3, T4, T5, T6, T7> : OperateResult {
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据1
@@ -974,8 +938,6 @@ public class OperateResult<T1, T2, T3, T4, T5, T6, T7> : OperateResult {
 /// <typeparam name="T7">泛型类</typeparam>
 /// <typeparam name="T8">泛型类</typeparam>
 public class OperateResult<T1, T2, T3, T4, T5, T6, T7, T8> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -996,8 +958,6 @@ public class OperateResult<T1, T2, T3, T4, T5, T6, T7, T8> : OperateResult {
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据1
@@ -1053,8 +1013,6 @@ public class OperateResult<T1, T2, T3, T4, T5, T6, T7, T8> : OperateResult {
 /// <typeparam name="T8">泛型类</typeparam>
 /// <typeparam name="T9">泛型类</typeparam>
 public class OperateResult<T1, T2, T3, T4, T5, T6, T7, T8, T9> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -1075,8 +1033,6 @@ public class OperateResult<T1, T2, T3, T4, T5, T6, T7, T8, T9> : OperateResult {
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据1
@@ -1138,8 +1094,6 @@ public class OperateResult<T1, T2, T3, T4, T5, T6, T7, T8, T9> : OperateResult {
 /// <typeparam name="T9">泛型类</typeparam>
 /// <typeparam name="T10">泛型类</typeparam>
 public class OperateResult<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> : OperateResult {
-    #region Constructor
-
     /// <summary>
     /// 实例化一个默认的结果对象
     /// </summary>
@@ -1160,8 +1114,6 @@ public class OperateResult<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> : OperateRes
     /// <param name="msg">错误消息</param>
     public OperateResult(int err, string msg) : base(err, msg) {
     }
-
-    #endregion
 
     /// <summary>
     /// 用户自定义的泛型数据1

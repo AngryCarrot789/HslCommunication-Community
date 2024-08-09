@@ -1,13 +1,11 @@
 ﻿using HslCommunication.BasicFramework;
 
-namespace HslCommunication.Enthernet;
+namespace HslCommunication.Enthernet.FileNet;
 
 /// <summary>
 /// 单个文件的存储
 /// </summary>
 public class GroupFileItem {
-    #region Public Members
-
     /// <summary>
     /// 文件的名称
     /// </summary>
@@ -43,10 +41,6 @@ public class GroupFileItem {
     /// </summary>
     public string Description { get; set; }
 
-    #endregion
-
-    #region Get Size Text
-
     /// <summary>
     /// 获取大小
     /// </summary>
@@ -54,6 +48,4 @@ public class GroupFileItem {
     public string GetTextFromFileSize() {
         return SoftBasic.GetSizeDescription(this.FileSize);
     }
-
-    #endregion
 }
