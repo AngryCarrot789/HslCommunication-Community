@@ -140,25 +140,6 @@ public sealed class SystemVersion {
         }
     }
 
-
-    /// <summary>
-    /// 判断两个实例是否相等
-    /// </summary>
-    /// <param name="obj">版本号</param>
-    /// <returns>是否一致</returns>
-    public override bool Equals(object obj) {
-        return base.Equals(obj);
-    }
-
-
-    /// <summary>
-    /// 获取哈希值
-    /// </summary>
-    /// <returns>哈希值</returns>
-    public override int GetHashCode() {
-        return base.GetHashCode();
-    }
-
     /// <summary>
     /// 判断是否相等
     /// </summary>

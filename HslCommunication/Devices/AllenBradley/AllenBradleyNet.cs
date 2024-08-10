@@ -609,7 +609,7 @@ public class AllenBradleyNet : NetworkDeviceBase<AllenBradleyMessage, RegularByt
     /// </summary>
     /// <returns>字节报文信息 -> BYTE message information </returns>
     public byte[] UnRegisterSessionHandle() {
-        return AllenBradleyHelper.PackRequestHeader(0x66, this.SessionHandle, new byte[0]);
+        return AllenBradleyHelper.PackRequestHeader(0x66, this.SessionHandle, Array.Empty<byte>());
     }
 
     private OperateResult CheckResponse(byte[] response) {

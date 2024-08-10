@@ -58,7 +58,7 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     /// </summary>
     /// <returns>所有的内容</returns>
     protected virtual byte[] SaveToBytes() {
-        return new byte[0];
+        return Array.Empty<byte>();
     }
 
     /// <summary>
@@ -236,7 +236,7 @@ public class NetworkDataServerBase : NetworkAuthenticationServerBase, IDisposabl
     /// </summary>
     /// <returns>字符串数据信息</returns>
     public string[] GetTrustedClients() {
-        string[] result = new string[0];
+        string[] result = Array.Empty<string>();
         this.lock_trusted_clients.Enter();
         if (this.TrustedClients != null) {
             result = this.TrustedClients.ToArray();

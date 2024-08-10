@@ -287,8 +287,8 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
         return OperateResult.CreateSuccessResult(buffer);
     }
 
-    protected override bool IsReceivedMessageComplete(byte[] received, int receivedCount) {
-        return SoftCRC16.CheckCRC16(received, receivedCount);
+    protected override bool IsReceivedMessageComplete(byte[] buffer, int count) {
+        return SoftCRC16.CheckCRC16(buffer, count);
     }
 
     /// <summary>

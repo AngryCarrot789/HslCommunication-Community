@@ -214,11 +214,11 @@ public class OmronFinsNetHelper {
             //if (response.Length >= 30)
             //{
             //    err = response[28] * 256 + response[29];
-            //    // if (err > 0) return new OperateResult<byte[]>( err, StringResources.Language.OmronReceiveDataError );
+            //    // if (err > 0) return new ObjectOperateResult<byte[]>( err, StringResources.Language.OmronReceiveDataError );
 
             //    if (!isRead)
             //    {
-            //        OperateResult<byte[]> success = OperateResult.CreateSuccessResult( new byte[0] );
+            //        ObjectOperateResult<byte[]> success = ObjectOperateResult.CreateSuccessResult( new byte[0] );
             //        success.ErrorCode = err;
             //        success.Message = GetStatusDescription( err );
             //        return success;
@@ -229,7 +229,7 @@ public class OmronFinsNetHelper {
             //        byte[] content = new byte[response.Length - 30];
             //        if (content.Length > 0) Array.Copy( response, 30, content, 0, content.Length );
 
-            //        OperateResult<byte[]> success = OperateResult.CreateSuccessResult( content );
+            //        ObjectOperateResult<byte[]> success = ObjectOperateResult.CreateSuccessResult( content );
             //        if (content.Length == 0) success.IsSuccess = false;
             //        success.ErrorCode = err;
             //        success.Message = GetStatusDescription( err );
@@ -251,10 +251,10 @@ public class OmronFinsNetHelper {
     public static OperateResult<byte[]> UdpResponseValidAnalysis(byte[] response, bool isRead) {
         if (response.Length >= 14) {
             int err = response[12] * 256 + response[13];
-            // if (err > 0) return new OperateResult<byte[]>( err, StringResources.Language.OmronReceiveDataError );
+            // if (err > 0) return new ObjectOperateResult<byte[]>( err, StringResources.Language.OmronReceiveDataError );
 
             if (!isRead) {
-                OperateResult<byte[]> success = OperateResult.CreateSuccessResult(new byte[0]);
+                OperateResult<byte[]> success = OperateResult.CreateSuccessResult(Array.Empty<byte>());
                 success.ErrorCode = err;
                 success.Message = GetStatusDescription(err) + " Received:" + SoftBasic.ByteToHexString(response, ' ');
                 return success;

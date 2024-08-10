@@ -1,4 +1,4 @@
-﻿using HslCommunication.Algorithms.ConnectPool;
+﻿using HslCommunication.ConnectorPools;
 using HslCommunication.Core.Types;
 using HslCommunication.ModBus.ModbusTcp;
 
@@ -6,11 +6,11 @@ namespace HslCommunication.Tests.Documentation.Samples.Algorithms;
 
 public class ConnectPoolExample {
     public ConnectPoolExample() {
-        this.connectPool = new ConnectPool<ModbusConnector>(() => new ModbusConnector("192.168.0.100", 502));
-        this.connectPool.MaxConnector = 10; // 允许同时存在10个连接对象
+        this.connectorPool = new ConnectorPool<ModbusConnector>(() => new ModbusConnector("192.168.0.100", 502));
+        this.connectorPool.MaxConnector = 10; // 允许同时存在10个连接对象
     }
 
-    private ConnectPool<ModbusConnector> connectPool = null;
+    private ConnectorPool<ModbusConnector> connectorPool = null;
 
     /// <summary>
     /// 现在可以从任意的线程来调用本方法了，性能非常的高
@@ -18,9 +18,9 @@ public class ConnectPoolExample {
     /// <param name="address">地址</param>
     /// <returns>结果对象</returns>
     public OperateResult<short> ReadInt16(string address) {
-        ModbusConnector connector = this.connectPool.GetAvailableConnector();
+        ModbusConnector connector = this.connectorPool.GetAvailableConnector();
         OperateResult<short> read = connector.ModbusTcp.ReadInt16(address);
-        this.connectPool.ReturnConnector(connector);
+        this.connectorPool.ReturnConnector(connector);
         return read;
     }
 
@@ -32,9 +32,9 @@ public class ConnectPoolExample {
     /// <param name="value">值</param>
     /// <returns>结果对象</returns>
     public OperateResult Write(string address, short value) {
-        ModbusConnector connector = this.connectPool.GetAvailableConnector();
+        ModbusConnector connector = this.connectorPool.GetAvailableConnector();
         OperateResult write = connector.ModbusTcp.Write(address, value);
-        this.connectPool.ReturnConnector(connector);
+        this.connectorPool.ReturnConnector(connector);
         return write;
     }
 

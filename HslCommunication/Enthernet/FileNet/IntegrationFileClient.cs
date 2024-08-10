@@ -309,7 +309,7 @@ public class IntegrationFileClient : FileClientBase {
         // connect server
         OperateResult<Socket> socketResult = this.CreateSocketAndConnect(this.ServerIpEndPoint, this.ConnectTimeOut);
         if (!socketResult.IsSuccess) {
-            arrays = new T[0];
+            arrays = Array.Empty<T>();
             return socketResult;
         }
 
@@ -317,21 +317,21 @@ public class IntegrationFileClient : FileClientBase {
         // 上传信息
         OperateResult send = this.SendStringAndCheckReceive(socketResult.Content, protocol, "nosense");
         if (!send.IsSuccess) {
-            arrays = new T[0];
+            arrays = Array.Empty<T>();
             return send;
         }
 
         // 上传三级分类
         OperateResult sendClass = this.SendFactoryGroupId(socketResult.Content, factory, group, id);
         if (!sendClass.IsSuccess) {
-            arrays = new T[0];
+            arrays = Array.Empty<T>();
             return sendClass;
         }
 
         // 接收数据信息
         OperateResult<int, string> receive = this.ReceiveStringContentFromSocket(socketResult.Content);
         if (!receive.IsSuccess) {
-            arrays = new T[0];
+            arrays = Array.Empty<T>();
             return receive;
         }
 
@@ -343,7 +343,7 @@ public class IntegrationFileClient : FileClientBase {
             return OperateResult.CreateSuccessResult();
         }
         catch (Exception ex) {
-            arrays = new T[0];
+            arrays = Array.Empty<T>();
             return new OperateResult() {
                 Message = ex.Message
             };

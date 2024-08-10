@@ -101,7 +101,7 @@ public class YRC1000TcpNet : NetworkDoubleBase<HslMessage, ReverseWordTransform>
         }
 
         if (this.ReceiveTimeOut < 0)
-            return OperateResult.CreateSuccessResult(new byte[0]);
+            return OperateResult.CreateSuccessResult(Array.Empty<byte>());
 
         // receive msg
         OperateResult<byte[]> resultReceive = NetSupport.ReceiveCommandLineFromSocket(socket, (byte) '\r', (byte) '\n');

@@ -243,7 +243,7 @@ public class XGBCnet : SerialDeviceBase<RegularByteTransform> {
             }
             else {
                 if (response[0] == 0x06) {
-                    return OperateResult.CreateSuccessResult(new byte[0]);
+                    return OperateResult.CreateSuccessResult(Array.Empty<byte>());
                 }
                 else {
                     byte[] buffer = new byte[response.Length - 9];

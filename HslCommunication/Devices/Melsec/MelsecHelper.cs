@@ -104,8 +104,11 @@ public class MelsecHelper {
         command[5] = 0x30;
         command[6] = 0x30;
         command[7] = isBit ? (byte) 0x31 : (byte) 0x30;
-        command[8] = Encoding.ASCII.GetBytes(addressData.McDataType.AsciiCode)[0]; // 软元件类型
-        command[9] = Encoding.ASCII.GetBytes(addressData.McDataType.AsciiCode)[1];
+
+        string code = addressData.McDataType.AsciiCode;
+        command[8] = Encoding.ASCII.GetBytes(code)[0]; // 软元件类型
+        command[9] = Encoding.ASCII.GetBytes(code)[1];
+        
         command[10] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[0]; // 起始地址的地位
         command[11] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[1];
         command[12] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[2];
@@ -128,7 +131,7 @@ public class MelsecHelper {
     /// <returns>带有成功标识的报文对象</returns>
     public static byte[] BuildWriteWordCoreCommand(McAddressData addressData, byte[] value) {
         if (value == null)
-            value = new byte[0];
+            value = Array.Empty<byte>();
         byte[] command = new byte[10 + value.Length];
         command[0] = 0x01; // 批量写入数据命令
         command[1] = 0x14;
@@ -153,7 +156,7 @@ public class MelsecHelper {
     /// <returns>带有成功标识的报文对象</returns>
     public static byte[] BuildAsciiWriteWordCoreCommand(McAddressData addressData, byte[] value) {
         if (value == null)
-            value = new byte[0];
+            value = Array.Empty<byte>();
         byte[] buffer = new byte[value.Length * 2];
         for (int i = 0; i < value.Length / 2; i++) {
             SoftBasic.BuildAsciiBytesFrom(BitConverter.ToUInt16(value, i * 2)).CopyTo(buffer, 4 * i);
@@ -170,8 +173,12 @@ public class MelsecHelper {
         command[5] = 0x30;
         command[6] = 0x30;
         command[7] = 0x30;
-        command[8] = Encoding.ASCII.GetBytes(addressData.McDataType.AsciiCode)[0]; // 软元件类型
-        command[9] = Encoding.ASCII.GetBytes(addressData.McDataType.AsciiCode)[1];
+
+        
+        string code = addressData.McDataType.AsciiCode;
+        command[8] = Encoding.ASCII.GetBytes(code)[0]; // 软元件类型
+        command[9] = Encoding.ASCII.GetBytes(code)[1];
+        
         command[10] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[0]; // 起始地址的地位
         command[11] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[1];
         command[12] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[2];
@@ -195,7 +202,7 @@ public class MelsecHelper {
     /// <returns>带有成功标识的报文对象</returns>
     public static byte[] BuildWriteBitCoreCommand(McAddressData addressData, bool[] value) {
         if (value == null)
-            value = new bool[0];
+            value = Array.Empty<bool>();
         byte[] buffer = TransBoolArrayToByteData(value);
         byte[] command = new byte[10 + buffer.Length];
         command[0] = 0x01; // 批量写入数据命令
@@ -221,7 +228,7 @@ public class MelsecHelper {
     /// <returns>带有成功标识的报文对象</returns>
     public static byte[] BuildAsciiWriteBitCoreCommand(McAddressData addressData, bool[] value) {
         if (value == null)
-            value = new bool[0];
+            value = Array.Empty<bool>();
         byte[] buffer = value.Select(m => m ? (byte) 0x31 : (byte) 0x30).ToArray();
 
         byte[] command = new byte[20 + buffer.Length];
@@ -233,8 +240,11 @@ public class MelsecHelper {
         command[5] = 0x30;
         command[6] = 0x30;
         command[7] = 0x31;
-        command[8] = Encoding.ASCII.GetBytes(addressData.McDataType.AsciiCode)[0]; // 软元件类型
-        command[9] = Encoding.ASCII.GetBytes(addressData.McDataType.AsciiCode)[1];
+        
+        string code = addressData.McDataType.AsciiCode;
+        command[8] = Encoding.ASCII.GetBytes(code)[0]; // 软元件类型
+        command[9] = Encoding.ASCII.GetBytes(code)[1];
+        
         command[10] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[0]; // 起始地址的地位
         command[11] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[1];
         command[12] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[2];

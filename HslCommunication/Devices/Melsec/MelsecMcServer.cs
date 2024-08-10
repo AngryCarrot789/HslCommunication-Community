@@ -199,7 +199,7 @@ public class MelsecMcServer : NetworkDataServerBase {
         appSession.IpEndPoint = endPoint;
         appSession.WorkSocket = socket;
         try {
-            socket.BeginReceive(new byte[0], 0, 0, SocketFlags.None, new AsyncCallback(this.SocketAsyncCallBack), appSession);
+            socket.BeginReceive(Array.Empty<byte>(), 0, 0, SocketFlags.None, new AsyncCallback(this.SocketAsyncCallBack), appSession);
             this.AddClient(appSession);
         }
         catch {
@@ -234,7 +234,7 @@ public class MelsecMcServer : NetworkDataServerBase {
                 }
 
                 this.RaiseDataReceived(read1.Content);
-                session.WorkSocket.BeginReceive(new byte[0], 0, 0, SocketFlags.None, new AsyncCallback(this.SocketAsyncCallBack), session);
+                session.WorkSocket.BeginReceive(Array.Empty<byte>(), 0, 0, SocketFlags.None, new AsyncCallback(this.SocketAsyncCallBack), session);
             }
             catch {
                 // 关闭连接，记录日志
@@ -335,17 +335,17 @@ public class MelsecMcServer : NetworkDataServerBase {
             if (command[7] == MelsecMcDataType.M.DataCode) {
                 byte[] buffer = MelsecMcNet.ExtractActualData(SoftBasic.BytesArrayRemoveBegin(command, 10), true).Content;
                 this.mBuffer.SetBytes(buffer.Take(length).ToArray(), startIndex);
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             else if (command[7] == MelsecMcDataType.X.DataCode) {
                 byte[] buffer = MelsecMcNet.ExtractActualData(SoftBasic.BytesArrayRemoveBegin(command, 10), true).Content;
                 this.xBuffer.SetBytes(buffer.Take(length).ToArray(), startIndex);
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             else if (command[7] == MelsecMcDataType.Y.DataCode) {
                 byte[] buffer = MelsecMcNet.ExtractActualData(SoftBasic.BytesArrayRemoveBegin(command, 10), true).Content;
                 this.yBuffer.SetBytes(buffer.Take(length).ToArray(), startIndex);
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             else {
                 throw new Exception(StringResources.Language.NotSupportedDataType);
@@ -359,25 +359,25 @@ public class MelsecMcServer : NetworkDataServerBase {
             if (command[7] == MelsecMcDataType.M.DataCode) {
                 byte[] buffer = SoftBasic.ByteToBoolArray(SoftBasic.BytesArrayRemoveBegin(command, 10)).Select(m => m ? (byte) 1 : (byte) 0).ToArray();
                 this.mBuffer.SetBytes(buffer, startIndex);
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             else if (command[7] == MelsecMcDataType.X.DataCode) {
                 byte[] buffer = SoftBasic.ByteToBoolArray(SoftBasic.BytesArrayRemoveBegin(command, 10)).Select(m => m ? (byte) 1 : (byte) 0).ToArray();
                 this.xBuffer.SetBytes(buffer, startIndex);
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             else if (command[7] == MelsecMcDataType.Y.DataCode) {
                 byte[] buffer = SoftBasic.ByteToBoolArray(SoftBasic.BytesArrayRemoveBegin(command, 10)).Select(m => m ? (byte) 1 : (byte) 0).ToArray();
                 this.yBuffer.SetBytes(buffer, startIndex);
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             else if (command[7] == MelsecMcDataType.D.DataCode) {
                 this.dBuffer.SetBytes(SoftBasic.BytesArrayRemoveBegin(command, 10), startIndex * 2);
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             else if (command[7] == MelsecMcDataType.W.DataCode) {
                 this.wBuffer.SetBytes(SoftBasic.BytesArrayRemoveBegin(command, 10), startIndex * 2);
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             else {
                 throw new Exception(StringResources.Language.NotSupportedDataType);

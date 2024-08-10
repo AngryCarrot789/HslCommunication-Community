@@ -264,7 +264,7 @@ public class SiemensS7Server : NetworkDataServerBase {
         appSession.IpEndPoint = endPoint;
         appSession.WorkSocket = socket;
         try {
-            socket.BeginReceive(new byte[0], 0, 0, SocketFlags.None, new AsyncCallback(this.SocketAsyncCallBack), appSession);
+            socket.BeginReceive(Array.Empty<byte>(), 0, 0, SocketFlags.None, new AsyncCallback(this.SocketAsyncCallBack), appSession);
             this.AddClient(appSession);
         }
         catch {
@@ -309,7 +309,7 @@ public class SiemensS7Server : NetworkDataServerBase {
                 }
 
                 this.RaiseDataReceived(receive);
-                session.WorkSocket.BeginReceive(new byte[0], 0, 0, SocketFlags.None, new AsyncCallback(this.SocketAsyncCallBack), session);
+                session.WorkSocket.BeginReceive(Array.Empty<byte>(), 0, 0, SocketFlags.None, new AsyncCallback(this.SocketAsyncCallBack), session);
             }
             catch {
                 // 关闭连接，记录日志

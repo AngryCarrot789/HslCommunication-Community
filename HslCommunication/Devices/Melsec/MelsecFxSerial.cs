@@ -132,13 +132,13 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         this.WordLength = 1;
     }
 
-    protected override bool IsReceivedMessageComplete(byte[] received, int receivedCount) {
-        switch (receivedCount) {
+    protected override bool IsReceivedMessageComplete(byte[] buffer, int count) {
+        switch (count) {
             case 0: return false;
             case 1:
-                return received[0] == 0x15 || received[0] == 0x6;
+                return buffer[0] == 0x15 || buffer[0] == 0x6;
             default:
-                return received[0] == 2 && receivedCount >= 5 && received[receivedCount - 3] == 3 && MelsecHelper.CheckCRC(received, receivedCount);
+                return buffer[0] == 2 && count >= 5 && buffer[count - 3] == 3 && MelsecHelper.CheckCRC(buffer, count);
         }
     }
 
@@ -524,7 +524,7 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     }
 
     /// <summary>
-    /// 解析数据地址成不同的三菱地址类型
+    /// Parse data addresses into different Mitsubishi address types
     /// </summary>
     /// <param name="address">数据地址</param>
     /// <returns>地址结果对象</returns>

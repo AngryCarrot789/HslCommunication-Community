@@ -369,7 +369,7 @@ public class SiemensFetchWriteNet : NetworkDeviceBase<FetchWriteMessage, Reverse
     /// <returns>带结果对象的报文数据 -> Message data with a result object</returns>
     public static OperateResult<byte[]> BuildWriteCommand(string address, byte[] data) {
         if (data == null)
-            data = new byte[0];
+            data = Array.Empty<byte>();
 
         OperateResult<byte, int, ushort> analysis = AnalysisAddress(address);
         if (!analysis.IsSuccess)

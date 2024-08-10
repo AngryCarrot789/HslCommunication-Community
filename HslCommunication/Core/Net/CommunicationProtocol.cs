@@ -249,7 +249,7 @@ internal class HslProtocol {
     /// <returns>打包后的原始数据内容</returns>
     internal static byte[] PackStringArrayToByte(string[] data) {
         if (data == null)
-            data = new string[0];
+            data = Array.Empty<string>();
 
         List<byte> buffer = new List<byte>();
         buffer.AddRange(BitConverter.GetBytes(data.Length));

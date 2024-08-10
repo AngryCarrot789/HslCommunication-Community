@@ -458,7 +458,7 @@ public class NetworkDoubleBase<TNetMessage, TTransform> : NetworkBase, IDisposab
         }
 
         if (this.receiveTimeOut < 0)
-            return OperateResult.CreateSuccessResult(new byte[0]);
+            return OperateResult.CreateSuccessResult(Array.Empty<byte>());
 
         // receive msg
         OperateResult<byte[]> resultReceive = this.ReceiveByMessage(socket, this.receiveTimeOut, netMessage);

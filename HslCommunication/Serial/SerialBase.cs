@@ -12,7 +12,7 @@ namespace HslCommunication.Serial;
 public class SerialBase : IDisposable {
     private readonly SerialPort serialPort;
     private readonly byte[] rxBuffer;
-    
+
     private SimpleHybirdLock hybirdLock; // Guard against multiple threads sending and receiving data at the same time
     private ILogNet? logNet;
     private int receiveTimeout = 5000;
@@ -72,7 +72,7 @@ public class SerialBase : IDisposable {
     /// </summary>
     public SerialBase() : this(128) {
     }
-    
+
     public SerialBase(int readBufferSize) {
         this.serialPort = new SerialPort();
         this.hybirdLock = new SimpleHybirdLock();
@@ -195,10 +195,10 @@ public class SerialBase : IDisposable {
     /// receive array's Length property but instead use receivedCount, because the receive
     /// array will almost always be larger than what has actually been processed
     /// </summary>
-    /// <param name="received">An array containing the bytes that have been received back so far</param>
-    /// <param name="receivedCount">The number of bytes received so far. This may differ from the length of the received array's Length</param>
+    /// <param name="buffer">An array that contains the bytes that have been received back so far</param>
+    /// <param name="count">The number of bytes received so far. This may be less than the buffer's Length, so use this if iterating the buffer</param>
     /// <returns>True if the message is complete and the received array can be processed, otherwise, keep waiting for data to be received</returns>
-    protected virtual bool IsReceivedMessageComplete(byte[] received, int receivedCount) {
+    protected virtual bool IsReceivedMessageComplete(byte[] buffer, int count) {
         return true;
     }
 
@@ -251,7 +251,7 @@ public class SerialBase : IDisposable {
             FastArrayCopy(dst, newSink, 0, dstCount);
             dst = newSink;
         }
-        
+
         FastArrayCopy(src, dst, dstCount, count);
         dstCount += count;
     }
@@ -266,13 +266,15 @@ public class SerialBase : IDisposable {
         FastArrayCopy(src, output, 0, count);
         return output;
     }
-    
-    private LightOperationResult<byte[]> ReadMessageInternal() {
-        DateTime now = DateTime.Now;
 
-        byte[] buffer = new byte[16];
+    private LightOperationResult<byte[]> ReadMessageInternal() {
+        DateTime start = DateTime.Now;
+
+        byte[] buffer = new byte[32];
         int bufferCount = 0;
         for (int iterations = 1;; iterations++) {
+            // This function appears to be ever slightly faster when sleeping
+            // on the 2nd iteration at the start instead of at the end of the 2nd iteration
             if (iterations > 1 && this.sleepTime >= 0) {
                 Thread.Sleep(this.sleepTime);
             }
@@ -282,14 +284,14 @@ public class SerialBase : IDisposable {
                     int received = this.serialPort.Read(this.rxBuffer, 0, this.rxBuffer.Length);
                     if (received > 0)
                         AppendBuffer(ref buffer, ref bufferCount, this.rxBuffer, received);
-                    
+
                     if (this.HasProtocol() && this.IsReceivedMessageComplete(buffer, bufferCount))
                         return LightOperationResult.CreateSuccessResult(Subarray(buffer, bufferCount));
 
-                    if (this.ReceiveTimeout > 0 && (DateTime.Now - now).TotalMilliseconds > this.ReceiveTimeout)
+                    if (this.ReceiveTimeout > 0 && (DateTime.Now - start).TotalMilliseconds > this.ReceiveTimeout)
                         return new LightOperationResult<byte[]>($"Time out while waiting for completed message: {this.ReceiveTimeout}");
                 }
-                else if (iterations != 1 && (DateTime.Now - now).TotalMilliseconds > this.ReceiveTimeout) {
+                else if (iterations != 1 && (DateTime.Now - start).TotalMilliseconds > this.ReceiveTimeout) {
                     return new LightOperationResult<byte[]>($"Time out with empty serial buffer: {this.ReceiveTimeout}");
                 }
             }

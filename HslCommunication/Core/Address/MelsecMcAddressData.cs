@@ -378,7 +378,6 @@ public class McAddressData : DeviceAddressDataBase {
                     if (address[1] == 'D' || address[1] == 'd') {
                         addressData.McDataType = MelsecMcDataType.Panasonic_LD;
                         addressData.AddressStart = Convert.ToInt32(address.Substring(2));
-                        break;
                     }
                     else {
                         addressData.McDataType = MelsecMcDataType.Panasonic_L;

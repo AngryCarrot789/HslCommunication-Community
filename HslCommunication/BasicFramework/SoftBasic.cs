@@ -12,7 +12,7 @@ namespace HslCommunication.BasicFramework;
 /// 一个软件基础类，提供常用的一些静态方法 ->
 /// A software-based class that provides some common static methods
 /// </summary>
-public class SoftBasic {
+public static class SoftBasic {
     /// <summary>
     /// 获取文件的md5码 -> Get the MD5 code of the file
     /// </summary>
@@ -23,10 +23,9 @@ public class SoftBasic {
     /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\BasicFramework\SoftBasicExample.cs" region="CalculateFileMD5Example" title="CalculateFileMD5示例" />
     /// </example>
     public static string CalculateFileMD5(string filePath) {
-        string str_md5 = string.Empty;
-        using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
+        string str_md5;
+        using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             str_md5 = CalculateStreamMD5(fs);
-        }
 
         return str_md5;
     }
@@ -213,7 +212,7 @@ public class SoftBasic {
     /// </example>
     public static T[] ArrayExpandToLengthEven<T>(T[] data) {
         if (data == null)
-            return new T[0];
+            return Array.Empty<T>();
 
         if (data.Length % 2 == 1) {
             return ArrayExpandToLength(data, data.Length + 1);
@@ -840,7 +839,7 @@ public class SoftBasic {
         if (value == null)
             return null;
         if (value.Length <= (leftLength + rightLength))
-            return new byte[0];
+            return Array.Empty<byte>();
 
         byte[] buffer = new byte[value.Length - leftLength - rightLength];
         Array.Copy(value, leftLength, buffer, 0, buffer.Length);

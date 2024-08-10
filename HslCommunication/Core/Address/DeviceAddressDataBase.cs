@@ -1,17 +1,11 @@
 ﻿namespace HslCommunication.Core.Address;
 
 /// <summary>
-/// 设备地址数据的信息，通常包含起始地址，数据类型，长度
+/// Device address data information, usually including the starting address, data type, and length
 /// </summary>
 public class DeviceAddressDataBase {
-    /// <summary>
-    /// 数字的起始地址，也就是偏移地址
-    /// </summary>
     public int AddressStart { get; set; }
 
-    /// <summary>
-    /// 读取的数据长度
-    /// </summary>
     public ushort Length { get; set; }
 
     /// <summary>

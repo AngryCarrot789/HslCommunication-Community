@@ -72,7 +72,7 @@ namespace HslCommunication;
 ///     </revision>
 ///     <revision date="2017-11-24" version="4.0.1" author="Richard.Hu">
 ///         <list type="bullet">
-///             <item>更新了三菱的读取接口，提供了一个额外的字符串表示的方式，OperateResult&lt;byte[]&gt; read =  melsecNet.ReadFromPLC("M100", 5);</item>
+///             <item>更新了三菱的读取接口，提供了一个额外的字符串表示的方式，ObjectOperateResult&lt;byte[]&gt; read =  melsecNet.ReadFromPLC("M100", 5);</item>
 ///             <item>更新了西门子的数据访问类和modbus tcp类提供双模式运行，按照之前版本的写法是默认模式，每次请求重新创建网络连接，新增模式二，在代码里先进行连接服务器方法，自动切换到模式二，每次请求都共用一个网络连接，内部已经同步处理，加速数据访问，如果访问失败，自动在下次请求是重新连接，如果调用关闭连接服务器，自动切换到模式一。</item>
 ///         </list>
 ///     </revision>

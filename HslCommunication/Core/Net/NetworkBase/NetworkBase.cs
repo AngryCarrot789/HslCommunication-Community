@@ -113,7 +113,7 @@ public abstract class NetworkBase {
     /// <returns>包含了字节数据的结果类</returns>
     protected OperateResult<byte[]> Receive(Socket socket, int length) {
         if (length == 0)
-            return OperateResult.CreateSuccessResult(new byte[0]);
+            return OperateResult.CreateSuccessResult(Array.Empty<byte>());
 
         if (this.UseSynchronousNet) {
             try {
@@ -236,7 +236,7 @@ public abstract class NetworkBase {
     /// <returns>包含了字节数据的结果类</returns>
     protected OperateResult<byte[]> ReceiveAsync(Socket socket, int length) {
         if (length <= 0)
-            return OperateResult.CreateSuccessResult(new byte[0]);
+            return OperateResult.CreateSuccessResult(Array.Empty<byte>());
 
         StateObjectAsync<byte[]>? state = new StateObjectAsync<byte[]>(length);
         state.Tcs = new TaskCompletionSource<byte[]>();
@@ -943,7 +943,7 @@ public abstract class NetworkBase {
         }
 
         if (receive.Content2 == null)
-            receive.Content2 = new byte[0];
+            receive.Content2 = Array.Empty<byte>();
         // 分析数据
         return OperateResult.CreateSuccessResult(BitConverter.ToInt32(receive.Content1, 4), Encoding.Unicode.GetString(receive.Content2));
     }

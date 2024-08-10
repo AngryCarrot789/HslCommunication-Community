@@ -286,13 +286,13 @@ public class NetworkFileServerBase : NetworkServerBase {
     /// <returns>文件列表</returns>
     public virtual string[] GetDirectoryFiles(string factory, string group, string id) {
         if (string.IsNullOrEmpty(this.FilesDirectoryPath))
-            return new string[0];
+            return Array.Empty<string>();
 
         string absolutePath = this.ReturnAbsoluteFilePath(factory, group, id);
 
         // 如果文件夹不存在
         if (!Directory.Exists(absolutePath))
-            return new string[0];
+            return Array.Empty<string>();
         // 返回文件列表
         return Directory.GetFiles(absolutePath);
     }
@@ -306,13 +306,13 @@ public class NetworkFileServerBase : NetworkServerBase {
     /// <returns>文件夹列表</returns>
     public string[] GetDirectories(string factory, string group, string id) {
         if (string.IsNullOrEmpty(this.FilesDirectoryPath))
-            return new string[0];
+            return Array.Empty<string>();
 
         string absolutePath = this.ReturnAbsoluteFilePath(factory, group, id);
 
         // 如果文件夹不存在
         if (!Directory.Exists(absolutePath))
-            return new string[0];
+            return Array.Empty<string>();
         // 返回文件列表
         return Directory.GetDirectories(absolutePath);
     }

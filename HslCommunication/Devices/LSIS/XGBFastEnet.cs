@@ -405,7 +405,7 @@ public class XGBFastEnet : NetworkDeviceBase<LsisFastEnetMessage, RegularByteTra
             return new OperateResult<byte[]>(response[28], "Error:" + GetErrorDesciption(response[28]));
 
         if (response[20] == 0x59)
-            return OperateResult.CreateSuccessResult(new byte[0]); // write
+            return OperateResult.CreateSuccessResult(Array.Empty<byte>()); // write
 
         if (response[20] == 0x55) // read
         {

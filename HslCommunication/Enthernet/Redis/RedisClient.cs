@@ -77,7 +77,7 @@ public class RedisClient : NetworkDoubleBase<HslMessage, RegularByteTransform> {
         string tmp = BasicFramework.SoftBasic.ByteToHexString(send, ' ');
         // 接收超时时间大于0时才允许接收远程的数据
         if (this.ReceiveTimeOut < 0)
-            return OperateResult.CreateSuccessResult(new byte[0]);
+            return OperateResult.CreateSuccessResult(Array.Empty<byte>());
 
         // 接收数据信息
         return RedisHelper.ReceiveCommand(socket);

@@ -156,7 +156,7 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
             return OperateResult.CreateFailedResult<byte[]>(analysis);
 
         // 获取消息号
-        ushort messageId = (ushort) this.softIncrementCount.GetCurrentValue();
+        ushort messageId = (ushort) this.softIncrementCount.GetValueAndIncrement();
 
         // 生成最终tcp指令
         byte[] buffer = ModbusInfo.PackCommandToTcp(analysis.Content.CreateReadCoils(this.station, length), messageId);
@@ -176,7 +176,7 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
             return OperateResult.CreateFailedResult<byte[]>(analysis);
 
         // 获取消息号
-        ushort messageId = (ushort) this.softIncrementCount.GetCurrentValue();
+        ushort messageId = (ushort) this.softIncrementCount.GetValueAndIncrement();
 
         // 生成最终tcp指令
         byte[] buffer = ModbusInfo.PackCommandToTcp(analysis.Content.CreateReadDiscrete(this.station, length), messageId);
@@ -196,7 +196,7 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
             return OperateResult.CreateFailedResult<byte[]>(analysis);
 
         // 获取消息号
-        ushort messageId = (ushort) this.softIncrementCount.GetCurrentValue();
+        ushort messageId = (ushort) this.softIncrementCount.GetValueAndIncrement();
 
         // 生成最终tcp指令
         byte[] buffer = ModbusInfo.PackCommandToTcp(analysis.Content.CreateReadRegister(this.station, length), messageId);
@@ -216,7 +216,7 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
             return OperateResult.CreateFailedResult<byte[]>(analysis);
 
         // 获取消息号
-        ushort messageId = (ushort) this.softIncrementCount.GetCurrentValue();
+        ushort messageId = (ushort) this.softIncrementCount.GetValueAndIncrement();
 
         // 生成最终tcp指令
         byte[] buffer = ModbusInfo.PackCommandToTcp(analysis.Content.CreateReadInputRegister(this.station, length), messageId);
@@ -231,7 +231,7 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
     /// <returns>包含结果对象的报文</returns>
     private OperateResult<byte[]> BuildReadRegisterCommand(ModbusAddress address, ushort length) {
         // 获取消息号
-        ushort messageId = (ushort) this.softIncrementCount.GetCurrentValue();
+        ushort messageId = (ushort) this.softIncrementCount.GetValueAndIncrement();
 
         // 生成最终tcp指令
         byte[] buffer = ModbusInfo.PackCommandToTcp(address.CreateReadRegister(this.station, length), messageId);
@@ -251,7 +251,7 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
             return OperateResult.CreateFailedResult<byte[]>(analysis);
 
         // 获取消息号
-        ushort messageId = (ushort) this.softIncrementCount.GetCurrentValue();
+        ushort messageId = (ushort) this.softIncrementCount.GetValueAndIncrement();
 
         // 生成最终tcp指令
         byte[] buffer = ModbusInfo.PackCommandToTcp(analysis.Content.CreateWriteOneCoil(this.station, value), messageId);
@@ -271,7 +271,7 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
             return OperateResult.CreateFailedResult<byte[]>(analysis);
 
         // 获取消息号
-        ushort messageId = (ushort) this.softIncrementCount.GetCurrentValue();
+        ushort messageId = (ushort) this.softIncrementCount.GetValueAndIncrement();
 
         // 生成最终tcp指令
         byte[] buffer = ModbusInfo.PackCommandToTcp(analysis.Content.CreateWriteOneRegister(this.station, values), messageId);
@@ -291,7 +291,7 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
             return OperateResult.CreateFailedResult<byte[]>(analysis);
 
         // 获取消息号
-        ushort messageId = (ushort) this.softIncrementCount.GetCurrentValue();
+        ushort messageId = (ushort) this.softIncrementCount.GetValueAndIncrement();
 
         // 生成最终tcp指令
         byte[] buffer = ModbusInfo.PackCommandToTcp(analysis.Content.CreateWriteCoil(this.station, values), messageId);
@@ -311,7 +311,7 @@ public class ModbusTcpNet : NetworkDeviceBase<ModbusTcpMessage, ReverseWordTrans
             return OperateResult.CreateFailedResult<byte[]>(analysis);
 
         // 获取消息号
-        ushort messageId = (ushort) this.softIncrementCount.GetCurrentValue();
+        ushort messageId = (ushort) this.softIncrementCount.GetValueAndIncrement();
 
         // 生成最终tcp指令
         byte[] buffer = ModbusInfo.PackCommandToTcp(analysis.Content.CreateWriteRegister(this.station, values), messageId);

@@ -22,9 +22,13 @@
  *******************************************************************************/
 
 public readonly struct LightOperationResult {
-    public bool IsSuccess { get; }
-    public string Message { get; }
     public int ErrorCode { get; }
+    public string Message { get; }
+    public bool IsSuccess { get; }
+
+    public LightOperationResult() {
+        this.IsSuccess = true;
+    }
 
     public LightOperationResult(string? msg = null) : this(10000, msg) { }
 
@@ -171,37 +175,14 @@ public readonly struct LightOperationResult<T1, T2, T3, T4> {
 /// 当 <see cref="IsSuccess"/> 为 True 时，忽略 <see cref="Message"/> 及 <see cref="ErrorCode"/> 的值
 /// </remarks>
 public class OperateResult {
-    /// <summary>
-    /// 指示本次访问是否成功
-    /// </summary>
     public bool IsSuccess { get; set; }
-
-    /// <summary>
-    /// 具体的错误描述
-    /// </summary>
     public string Message { get; set; } = StringResources.Language.UnknownError;
-
-    /// <summary>
-    /// 具体的错误代码
-    /// </summary>
     public int ErrorCode { get; set; } = 10000;
-
-    /// <summary>
-    /// Creates an empty failed operation result
-    /// </summary>
     public OperateResult() {
     }
-
-    /// <summary>
-    /// Creates a failed operation result with the error message
-    /// </summary>
     public OperateResult(string msg) {
         this.Message = msg;
     }
-
-    /// <summary>
-    /// Creates a failed operation result with the error code and message
-    /// </summary>
     public OperateResult(int err, string msg) {
         this.ErrorCode = err;
         this.Message = msg;

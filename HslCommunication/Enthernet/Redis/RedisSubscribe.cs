@@ -73,7 +73,7 @@ public class RedisSubscribe : NetworkXBase {
         this.CoreSocket = connect.Content;
 
         try {
-            connect.Content.BeginReceive(new byte[0], 0, 0, SocketFlags.None, new AsyncCallback(this.ReceiveCallBack), connect.Content);
+            connect.Content.BeginReceive(Array.Empty<byte>(), 0, 0, SocketFlags.None, new AsyncCallback(this.ReceiveCallBack), connect.Content);
         }
         catch (Exception ex) {
             return new OperateResult(ex.Message);
@@ -93,7 +93,7 @@ public class RedisSubscribe : NetworkXBase {
                     return;
                 }
                 else {
-                    socket.BeginReceive(new byte[0], 0, 0, SocketFlags.None, new AsyncCallback(this.ReceiveCallBack), socket);
+                    socket.BeginReceive(Array.Empty<byte>(), 0, 0, SocketFlags.None, new AsyncCallback(this.ReceiveCallBack), socket);
                 }
 
                 OperateResult<string[]> data = RedisHelper.GetStringsFromCommandLine(read.Content);

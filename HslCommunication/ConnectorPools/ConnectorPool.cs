@@ -1,7 +1,7 @@
 ﻿using HslCommunication.Core.Thread;
 using HslCommunication.ModBus.ModbusTcp;
 
-namespace HslCommunication.Algorithms.ConnectPool;
+namespace HslCommunication.ConnectorPools;
 
 /// <summary>
 /// 一个连接池管理器，负责维护多个可用的连接，并且自动清理，扩容
@@ -17,12 +17,12 @@ namespace HslCommunication.Algorithms.ConnectPool;
 /// 然后就可以实现真正的连接池了
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Algorithms\ConnectPool.cs" region="ConnectPoolExample" title="ConnectPool示例" />
 /// </example>
-public class ConnectPool<TConnector> where TConnector : IConnector {
+public class ConnectorPool<TConnector> where TConnector : class, IConnector {
     /// <summary>
     /// 实例化一个连接池对象，需要指定如果创建新实例的方法
     /// </summary>
     /// <param name="createConnector">创建连接对象的委托</param>
-    public ConnectPool(Func<TConnector> createConnector) {
+    public ConnectorPool(Func<TConnector> createConnector) {
         this.CreateConnector = createConnector;
         this.hybirdLock = new SimpleHybirdLock();
         this.connectors = new List<TConnector>();
@@ -39,18 +39,13 @@ public class ConnectPool<TConnector> where TConnector : IConnector {
             Thread.Sleep(100);
         }
 
-        TConnector result = default(TConnector);
         this.hybirdLock.Enter();
 
-        for (int i = 0; i < this.connectors.Count; i++) {
-            if (!this.connectors[i].IsConnectUsing) {
-                this.connectors[i].IsConnectUsing = true;
-                result = this.connectors[i];
-                break;
-            }
+        TConnector? result = this.connectors.FirstOrDefault(x => !x.IsConnectUsing);
+        if (result != null) {
+            result.IsConnectUsing = true;
         }
-
-        if (result == null) {
+        else {
             // 创建新的连接
             result = this.CreateConnector();
             result.IsConnectUsing = true;
@@ -62,7 +57,6 @@ public class ConnectPool<TConnector> where TConnector : IConnector {
             if (this.usedConnector == this.maxConnector)
                 this.canGetConnector = false;
         }
-
 
         result.LastUseTime = DateTime.Now;
 
@@ -111,7 +105,7 @@ public class ConnectPool<TConnector> where TConnector : IConnector {
         get { return this.usedConnector; }
     }
 
-    private void TimerCheckBackground(object obj) {
+    private void TimerCheckBackground(object? obj) {
         // 清理长久不用的连接对象
         this.hybirdLock.Enter();
 

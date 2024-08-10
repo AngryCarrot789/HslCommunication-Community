@@ -35,7 +35,7 @@ public class ER7BC10 : NetworkDoubleBase<EFORTMessage, RegularByteTransform>, IR
         Encoding.ASCII.GetBytes("MessageHead").CopyTo(command, 0);
         BitConverter.GetBytes((ushort) command.Length).CopyTo(command, 16);
         BitConverter.GetBytes((ushort) 1001).CopyTo(command, 18);
-        BitConverter.GetBytes((ushort) this.softIncrementCount.GetCurrentValue()).CopyTo(command, 20);
+        BitConverter.GetBytes((ushort) this.softIncrementCount.GetValueAndIncrement()).CopyTo(command, 20);
         Encoding.ASCII.GetBytes("MessageTail").CopyTo(command, 22);
 
         return command;

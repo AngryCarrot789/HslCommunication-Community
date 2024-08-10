@@ -91,7 +91,7 @@ public class KukaAvarProxyNet : NetworkDoubleBase<KukaVarProxyMessage, ReverseWo
     /// <returns>最终实现的可以发送的机器人的字节数据</returns>
     private byte[] PackCommand(byte[] commandCore) {
         byte[] buffer = new byte[commandCore.Length + 4];
-        this.ByteTransform.TransByte((ushort) this.softIncrementCount.GetCurrentValue()).CopyTo(buffer, 0);
+        this.ByteTransform.TransByte((ushort) this.softIncrementCount.GetValueAndIncrement()).CopyTo(buffer, 0);
         this.ByteTransform.TransByte((ushort) commandCore.Length).CopyTo(buffer, 2);
         commandCore.CopyTo(buffer, 4);
 

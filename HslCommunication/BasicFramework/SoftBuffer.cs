@@ -5,16 +5,15 @@ using HslCommunication.Core.Types;
 namespace HslCommunication.BasicFramework;
 
 /// <summary>
-/// 一个线程安全的缓存数据块，支持批量动态修改，添加，并获取快照
+/// A thread-safe buffer that supports batch modification and snapshotting
 /// </summary>
 /// <remarks>
-/// 这个类可以实现什么功能呢，就是你有一个大的数组，作为你的应用程序的中间数据池，允许你往byte[]数组里存放指定长度的子byte[]数组，也允许从里面拿数据，
-/// 这些操作都是线程安全的，当然，本类扩展了一些额外的方法支持，也可以直接赋值或获取基本的数据类型对象。
+/// What functions can this class achieve? You have a large array as the intermediate
+/// data pool of your application, allowing you to store sub-byte[] arrays of specified
+/// length in the byte[] array, and also allowing you to get data from it.
+/// These operations are thread-safe. Of course, this class extends some additional method
+/// support, and can also directly assign or get basic data type objects.
 /// </remarks>
-/// <example>
-/// 此处举例一些数据的读写说明，可以此处的数据示例。
-/// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\BasicFramework\SoftBufferExample.cs" region="SoftBufferExample1" title="SoftBuffer示例" />
-/// </example>
 public class SoftBuffer : IDisposable {
     /// <summary>
     /// 使用默认的大小初始化缓存空间
