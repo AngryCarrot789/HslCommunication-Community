@@ -126,9 +126,9 @@ public class KeyenceNanoSerial : SerialDeviceBase<KeyenceNanoByteTransform> {
     /// <returns>是否初始化成功</returns>
     protected override OperateResult InitializationOnOpen() {
         // 建立通讯连接{CR/r}
-        OperateResult<byte[]> result = this.SendMessageAndGetResponce(this._buildConnectCmd);
+        LightOperationResult<byte[]> result = this.SendMessageAndGetResponce(this._buildConnectCmd);
         if (!result.IsSuccess)
-            return result;
+            return result.ToOperateResult();
 
         return OperateResult.CreateSuccessResult();
     }
@@ -288,9 +288,9 @@ public class KeyenceNanoSerial : SerialDeviceBase<KeyenceNanoByteTransform> {
             return OperateResult.CreateFailedResult<byte[]>(command);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<byte[]>(read);
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 反馈检查
         OperateResult ackResult = this.CheckPlcReadResponse(read.Content);
@@ -331,9 +331,9 @@ public class KeyenceNanoSerial : SerialDeviceBase<KeyenceNanoByteTransform> {
             return command;
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return read.ToOperateResult();
 
         // 结果验证
         OperateResult checkResult = this.CheckPlcWriteResponse(read.Content);
@@ -358,9 +358,9 @@ public class KeyenceNanoSerial : SerialDeviceBase<KeyenceNanoByteTransform> {
             return command;
 
         // 和串口进行核心的数据交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 检查结果是否正确
         OperateResult checkResult = this.CheckPlcWriteResponse(read.Content);

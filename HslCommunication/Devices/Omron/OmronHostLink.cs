@@ -131,9 +131,9 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
             return command;
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<byte[]>(read);
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 数据有效性分析
         OperateResult<byte[]> valid = ResponseValidAnalysis(read.Content, true);
@@ -158,9 +158,9 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
             return command;
 
         // 核心数据交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 数据有效性分析
         OperateResult<byte[]> valid = ResponseValidAnalysis(read.Content, false);
@@ -187,9 +187,9 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
             return OperateResult.CreateFailedResult<bool[]>(command);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<bool[]>(read);
+            return new OperateResult<bool[]>(read.ErrorCode, read.Message);
 
         // 数据有效性分析
         OperateResult<byte[]> valid = ResponseValidAnalysis(read.Content, true);
@@ -217,9 +217,9 @@ public class OmronHostLink : SerialDeviceBase<ReverseWordTransform> {
             return command;
 
         // 核心数据交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(this.PackCommand(command.Content));
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 数据有效性分析
         OperateResult<byte[]> valid = ResponseValidAnalysis(read.Content, false);

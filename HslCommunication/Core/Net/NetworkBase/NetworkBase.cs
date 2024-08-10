@@ -184,7 +184,6 @@ public abstract class NetworkBase {
         result.Content = state.Buffer;
         result.IsSuccess = true;
         state.Clear();
-        state = null;
         return result;
     }
 

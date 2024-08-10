@@ -251,9 +251,9 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
         byte[] command = MelsecHelper.BuildAsciiReadMcCoreCommand(addressResult.Content, false);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
         if (!read.IsSuccess)
-            return read;
+            return read.ToOperateResult();
 
         // 结果验证
         if (read.Content[0] != 0x02)
@@ -285,9 +285,9 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
         byte[] command = MelsecHelper.BuildAsciiWriteWordCoreCommand(addressResult.Content, value);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x06)
@@ -313,9 +313,9 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
         byte[] command = MelsecHelper.BuildAsciiReadMcCoreCommand(addressResult.Content, true);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<bool[]>(read);
+            return new OperateResult<bool[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x02)
@@ -343,9 +343,9 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
         byte[] command = MelsecHelper.BuildAsciiWriteBitCoreCommand(addressResult.Content, value);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(command, this.station));
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x06)
@@ -361,9 +361,9 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
     /// <returns>是否成功</returns>
     public OperateResult RemoteRun() {
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(Encoding.ASCII.GetBytes("1001000000010000"), this.station));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(Encoding.ASCII.GetBytes("1001000000010000"), this.station));
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x06 && read.Content[0] != 0x02)
@@ -379,9 +379,9 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
     /// <returns>是否成功</returns>
     public OperateResult RemoteStop() {
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(Encoding.ASCII.GetBytes("100200000001"), this.station));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(Encoding.ASCII.GetBytes("100200000001"), this.station));
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x06 && read.Content[0] != 0x02)
@@ -397,9 +397,9 @@ public class MelsecA3CNet1 : SerialDeviceBase<RegularByteTransform> {
     /// <returns>返回型号的结果对象</returns>
     public OperateResult<string> ReadPlcType() {
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(Encoding.ASCII.GetBytes("01010000"), this.station));
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(PackCommand(Encoding.ASCII.GetBytes("01010000"), this.station));
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<string>(read);
+            return new OperateResult<string>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x06 && read.Content[0] != 0x02)

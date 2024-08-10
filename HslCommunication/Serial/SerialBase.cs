@@ -1,4 +1,5 @@
-﻿using System.IO.Ports;
+﻿using System.Diagnostics;
+using System.IO.Ports;
 using HslCommunication.Core.Thread;
 using HslCommunication.Core.Types;
 using HslCommunication.LogNet.Core;
@@ -6,23 +7,25 @@ using HslCommunication.LogNet.Core;
 namespace HslCommunication.Serial;
 
 /// <summary>
-/// 所有串行通信类的基类，提供了一些基础的服务
+/// The base class for all types of serial devices. There may be a similarly named class for a PLC that can communicate via serial, ethernet, etc.
 /// </summary>
 public class SerialBase : IDisposable {
     private readonly SerialPort serialPort;
+    private readonly byte[] rxBuffer;
+    
     private SimpleHybirdLock hybirdLock; // Guard against multiple threads sending and receiving data at the same time
     private ILogNet? logNet;
     private int receiveTimeout = 5000;
     private int sleepTime;
     private bool clearReadBufferBeforeSend;
     private bool disposedValue;
-    
+
     /// <summary>
     /// 当前的日志情况
     /// </summary>
     public ILogNet? LogNet {
-        get { return this.logNet; }
-        set { this.logNet = value; }
+        get => this.logNet;
+        set => this.logNet = value;
     }
 
     /// <summary>
@@ -67,9 +70,13 @@ public class SerialBase : IDisposable {
     /// <summary>
     /// 实例化一个无参的构造方法
     /// </summary>
-    public SerialBase() {
+    public SerialBase() : this(128) {
+    }
+    
+    public SerialBase(int readBufferSize) {
         this.serialPort = new SerialPort();
         this.hybirdLock = new SimpleHybirdLock();
+        this.rxBuffer = new byte[readBufferSize];
     }
 
     /// <summary>
@@ -142,11 +149,20 @@ public class SerialBase : IDisposable {
     }
 
     /// <summary>
-    /// 清除串口缓冲区的数据，并返回该数据，如果缓冲区没有数据，返回的字节数组长度为0
+    /// Clears the serial port's receive buffer
     /// </summary>
     /// <returns>是否操作成功的方法</returns>
-    public LightOperationResult<byte[]> ClearSerialCache() {
-        return this.ReadSerialData(false);
+    public LightOperationResult ClearSerialCache() {
+        if (this.serialPort.IsOpen) {
+            try {
+                this.serialPort.DiscardInBuffer();
+            }
+            catch (Exception e) {
+                return new LightOperationResult(e.Message);
+            }
+        }
+
+        return new LightOperationResult();
     }
 
     /// <summary>
@@ -175,9 +191,9 @@ public class SerialBase : IDisposable {
     }
 
     /// <summary>
-    /// Checks if the received bytes account to a valid message from the PLC.
-    /// Do not use the receive array's Length property but instead use receivedCount,
-    /// because the receive array will almost always be larger than what has actually been processed
+    /// Checks if the received bytes make up a valid message from the PLC. Do not use the
+    /// receive array's Length property but instead use receivedCount, because the receive
+    /// array will almost always be larger than what has actually been processed
     /// </summary>
     /// <param name="received">An array containing the bytes that have been received back so far</param>
     /// <param name="receivedCount">The number of bytes received so far. This may differ from the length of the received array's Length</param>
@@ -185,101 +201,101 @@ public class SerialBase : IDisposable {
     protected virtual bool IsReceivedMessageComplete(byte[] received, int receivedCount) {
         return true;
     }
-    
+
     /// <summary>
     /// Sends the given array of bytes (if non-null) and then reads a response
     /// </summary>
-    /// <param name="send">发送的原始字节数据</param>
-    /// <returns>带接收字节的结果对象</returns>
-    public OperateResult<byte[]> SendMessageAndGetResponce(byte[] send) {
+    /// <param name="send">The raw bytes to send</param>
+    /// <returns>An operation result containing the response, if data was sent and a response was received in time</returns>
+    public LightOperationResult<byte[]> SendMessageAndGetResponce(byte[] send) {
+        if (send == null! || send.Length < 1) {
+            return LightOperationResult.CreateSuccessResult(Array.Empty<byte>());
+        }
+
         this.hybirdLock.Enter();
 
         if (this.ClearReadBufferBeforeSend)
             this.ClearSerialCache();
 
-        LightOperationResult sendResult = this.WriteSerialData(send);
-        if (!sendResult.IsSuccess) {
+        try {
+            this.serialPort.Write(send, 0, send.Length);
+        }
+        catch (Exception ex) {
             this.hybirdLock.Leave();
-            return sendResult.ToFailedResult<byte[]>();
+            return new LightOperationResult<byte[]>(ex.Message);
         }
 
-        LightOperationResult<byte[]> receiveResult = this.ReadSerialData(true);
+        LightOperationResult<byte[]> receiveResult = this.ReadMessageInternal();
         this.hybirdLock.Leave();
 
-        return receiveResult.ToOperateResult();
+        return receiveResult;
     }
 
-    protected virtual LightOperationResult<byte[]> ReadSerialData(bool waitForData) {
-        byte[] buffer;
-        try {
-            buffer = new byte[64];
-        }
-        catch (Exception ex) {
-            return new LightOperationResult<byte[]>(ex.Message);
-        }
+    private static void FastArrayCopy(byte[] src, byte[] dst, int dstoffset, int count) {
+        if (count > 512) // is 512 a good value for this?
+            Buffer.BlockCopy(src, 0, dst, dstoffset, count);
+        else
+            for (int i = 0; i < count; i++)
+                dst[i + dstoffset] = src[i];
+    }
 
-        using MemoryStream ms = new MemoryStream(64);
+    private static void AppendBuffer(ref byte[] dst, ref int dstCount, byte[] src, int count) {
+        // sinkCount: 4
+        // sink.Length: 8
+        // count: 6
+        Debug.Assert(src.Length >= count, "Source buffer length is too small to copy count bytes from");
+
+        int remaining = dst.Length - dstCount;
+        if (count > remaining) {
+            byte[] newSink = new byte[(dstCount + count) << 1];
+            FastArrayCopy(dst, newSink, 0, dstCount);
+            dst = newSink;
+        }
         
-        DateTime now = DateTime.Now;
-        int iterations = 0;
+        FastArrayCopy(src, dst, dstCount, count);
+        dstCount += count;
+    }
 
-        LoopStart:
-        
-        if (++iterations > 1 && this.sleepTime >= 0)
-            Thread.Sleep(this.sleepTime);
+    private static byte[] Subarray(byte[] src, int count) {
+        if (src.Length == count)
+            return src;
+        if (count > src.Length)
+            throw new InvalidOperationException("Cannot sub-array more than the length of the array");
 
-        try {
-            if (this.serialPort.BytesToRead > 0) {
-                int received = this.serialPort.Read(buffer, 0, buffer.Length);
-                if (received > 0)
-                    ms.Write(buffer, 0, received);
-
-                if (this.HasProtocol() && this.IsReceivedMessageComplete(ms.GetBuffer(), (int) ms.Length))
-                    goto SuccessResult;
-
-                if (this.ReceiveTimeout > 0 && (DateTime.Now - now).TotalMilliseconds > this.ReceiveTimeout)
-                    goto TimeoutResult;
-
-                goto LoopStart;
-            }
-            else if (iterations != 1) {
-                if ((DateTime.Now - now).TotalMilliseconds > this.ReceiveTimeout)
-                    goto TimeoutResult;
-
-                if (ms.Length > 0 || waitForData)
-                    goto LoopStart;
-            }
-            else {
-                goto LoopStart;
-            }
-        }
-        catch (Exception ex) {
-            return new LightOperationResult<byte[]>(ex.Message);
-        }
-
-        SuccessResult:
-        return LightOperationResult.CreateSuccessResult(ms.ToArray());
-        
-        TimeoutResult:
-        return new LightOperationResult<byte[]>($"Time out: {this.ReceiveTimeout}");
+        byte[] output = new byte[count];
+        FastArrayCopy(src, output, 0, count);
+        return output;
     }
     
-    /// <summary>
-    /// Writes serial data to our serial port
-    /// </summary>
-    /// <param name="data">字节数据</param>
-    /// <returns>是否发送成功</returns>
-    protected virtual LightOperationResult WriteSerialData(byte[] data) {
-        if (data == null! || data.Length == 0) {
-            return LightOperationResult.CreateSuccessResult();
-        }
+    private LightOperationResult<byte[]> ReadMessageInternal() {
+        DateTime now = DateTime.Now;
 
-        try {
-            this.serialPort.Write(data, 0, data.Length);
-            return LightOperationResult.CreateSuccessResult();
-        }
-        catch (Exception ex) {
-            return new LightOperationResult(ex.Message);
+        byte[] buffer = new byte[16];
+        int bufferCount = 0;
+        for (int iterations = 1;; iterations++) {
+            if (iterations > 1 && this.sleepTime >= 0) {
+                Thread.Sleep(this.sleepTime);
+            }
+
+            try {
+                if (this.serialPort.BytesToRead > 0) {
+                    int received = this.serialPort.Read(this.rxBuffer, 0, this.rxBuffer.Length);
+                    if (received > 0)
+                        AppendBuffer(ref buffer, ref bufferCount, this.rxBuffer, received);
+                    
+                    if (this.HasProtocol() && this.IsReceivedMessageComplete(buffer, bufferCount))
+                        return LightOperationResult.CreateSuccessResult(Subarray(buffer, bufferCount));
+
+                    if (this.ReceiveTimeout > 0 && (DateTime.Now - now).TotalMilliseconds > this.ReceiveTimeout)
+                        return new LightOperationResult<byte[]>($"Time out while waiting for completed message: {this.ReceiveTimeout}");
+                }
+                else if (iterations != 1 && (DateTime.Now - now).TotalMilliseconds > this.ReceiveTimeout) {
+                    return new LightOperationResult<byte[]>($"Time out with empty serial buffer: {this.ReceiveTimeout}");
+                }
+            }
+            catch (Exception ex) {
+                return new LightOperationResult<byte[]>(ex.Message);
+            }
         }
     }
 

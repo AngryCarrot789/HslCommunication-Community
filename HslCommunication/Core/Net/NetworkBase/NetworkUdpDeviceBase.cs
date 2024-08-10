@@ -78,20 +78,15 @@ public class NetworkUdpDeviceBase<TTransform> : NetworkUdpBase, IReadWriteNet wh
     /// 需要是定义一个类，选择好相对于的ByteTransform实例，才能调用该方法。
     /// </remarks>
     public OperateResult<T> ReadCustomer<T>(string address) where T : IDataTransfer, new() {
-        OperateResult<T> result = new OperateResult<T>();
         T Content = new T();
         OperateResult<byte[]> read = this.Read(address, Content.ReadCount);
         if (read.IsSuccess) {
             Content.ParseSource(read.Content);
-            result.Content = Content;
-            result.IsSuccess = true;
+            return OperateResult.CreateSuccessResult(Content);
         }
         else {
-            result.ErrorCode = read.ErrorCode;
-            result.Message = read.Message;
+            return OperateResult.CreateFailedResult<T>(read);
         }
-
-        return result;
     }
 
     /// <summary>

@@ -1,5 +1,4 @@
 ﻿using HslCommunication.BasicFramework;
-using HslCommunication.Core;
 using System.Text;
 using HslCommunication.Core.Net;
 using HslCommunication.Core.Reflection;

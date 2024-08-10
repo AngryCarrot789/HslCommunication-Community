@@ -67,9 +67,9 @@ public class XGBCnet : SerialDeviceBase<RegularByteTransform> {
         if (!command.IsSuccess)
             return command;
 
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         return ExtractActualData(read.Content, true);
     }
@@ -85,9 +85,9 @@ public class XGBCnet : SerialDeviceBase<RegularByteTransform> {
         if (!command.IsSuccess)
             return command;
 
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         return ExtractActualData(read.Content, false);
     }

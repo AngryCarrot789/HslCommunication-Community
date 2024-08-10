@@ -35,9 +35,9 @@ public class FujiSPB : SerialDeviceBase<RegularByteTransform> {
             return OperateResult.CreateFailedResult<byte[]>(command);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<byte[]>(read);
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != ':')
@@ -68,9 +68,9 @@ public class FujiSPB : SerialDeviceBase<RegularByteTransform> {
             return command;
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != ':')

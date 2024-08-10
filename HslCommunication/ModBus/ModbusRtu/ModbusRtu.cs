@@ -261,9 +261,9 @@ public class ModbusRtu : SerialDeviceBase<ReverseWordTransform> {
     /// <returns>带是否成功的结果数据</returns>
     protected virtual OperateResult<byte[]> CheckModbusTcpResponse(byte[] send) {
         // 核心交互
-        OperateResult<byte[]> result = this.SendMessageAndGetResponce(send);
+        LightOperationResult<byte[]> result = this.SendMessageAndGetResponce(send);
         if (!result.IsSuccess)
-            return result;
+            return result.ToOperateResult();
 
         // 长度校验
         if (result.Content.Length < 5)

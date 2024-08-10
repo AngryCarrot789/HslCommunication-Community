@@ -20,7 +20,7 @@ public class MelsecFxLinksTest {
     public void buildCommandTest() {
         byte[] right = new byte[] { 0x05, 0x30, 0x35, 0x46, 0x46, 0x42, 0x52, 0x41, 0x58, 0x30, 0x30, 0x34, 0x30, 0x30, 0x35, 0x34, 0x37 };
 
-        OperateResult<byte[]> command = MelsecFxLinks.BuildReadCommand(5, "X40", 5, true, true, 10);
+        LightOperationResult<byte[]> command = MelsecFxLinks.BuildReadCommand(5, "X40", 5, true, true, 10);
 
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(HslCommunication.BasicFramework.SoftBasic.IsTwoBytesEquel(command.Content, right), HslCommunication.BasicFramework.SoftBasic.ByteToHexString(command.Content, ' '));
     }

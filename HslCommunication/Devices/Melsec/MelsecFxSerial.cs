@@ -185,9 +185,9 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
             return new OperateResult<byte[]>(command.ErrorCode, command.Message);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<byte[]>(read);
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 反馈检查
         LightOperationResult ackResult = this.CheckPlcReadResponse(read.Content);
@@ -213,9 +213,9 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         if (!command.IsSuccess)
             return new OperateResult<bool[]>(command.ErrorCode, command.Message);
 
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content1);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content1);
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<bool[]>(read);
+            return new OperateResult<bool[]>(read.ErrorCode, read.Message);
 
         LightOperationResult ackResult = this.CheckPlcReadResponse(read.Content);
         if (!ackResult.IsSuccess)
@@ -230,7 +230,7 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         if (!command.IsSuccess)
             return new LightOperationResult<bool[]>(command.ErrorCode, command.Message);
 
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content1);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content1);
         if (!read.IsSuccess)
             return new LightOperationResult<bool[]>(read.ErrorCode, read.Message);
 
@@ -261,9 +261,9 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
             return command.ToOperateResult();
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         LightOperationResult checkResult = this.CheckPlcWriteResponse(read.Content);
@@ -286,9 +286,9 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
             return command.ToOperateResult();
 
         // 和串口进行核心的数据交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 检查结果是否正确
         LightOperationResult checkResult = this.CheckPlcWriteResponse(read.Content);
@@ -499,13 +499,22 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         if (!extraResult.IsSuccess)
             return new LightOperationResult<bool[]>(extraResult.ErrorCode, extraResult.Message);
 
-        // 转化bool数组
         try {
+            // DateTime startTime = DateTime.Now;
             bool[] data = new bool[length];
             bool[] array = SoftBasic.ByteToBoolArray(extraResult.Content, extraResult.Content.Length * 8);
+            
+            // Although I profiled this in debug mode, manual array copy is
+            // still faster. BlockCopy is a bit slower, and CopyBlockUnaligned
+            // is also slower than BlockCopy
+            
             for (int i = 0; i < length; i++) {
                 data[i] = array[i + start];
             }
+            
+            // Buffer.BlockCopy(array, start, data, 0, length);
+            // Unsafe.CopyBlockUnaligned(ref Unsafe.As<bool, byte>(ref data[0]), ref Unsafe.As<bool, byte>(ref array[start]), (uint) length);
+            // double millisTaken = (DateTime.Now - startTime).TotalMilliseconds;
 
             return LightOperationResult.CreateSuccessResult(data);
         }

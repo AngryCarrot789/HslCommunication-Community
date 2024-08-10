@@ -18,50 +18,51 @@
 
 #### Siemens
 
-| No. | Class ~~~~                                                               | Model                                                       | Price | Remarks | Contributor                                               |
-|-----|----------------------------------------------------------------------|-------------------------------------------------------------|-------|---------|-----------------------------------------------------------|
-| 1   | ![pic](https://img.shields.io/badge/-SiemensS7Net-informational.svg) | ![pic](https://img.shields.io/badge/1215C-Good-success.svg) | ￥     | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
+| No. | Class ~~~~                                                               | Model                                                       | Remarks | Contributor                                               |
+|-----|----------------------------------------------------------------------|-------------------------------------------------------------|---------|-----------------------------------------------------------|
+| 1   | ![pic](https://img.shields.io/badge/-SiemensS7Net-informational.svg) | ![pic](https://img.shields.io/badge/1215C-Good-success.svg) | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
 
 #### Melsec
 
-| No. | Class                                                               | Model                                                               | Price | Remarks | Contributor                                               |
-|-----|---------------------------------------------------------------------|---------------------------------------------------------------------|-------|---------|-----------------------------------------------------------|
-| 1   | ![pic](https://img.shields.io/badge/-MelsecMcNet-informational.svg) | ![pic](https://img.shields.io/badge/QJ71E71%20100-Good-success.svg) | ￥     | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
-| 2   | ![pic](https://img.shields.io/badge/-MelsecMcNet-informational.svg) | ![pic](https://img.shields.io/badge/Q02H-Good-success.svg)          | ￥     | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
-| 3   | ![pic](https://img.shields.io/badge/-MelsecMcNet-informational.svg) | ![pic](https://img.shields.io/badge/L02H-Good-success.svg)          | ￥     | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
-| 4   | ![pic](https://img.shields.io/badge/-MelsecMcNet-informational.svg) | ![pic](https://img.shields.io/badge/Fx5u-Good-success.svg)          | ￥     | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
+| No. | Class                                                               | Model                                                                | Remarks            | Contributor                                                                                                 |
+|-----|---------------------------------------------------------------------|----------------------------------------------------------------------|--------------------|-------------------------------------------------------------------------------------------------------------|
+| 1   | ![pic](https://img.shields.io/badge/-MelsecMcNet-informational.svg) | ![pic](https://img.shields.io/badge/QJ71E71%20100-Good-success.svg)  | &nbsp;             | [Richard Hu](https://github.com/dathlin/HslCommunication)                                                   |
+| 2   | ![pic](https://img.shields.io/badge/-MelsecMcNet-informational.svg) | ![pic](https://img.shields.io/badge/Q02H-Good-success.svg)           | &nbsp;             | [Richard Hu](https://github.com/dathlin/HslCommunication)                                                   |
+| 3   | ![pic](https://img.shields.io/badge/-MelsecMcNet-informational.svg) | ![pic](https://img.shields.io/badge/L02H-Good-success.svg)           | &nbsp;             | [Richard Hu](https://github.com/dathlin/HslCommunication)                                                   |
+| 4   | ![pic](https://img.shields.io/badge/-MelsecMcNet-informational.svg) | ![pic](https://img.shields.io/badge/Fx5u-Good-success.svg)           | &nbsp;             | [Richard Hu](https://github.com/dathlin/HslCommunication)                                                   |
+| 4   | ![pic](https://img.shields.io/badge/-MelsecFxSerial-informational.svg) | ![pic](https://img.shields.io/badge/FX3U-Good-success.svg)           | &nbsp;             | Original Author Unknown <br/>[AngryCarrot789](https://github.com/AngryCarrot789/HslCommunication-Community) |
 
 #### AB plc
 
-| No. | Class                                                                   | Model                                                      | Price | Remarks | Contributor |
-|-----|-------------------------------------------------------------------------|------------------------------------------------------------|-------|---------|-------------|
-| 1   | ![pic](https://img.shields.io/badge/-AllenBradleyNet-informational.svg) | ![pic](https://img.shields.io/badge/1769-Good-success.svg) | ￥     | &nbsp;  | &nbsp;      |
-| 1   | ![pic](https://img.shields.io/badge/-AllenBradleyNet-informational.svg) | ![pic](https://img.shields.io/badge/1756-Good-success.svg) | ￥     | &nbsp;  | &nbsp;      |
+| No. | Class                                                                   | Model                                                      | Remarks | Contributor |
+|-----|-------------------------------------------------------------------------|------------------------------------------------------------|---------|-------------|
+| 1   | ![pic](https://img.shields.io/badge/-AllenBradleyNet-informational.svg) | ![pic](https://img.shields.io/badge/1769-Good-success.svg) | &nbsp;  | &nbsp;      |
+| 1   | ![pic](https://img.shields.io/badge/-AllenBradleyNet-informational.svg) | ![pic](https://img.shields.io/badge/1756-Good-success.svg) | &nbsp;  | &nbsp;      |
 
 #### Omron
 
-| No. | Class                                                                | Model | Price | Remarks | Contributor |
-|-----|----------------------------------------------------------------------|-------|-------|---------|-------------|
-| 1   | ![pic](https://img.shields.io/badge/-OmronFinsNet-informational.svg) | -     | ￥     | &nbsp;  | &nbsp;      |
+| No. | Class                                                                | Model | Remarks | Contributor |
+|-----|----------------------------------------------------------------------|-------|---------|-------------|
+| 1   | ![pic](https://img.shields.io/badge/-OmronFinsNet-informational.svg) | -     | &nbsp;  | &nbsp;      |
 
 #### Keyence
 
-| No. | Class                                                                | Model | Price | Remarks | Contributor |
-|-----|----------------------------------------------------------------------|-------|-------|---------|-------------|
-| 1   | ![pic](https://img.shields.io/badge/-OmronFinsNet-informational.svg) | -     | ￥     | &nbsp;  | &nbsp;      |
+| No. | Class                                                                | Model | Remarks | Contributor |
+|-----|----------------------------------------------------------------------|-------|---------|-------------|
+| 1   | ![pic](https://img.shields.io/badge/-OmronFinsNet-informational.svg) | -     | &nbsp;  | &nbsp;      |
 
 #### ModbusTcp
 
-| No. | Class                                                                | Model                                                       | Price | Remarks | Contributor                                               |
-|-----|----------------------------------------------------------------------|-------------------------------------------------------------|-------|---------|-----------------------------------------------------------|
-| 1   | ![pic](https://img.shields.io/badge/-Modbus%20Tcp-informational.svg) | ![pic](https://img.shields.io/badge/1215C-Good-success.svg) | ￥     | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
-| 4   | ![pic](https://img.shields.io/badge/-Modbus%20Tcp-informational.svg) | ![pic](https://img.shields.io/badge/Fx5u-Good-success.svg)  | ￥     | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
+| No. | Class                                                                | Model                                                       | Remarks | Contributor                                               |
+|-----|----------------------------------------------------------------------|-------------------------------------------------------------|---------|-----------------------------------------------------------|
+| 1   | ![pic](https://img.shields.io/badge/-Modbus%20Tcp-informational.svg) | ![pic](https://img.shields.io/badge/1215C-Good-success.svg) | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
+| 4   | ![pic](https://img.shields.io/badge/-Modbus%20Tcp-informational.svg) | ![pic](https://img.shields.io/badge/Fx5u-Good-success.svg)  | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
 
 #### Panasonic
 
-| No. | Class                                                                  | Model                                                              | Price | Remarks | Contributor |
-|-----|------------------------------------------------------------------------|--------------------------------------------------------------------|-------|---------|-------------|
-| 1   | ![pic](https://img.shields.io/badge/-PanasonicMcNet-informational.svg) | ![pic](https://img.shields.io/badge/FP7%20CPS31E-Good-success.svg) | ￥     | &nbsp;  | 镇江-Relax;   |
+| No. | Class                                                                  | Model                                                              | Remarks | Contributor |
+|-----|------------------------------------------------------------------------|--------------------------------------------------------------------|---------|-------------|
+| 1   | ![pic](https://img.shields.io/badge/-PanasonicMcNet-informational.svg) | ![pic](https://img.shields.io/badge/FP7%20CPS31E-Good-success.svg) | &nbsp;  | 镇江-Relax;   |
 
 ## Summary
 

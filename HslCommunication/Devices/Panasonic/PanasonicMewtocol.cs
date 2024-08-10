@@ -179,9 +179,9 @@ public class PanasonicMewtocol : SerialDeviceBase<RegularByteTransform> {
             return command;
 
         // 数据交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 提取数据
         return ExtraActualData(read.Content);
@@ -200,9 +200,9 @@ public class PanasonicMewtocol : SerialDeviceBase<RegularByteTransform> {
             return command;
 
         // 数据交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult(read.ErrorCode, read.Message);
 
         // 提取结果
         return ExtraActualData(read.Content);
@@ -241,9 +241,9 @@ public class PanasonicMewtocol : SerialDeviceBase<RegularByteTransform> {
             return command;
 
         // 数据交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult(read.ErrorCode, read.Message);
 
         // 提取结果
         return ExtraActualData(read.Content);

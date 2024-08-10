@@ -242,14 +242,14 @@ public class MelsecFxLinks : SerialDeviceBase<RegularByteTransform> {
     /// <returns>读取结果信息</returns>
     public override OperateResult<byte[]> Read(string address, ushort length) {
         // 解析指令
-        OperateResult<byte[]> command = BuildReadCommand(this.station, address, length, false, this.sumCheck, this.watiingTime);
+        LightOperationResult<byte[]> command = BuildReadCommand(this.station, address, length, false, this.sumCheck, this.watiingTime);
         if (!command.IsSuccess)
-            return OperateResult.CreateFailedResult<byte[]>(command);
+            return new OperateResult<byte[]>(command.ErrorCode, command.Message);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<byte[]>(read);
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x02)
@@ -278,9 +278,9 @@ public class MelsecFxLinks : SerialDeviceBase<RegularByteTransform> {
             return command;
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x06)
@@ -298,14 +298,14 @@ public class MelsecFxLinks : SerialDeviceBase<RegularByteTransform> {
     /// <returns>读取结果信息</returns>
     public override OperateResult<bool[]> ReadBool(string address, ushort length) {
         // 解析指令
-        OperateResult<byte[]> command = BuildReadCommand(this.station, address, length, true, this.sumCheck, this.watiingTime);
+        LightOperationResult<byte[]> command = BuildReadCommand(this.station, address, length, true, this.sumCheck, this.watiingTime);
         if (!command.IsSuccess)
-            return OperateResult.CreateFailedResult<bool[]>(command);
+            return new OperateResult<bool[]>(command.ErrorCode, command.Message);
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return OperateResult.CreateFailedResult<bool[]>(read);
+            return new OperateResult<bool[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x02)
@@ -330,9 +330,9 @@ public class MelsecFxLinks : SerialDeviceBase<RegularByteTransform> {
             return command;
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x06)
@@ -353,9 +353,9 @@ public class MelsecFxLinks : SerialDeviceBase<RegularByteTransform> {
             return command;
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x06)
@@ -376,9 +376,9 @@ public class MelsecFxLinks : SerialDeviceBase<RegularByteTransform> {
             return command;
 
         // 核心交互
-        OperateResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
         if (!read.IsSuccess)
-            return read;
+            return new OperateResult<byte[]>(read.ErrorCode, read.Message);
 
         // 结果验证
         if (read.Content[0] != 0x06)
@@ -497,10 +497,10 @@ public class MelsecFxLinks : SerialDeviceBase<RegularByteTransform> {
     /// <param name="sumCheck">是否和校验</param>
     /// <param name="waitTime">等待时间</param>
     /// <returns>是否成功的结果对象</returns>
-    public static OperateResult<byte[]> BuildReadCommand(byte station, string address, ushort length, bool isBool, bool sumCheck = true, byte waitTime = 0x00) {
+    public static LightOperationResult<byte[]> BuildReadCommand(byte station, string address, ushort length, bool isBool, bool sumCheck = true, byte waitTime = 0x00) {
         OperateResult<string> addressAnalysis = FxAnalysisAddress(address);
         if (!addressAnalysis.IsSuccess)
-            return OperateResult.CreateFailedResult<byte[]>(addressAnalysis);
+            return new LightOperationResult<byte[]>(addressAnalysis.ErrorCode, addressAnalysis.Message);
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.Append(station.ToString("D2"));
@@ -515,15 +515,9 @@ public class MelsecFxLinks : SerialDeviceBase<RegularByteTransform> {
         stringBuilder.Append(addressAnalysis.Content);
         stringBuilder.Append(length.ToString("D2"));
 
-        byte[] core = null;
-        if (sumCheck)
-            core = Encoding.ASCII.GetBytes(CalculateAcc(stringBuilder.ToString()));
-        else
-            core = Encoding.ASCII.GetBytes(stringBuilder.ToString());
-
+        byte[] core = Encoding.ASCII.GetBytes(sumCheck ? CalculateAcc(stringBuilder.ToString()) : stringBuilder.ToString());
         core = SoftBasic.SpliceTwoByteArray(new byte[] { 0x05 }, core);
-
-        return OperateResult.CreateSuccessResult(core);
+        return LightOperationResult.CreateSuccessResult(core);
     }
 
     /// <summary>
