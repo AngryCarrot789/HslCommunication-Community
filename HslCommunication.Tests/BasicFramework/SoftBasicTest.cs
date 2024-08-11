@@ -245,22 +245,6 @@ public class SoftBasicTest {
     }
 
     [TestMethod]
-    public void DeepCloneTest() {
-        SystemVersion version1 = new SystemVersion("1.2.3");
-        SystemVersion version2 = (SystemVersion) SoftBasic.DeepClone(version1);
-
-        if (version1.MainVersion != version2.MainVersion)
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("主版本不一致");
-        if (version1.SecondaryVersion != version2.SecondaryVersion)
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("副版本不一致");
-        if (version1.EditVersion != version2.EditVersion)
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("修订版不一致");
-        if (version1.InnerVersion != version2.InnerVersion)
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("内部版不一致");
-    }
-
-
-    [TestMethod]
     public void BytesReverseByWordTest1() {
         byte[] b1 = new byte[] { 0x13, 0xA6, 0x15, 0x85, 0x5B, 0x05, 0x12 };
         byte[] b2 = new byte[] { 0xA6, 0x13, 0x85, 0x15, 0x05, 0x5B, 0x00, 0x12 };

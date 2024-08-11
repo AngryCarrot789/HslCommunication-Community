@@ -132,22 +132,34 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         this.WordLength = 1;
     }
 
+    /*
+     * Control Codes:
+         STX 0x2 Start of Text        LF  0xA Line Feed
+         ETX 0x3 End of Text          CL  0xC Clear
+         EOT 0x4 End of Transmission  CR  0xD Carriage Return
+         ENQ 0x5 Enquiry              NAK 0x15 Negative Acknowledge
+         ACK 0x6 Acknowledge
+     */
+    
     protected override bool IsReceivedMessageComplete(byte[] buffer, int count) {
         switch (count) {
             case 0: return false;
             case 1:
-                return buffer[0] == 0x15 || buffer[0] == 0x6;
+                // Check response is ACK or NAK
+                return buffer[0] == 0x6 || buffer[0] == 0x15;
             default:
-                return buffer[0] == 2 && count >= 5 && buffer[count - 3] == 3 && MelsecHelper.CheckCRC(buffer, count);
+                // Check for STX, check buffer is big enough has contains ETX,
+                // then verify checksum
+                return buffer[0] == 0x2 && count >= 5 && buffer[count - 3] == 0x3 && MelsecHelper.CheckCRC(buffer, count);
         }
     }
 
     private LightOperationResult CheckPlcReadResponse(byte[] ack) {
         if (ack.Length == 0)
             return new LightOperationResult(StringResources.Language.MelsecFxReceiveZore);
-        if (ack[0] == 0x15)
+        if (ack[0] == 0x15) // Received NAK
             return new LightOperationResult(StringResources.Language.MelsecFxAckNagative + " Actual: " + SoftBasic.ByteToHexString(ack, ' '));
-        if (ack[0] != 0x02)
+        if (ack[0] != 0x02) // 
             return new LightOperationResult(StringResources.Language.MelsecFxAckWrong + ack[0] + " Actual: " + SoftBasic.ByteToHexString(ack, ' '));
         if (!MelsecHelper.CheckCRC(ack))
             return new LightOperationResult(StringResources.Language.MelsecFxCrcCheckFailed);

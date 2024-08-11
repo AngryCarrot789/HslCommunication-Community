@@ -7,7 +7,7 @@ public class MelsecFxSerialSample {
     public void ClassTest() {
         // 实例化对象，指定PLC的ip地址和端口号
         MelsecFxSerial melsecFx = new MelsecFxSerial();
-        melsecFx.SerialPortInni(sp => {
+        melsecFx.SetupSerial(sp => {
             sp.PortName = "COM1";
             sp.BaudRate = 9600;
             sp.DataBits = 7;
@@ -23,7 +23,7 @@ public class MelsecFxSerialSample {
 
     public void ReadExample() {
         MelsecFxSerial melsecFx = new MelsecFxSerial();
-        melsecFx.SerialPortInni(sp => {
+        melsecFx.SetupSerial(sp => {
             sp.PortName = "COM1";
             sp.BaudRate = 9600;
             sp.DataBits = 7;
@@ -56,7 +56,7 @@ public class MelsecFxSerialSample {
 
     public void ReadExample2() {
         MelsecFxSerial melsecFx = new MelsecFxSerial();
-        melsecFx.SerialPortInni(sp => {
+        melsecFx.SetupSerial(sp => {
             sp.PortName = "COM1";
             sp.BaudRate = 9600;
             sp.DataBits = 7;
@@ -80,7 +80,7 @@ public class MelsecFxSerialSample {
 
     public void WriteExample() {
         MelsecFxSerial melsecFx = new MelsecFxSerial();
-        melsecFx.SerialPortInni(sp => {
+        melsecFx.SetupSerial(sp => {
             sp.PortName = "COM1";
             sp.BaudRate = 9600;
             sp.DataBits = 7;
@@ -113,7 +113,7 @@ public class MelsecFxSerialSample {
 
     public void WriteExample2() {
         MelsecFxSerial melsecFx = new MelsecFxSerial();
-        melsecFx.SerialPortInni(sp => {
+        melsecFx.SetupSerial(sp => {
             sp.PortName = "COM1";
             sp.BaudRate = 9600;
             sp.DataBits = 7;
@@ -145,7 +145,7 @@ public class MelsecFxSerialSample {
 
     public void ReadBool() {
         MelsecFxSerial melsecFx = new MelsecFxSerial();
-        melsecFx.SerialPortInni(sp => {
+        melsecFx.SetupSerial(sp => {
             sp.PortName = "COM1";
             sp.BaudRate = 9600;
             sp.DataBits = 7;
@@ -190,7 +190,7 @@ public class MelsecFxSerialSample {
 
     public void WriteBool() {
         MelsecFxSerial melsecFx = new MelsecFxSerial();
-        melsecFx.SerialPortInni(sp => {
+        melsecFx.SetupSerial(sp => {
             sp.PortName = "COM1";
             sp.BaudRate = 9600;
             sp.DataBits = 7;

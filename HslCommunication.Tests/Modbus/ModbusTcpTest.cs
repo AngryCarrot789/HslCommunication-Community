@@ -132,7 +132,7 @@ public class ModbusTcpTest {
     [TestMethod]
     public void ModbusRtuUnitTest() {
         ModbusRtu modbus = new ModbusRtu(1);
-        modbus.SerialPortInni("COM2", 9600);
+        modbus.SetupSerial("COM2", 9600);
 
         try {
             modbus.Open();

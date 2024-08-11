@@ -26,8 +26,7 @@ public readonly struct LightOperationResult {
     public string Message { get; }
     public bool IsSuccess { get; }
 
-    public LightOperationResult() {
-        this.IsSuccess = true;
+    public LightOperationResult() : this(true) {
     }
 
     public LightOperationResult(string? msg = null) : this(10000, msg) { }
@@ -63,7 +62,7 @@ public readonly struct LightOperationResult<T> {
 
     public T Content { get; }
 
-    public LightOperationResult(string? msg = null) : this(10000, null) { }
+    public LightOperationResult(string? msg = null) : this(10000, msg) { }
 
     public LightOperationResult(int err, string? msg = null) {
         this.IsSuccess = false;
@@ -88,8 +87,8 @@ public readonly struct LightOperationResult<T1, T2> {
 
     public T1 Content1 { get; }
     public T2 Content2 { get; }
-
-    public LightOperationResult(string? msg = null) : this(10000, null) { }
+    
+    public LightOperationResult(string? msg = null) : this(10000, msg) { }
 
     public LightOperationResult(int err, string? msg = null) {
         this.IsSuccess = false;
@@ -116,8 +115,8 @@ public readonly struct LightOperationResult<T1, T2, T3> {
     public T1 Content1 { get; }
     public T2 Content2 { get; }
     public T3 Content3 { get; }
-
-    public LightOperationResult(string? msg = null) : this(10000, null) { }
+    
+    public LightOperationResult(string? msg = null) : this(10000, msg) { }
 
     public LightOperationResult(int err, string? msg = null) {
         this.IsSuccess = false;
@@ -147,7 +146,7 @@ public readonly struct LightOperationResult<T1, T2, T3, T4> {
     public T3 Content3 { get; }
     public T4 Content4 { get; }
 
-    public LightOperationResult(string? msg = null) : this(10000, null) { }
+    public LightOperationResult(string? msg = null) : this(10000, msg) { }
 
     public LightOperationResult(int err, string? msg = null) {
         this.IsSuccess = false;

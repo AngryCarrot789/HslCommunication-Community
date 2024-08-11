@@ -254,7 +254,7 @@ public class ModbusRtuExample {
     private void ReadExample() {
         ModbusRtu modbus = new ModbusRtu(); // 实例化
         // 此处忽略初始化
-        // modbus.SerialPortInni( "COM3" );
+        // modbus.SetupSerial( "COM3" );
 
         // 假设100存储了short的报警，101,102存储了float的温度，103，104存储了int的产量
         OperateResult<byte[]> read = modbus.Read("100", 5);
@@ -272,7 +272,7 @@ public class ModbusRtuExample {
     private void WriteExample() {
         ModbusRtu modbus = new ModbusRtu(); // 实例化
         // 此处忽略初始化
-        // modbus.SerialPortInni( "COM3" );
+        // modbus.SetupSerial( "COM3" );
 
         // 假设100存储了short的报警，101,102存储了float的温度，103，104存储了int的产量
         byte[] buffer = new byte[10];

@@ -273,13 +273,6 @@ public class SoftBasicExample {
         // buffer的值就是移除了第一个字节数据和最后两个字节数据的新值 new byte[] { 0xA6, 0x15, 0x85 };
     }
 
-    public void DeepCloneExample() {
-        SystemVersion version1 = new SystemVersion("1.2.3");
-        SystemVersion version2 = (SystemVersion) SoftBasic.DeepClone(version1);
-
-        // 这两个版本号的值是一致的，但是属于不同的对象
-    }
-
     public void GetUniqueStringByGuidAndRandomExample() {
         string uid = SoftBasic.GetUniqueStringByGuidAndRandom();
 

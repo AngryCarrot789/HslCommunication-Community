@@ -1,1 +1,0 @@
-﻿namespace HslCommunication.Tests.Core.Transfer;

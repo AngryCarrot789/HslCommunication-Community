@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Ports;
+using System.Net.Http.Json;
+using System.Threading.Tasks.Dataflow;
 using HslCommunication.Core.Thread;
 using HslCommunication.Core.Types;
 using HslCommunication.LogNet.Core;
@@ -12,12 +15,11 @@ namespace HslCommunication.Serial;
 public class SerialBase : IDisposable {
     private readonly SerialPort serialPort;
     private readonly byte[] rxBuffer;
-
-    private SimpleHybirdLock hybirdLock; // Guard against multiple threads sending and receiving data at the same time
+    private readonly SimpleHybirdLock hybirdLock; // Guard against multiple threads sending and receiving data at the same time
+    private readonly Stopwatch readTimer = new Stopwatch();
     private ILogNet? logNet;
     private int receiveTimeout = 5000;
     private int sleepTime;
-    private bool clearReadBufferBeforeSend;
     private bool disposedValue;
 
     /// <summary>
@@ -52,10 +54,7 @@ public class SerialBase : IDisposable {
     /// <summary>
     /// Gets or sets whether to clear the read buffer before sending data
     /// </summary>
-    public bool ClearReadBufferBeforeSend {
-        get => this.clearReadBufferBeforeSend;
-        set => this.clearReadBufferBeforeSend = value;
-    }
+    public bool ClearReadBufferBeforeSend { get; set; }
 
     /// <summary>
     /// Gets the current port name
@@ -80,14 +79,9 @@ public class SerialBase : IDisposable {
     }
 
     /// <summary>
-    /// Initialise serial port variable
+    /// Initialise serial port variables
     /// </summary>
-    /// <param name="portName">端口号信息，例如"COM3"</param>
-    /// <param name="baudRate">波特率</param>
-    /// <param name="dataBits">数据位</param>
-    /// <param name="stopBits">停止位</param>
-    /// <param name="parity">奇偶校验</param>
-    public void SerialPortInni(string portName, int baudRate = 38400, int dataBits = 8, StopBits stopBits = StopBits.One, Parity parity = Parity.None) {
+    public void SetupSerial(string portName, int baudRate = 38400, int dataBits = 8, StopBits stopBits = StopBits.One, Parity parity = Parity.None) {
         if (this.serialPort.IsOpen) {
             throw new InvalidOperationException("Cannot initialise serial port variables because it is currently open");
         }
@@ -101,11 +95,7 @@ public class SerialBase : IDisposable {
         this.BaudRate = this.serialPort.BaudRate;
     }
 
-    /// <summary>
-    /// 根据自定义初始化方法进行初始化串口信息
-    /// </summary>
-    /// <param name="initi">初始化的委托方法</param>
-    public void SerialPortInni(Action<SerialPort> initi) {
+    public void SetupSerial(Action<SerialPort> initi) {
         if (this.serialPort.IsOpen) {
             throw new InvalidOperationException("Cannot initialise serial port variables because it is currently open");
         }
@@ -127,6 +117,8 @@ public class SerialBase : IDisposable {
     /// </summary>
     public void Open() {
         if (!this.serialPort.IsOpen) {
+            this.serialPort.ReadTimeout = this.ReceiveTimeout;
+            this.serialPort.WriteTimeout = 5000;
             this.serialPort.Open();
             this.InitializationOnOpen();
         }
@@ -162,7 +154,7 @@ public class SerialBase : IDisposable {
             }
         }
 
-        return new LightOperationResult();
+        return LightOperationResult.CreateSuccessResult();
     }
 
     /// <summary>
@@ -179,15 +171,6 @@ public class SerialBase : IDisposable {
     /// <returns>当断开连接时额外的操作结果</returns>
     protected virtual OperateResult ExtraOnClose() {
         return OperateResult.CreateSuccessResult();
-    }
-
-    /// <summary>
-    /// Returns true when this device uses a protocol when sending data to and from devices, and the protocol can
-    /// be identified in the received data. This is required for <see cref="IsReceivedMessageComplete"/> to be called
-    /// </summary>
-    /// <returns>True or false</returns>
-    protected virtual bool HasProtocol() {
-        return true;
     }
 
     /// <summary>
@@ -212,6 +195,7 @@ public class SerialBase : IDisposable {
             return LightOperationResult.CreateSuccessResult(Array.Empty<byte>());
         }
 
+        DateTime start = DateTime.Now;
         this.hybirdLock.Enter();
 
         if (this.ClearReadBufferBeforeSend)
@@ -243,11 +227,15 @@ public class SerialBase : IDisposable {
         // sinkCount: 4
         // sink.Length: 8
         // count: 6
-        Debug.Assert(src.Length >= count, "Source buffer length is too small to copy count bytes from");
+        // Debug.Assert(src.Length >= count, "Source buffer length is too small to copy count bytes from");
 
-        int remaining = dst.Length - dstCount;
-        if (count > remaining) {
-            byte[] newSink = new byte[(dstCount + count) << 1];
+        if (count > (dst.Length - dstCount)) {
+            int newCount = dst.Length;
+            do {
+                newCount <<= 1;
+            } while (newCount < (dstCount + count));
+            
+            byte[] newSink = new byte[newCount];
             FastArrayCopy(dst, newSink, 0, dstCount);
             dst = newSink;
         }
@@ -266,34 +254,34 @@ public class SerialBase : IDisposable {
         FastArrayCopy(src, output, 0, count);
         return output;
     }
-
+    
     private LightOperationResult<byte[]> ReadMessageInternal() {
-        DateTime start = DateTime.Now;
+        if (!this.serialPort.IsOpen)
+            return new LightOperationResult<byte[]>("Serial port is closed");
+
 
         byte[] buffer = new byte[32];
         int bufferCount = 0;
+
+        this.readTimer.Restart();
         for (int iterations = 1;; iterations++) {
             // This function appears to be ever slightly faster when sleeping
             // on the 2nd iteration at the start instead of at the end of the 2nd iteration
-            if (iterations > 1 && this.sleepTime >= 0) {
-                Thread.Sleep(this.sleepTime);
-            }
-
             try {
-                if (this.serialPort.BytesToRead > 0) {
-                    int received = this.serialPort.Read(this.rxBuffer, 0, this.rxBuffer.Length);
-                    if (received > 0)
-                        AppendBuffer(ref buffer, ref bufferCount, this.rxBuffer, received);
-
-                    if (this.HasProtocol() && this.IsReceivedMessageComplete(buffer, bufferCount))
+                // We rely on the SerialPort timeout values to block until we receive data
+                int received = this.serialPort.BaseStream.Read(this.rxBuffer, 0, this.rxBuffer.Length);
+                if (received > 0) {
+                    AppendBuffer(ref buffer, ref bufferCount, this.rxBuffer, received);
+                    if (this.IsReceivedMessageComplete(buffer, bufferCount)) {
+#if DEBUG
+                        double millis = this.readTimer.ElapsedMilliseconds;
+#endif
                         return LightOperationResult.CreateSuccessResult(Subarray(buffer, bufferCount));
-
-                    if (this.ReceiveTimeout > 0 && (DateTime.Now - start).TotalMilliseconds > this.ReceiveTimeout)
-                        return new LightOperationResult<byte[]>($"Time out while waiting for completed message: {this.ReceiveTimeout}");
+                    }
                 }
-                else if (iterations != 1 && (DateTime.Now - start).TotalMilliseconds > this.ReceiveTimeout) {
-                    return new LightOperationResult<byte[]>($"Time out with empty serial buffer: {this.ReceiveTimeout}");
-                }
+                
+                if (iterations != 1 && this.ReceiveTimeout > 0 && this.readTimer.ElapsedMilliseconds > this.ReceiveTimeout)
+                    return new LightOperationResult<byte[]>($"Time out while waiting for completed message: {this.ReceiveTimeout}");
             }
             catch (Exception ex) {
                 return new LightOperationResult<byte[]>(ex.Message);

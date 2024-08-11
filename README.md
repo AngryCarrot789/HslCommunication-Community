@@ -14,11 +14,11 @@
 
 [![NetFramework](https://img.shields.io/badge/Language-C%2312.0-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/) ![License status](https://img.shields.io/badge/License-LGPL3.0-yellow.svg)
 
-## Supported Model and price [welcome to complete]
+## Supported Model
 
 #### Siemens
 
-| No. | Class ~~~~                                                               | Model                                                       | Remarks | Contributor                                               |
+| No. | Class                                                                | Model                                                       | Remarks | Contributor                                               |
 |-----|----------------------------------------------------------------------|-------------------------------------------------------------|---------|-----------------------------------------------------------|
 | 1   | ![pic](https://img.shields.io/badge/-SiemensS7Net-informational.svg) | ![pic](https://img.shields.io/badge/1215C-Good-success.svg) | &nbsp;  | [Richard Hu](https://github.com/dathlin/HslCommunication) |
 
