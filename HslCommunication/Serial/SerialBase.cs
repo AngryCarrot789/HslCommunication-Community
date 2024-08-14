@@ -254,7 +254,7 @@ public class SerialBase : IDisposable {
         FastArrayCopy(src, output, 0, count);
         return output;
     }
-    
+
     private LightOperationResult<byte[]> ReadMessageInternal() {
         if (!this.serialPort.IsOpen)
             return new LightOperationResult<byte[]>("Serial port is closed");
@@ -279,7 +279,7 @@ public class SerialBase : IDisposable {
                         return LightOperationResult.CreateSuccessResult(Subarray(buffer, bufferCount));
                     }
                 }
-                
+
                 if (iterations != 1 && this.ReceiveTimeout > 0 && this.readTimer.ElapsedMilliseconds > this.ReceiveTimeout)
                     return new LightOperationResult<byte[]>($"Time out while waiting for completed message: {this.ReceiveTimeout}");
             }

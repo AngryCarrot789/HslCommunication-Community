@@ -74,6 +74,19 @@ public readonly struct LightOperationResult<T> {
         this.IsSuccess = true;
         this.Content = value;
     }
+    
+    public T? GetResultOr(T? def = default) => this.IsSuccess ? this.Content : def;
+    
+    public LightOperationResult<TResult> Select<TResult>(Func<T, TResult> func) {
+        if (!this.IsSuccess)
+            return new LightOperationResult<TResult>(this.ErrorCode, this.Message);
+        return new LightOperationResult<TResult>(func(this.Content));
+    }
+    
+    public bool TryGetValue(out T value) {
+        value = this.Content;
+        return this.IsSuccess;
+    }
 
     public override string ToString() => LightOperationResult.ToString(this.Message, this.ErrorCode);
 

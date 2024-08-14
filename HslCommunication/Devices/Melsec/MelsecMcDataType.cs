@@ -289,7 +289,7 @@ public readonly struct MelsecMcDataType : IEquatable<MelsecMcDataType> {
     /// Creates an instance of a Melsec data type
     /// </summary>
     /// <param name="code">Data type code</param>
-    /// <param name="type">0 or 1, default is 0</param>
+    /// <param name="type">1 for bit, 0 for word</param>
     /// <param name="asciiCode">Type information in ASCII format</param>
     /// <param name="fromBase">Indicates the base of the address, 10 or 16</param>
     public MelsecMcDataType(byte code, byte type, char ch1, char ch2, int fromBase) {

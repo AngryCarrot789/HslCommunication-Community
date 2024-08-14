@@ -540,7 +540,7 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     /// </summary>
     /// <param name="address">数据地址</param>
     /// <returns>地址结果对象</returns>
-    private static LightOperationResult<MelsecMcDataType, ushort> FxAnalysisAddress(string address) {
+    public static LightOperationResult<MelsecMcDataType, ushort> FxAnalysisAddress(string address) {
         LightOperationResult<MelsecMcDataType, ushort> result;
         try {
             switch (address[0]) {
@@ -620,15 +620,19 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     /// </summary>
     /// <param name="address">读取的地址信息</param>
     /// <returns>带起始地址的结果对象</returns>
-    private static LightOperationResult<ushort> FxCalculateWordStartAddress(string address) {
+    public static LightOperationResult<ushort> FxCalculateWordStartAddress(string address) {
         // 初步解析，失败就返回
         LightOperationResult<MelsecMcDataType, ushort> analysis = FxAnalysisAddress(address);
-        if (!analysis.IsSuccess)
-            return new LightOperationResult<ushort>(analysis.ErrorCode, analysis.Message);
+        if (analysis.IsSuccess)
+            return FxCalculateWordStartAddress(analysis.Content1, analysis.Content2);
 
+        return new LightOperationResult<ushort>(analysis.ErrorCode, analysis.Message);
+
+    }
+    
+    public static LightOperationResult<ushort> FxCalculateWordStartAddress(MelsecMcDataType dataType, ushort startAddress) {
         // 二次解析
-        ushort startAddress = analysis.Content2;
-        if (analysis.Content1 == MelsecMcDataType.D) {
+        if (dataType == MelsecMcDataType.D) {
             if (startAddress >= 8000) {
                 startAddress = (ushort) ((startAddress - 8000) * 2 + 0x0E00);
             }
@@ -636,7 +640,7 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
                 startAddress = (ushort) (startAddress * 2 + 0x1000);
             }
         }
-        else if (analysis.Content1 == MelsecMcDataType.CN) {
+        else if (dataType == MelsecMcDataType.CN) {
             if (startAddress >= 200) {
                 startAddress = (ushort) ((startAddress - 200) * 4 + 0x0C00);
             }
@@ -644,7 +648,7 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
                 startAddress = (ushort) (startAddress * 2 + 0x0A00);
             }
         }
-        else if (analysis.Content1 == MelsecMcDataType.TN) {
+        else if (dataType == MelsecMcDataType.TN) {
             startAddress = (ushort) (startAddress * 2 + 0x0800);
         }
         else {
@@ -658,15 +662,20 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     /// 返回读取的地址及长度信息，以及当前的偏置信息
     /// </summary><param name="address">读取的地址信息</param>
     /// <returns>带起始地址的结果对象</returns>
-    private static LightOperationResult<ushort, ushort, ushort> FxCalculateBoolStartAddress(string address) {
+    public static LightOperationResult<ushort, ushort, ushort> FxCalculateBoolStartAddress(string address) {
         // 初步解析
         LightOperationResult<MelsecMcDataType, ushort> analysis = FxAnalysisAddress(address);
-        if (!analysis.IsSuccess)
-            return new LightOperationResult<ushort, ushort, ushort>(analysis.ErrorCode, analysis.Message);
+        if (analysis.IsSuccess)
+            return FxCalculateBoolStartAddress(analysis.Content1, analysis.Content2);
 
+        return new LightOperationResult<ushort, ushort, ushort>(analysis.ErrorCode, analysis.Message);
+    }
+    
+    public static LightOperationResult<ushort, ushort, ushort> FxCalculateBoolStartAddress(MelsecMcDataType dataType, ushort startAddress) {
         // 二次解析
-        ushort startAddress = analysis.Content2;
-        if (analysis.Content1 == MelsecMcDataType.M) {
+        
+        ushort originalAddress = startAddress;
+        if (dataType == MelsecMcDataType.M) {
             if (startAddress >= 8000) {
                 startAddress = (ushort) ((startAddress - 8000) / 8 + 0x01E0);
             }
@@ -674,31 +683,31 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
                 startAddress = (ushort) (startAddress / 8 + 0x0100);
             }
         }
-        else if (analysis.Content1 == MelsecMcDataType.X) {
+        else if (dataType == MelsecMcDataType.X) {
             startAddress = (ushort) (startAddress / 8 + 0x0080);
         }
-        else if (analysis.Content1 == MelsecMcDataType.Y) {
+        else if (dataType == MelsecMcDataType.Y) {
             startAddress = (ushort) (startAddress / 8 + 0x00A0);
         }
-        else if (analysis.Content1 == MelsecMcDataType.S) {
+        else if (dataType == MelsecMcDataType.S) {
             startAddress = (ushort) (startAddress / 8 + 0x0000);
         }
-        else if (analysis.Content1 == MelsecMcDataType.CS) {
+        else if (dataType == MelsecMcDataType.CS) {
             startAddress += (ushort) (startAddress / 8 + 0x01C0);
         }
-        else if (analysis.Content1 == MelsecMcDataType.CC) {
+        else if (dataType == MelsecMcDataType.CC) {
             startAddress += (ushort) (startAddress / 8 + 0x03C0);
         }
-        else if (analysis.Content1 == MelsecMcDataType.TS) {
+        else if (dataType == MelsecMcDataType.TS) {
             startAddress += (ushort) (startAddress / 8 + 0x00C0);
         }
-        else if (analysis.Content1 == MelsecMcDataType.TC) {
+        else if (dataType == MelsecMcDataType.TC) {
             startAddress += (ushort) (startAddress / 8 + 0x02C0);
         }
         else {
             return new LightOperationResult<ushort, ushort, ushort>(StringResources.Language.MelsecCurrentTypeNotSupportedBitOperate);
         }
 
-        return LightOperationResult.CreateSuccessResult(startAddress, analysis.Content2, (ushort) (analysis.Content2 % 8));
+        return LightOperationResult.CreateSuccessResult(startAddress, originalAddress, (ushort) (originalAddress % 8));
     }
 }
