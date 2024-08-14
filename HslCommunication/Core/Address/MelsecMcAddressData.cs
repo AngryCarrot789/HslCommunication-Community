@@ -45,13 +45,13 @@ public class McAddressData : DeviceAddressDataBase {
                 case 'X':
                 case 'x': {
                     type = MelsecMcDataType.X;
-                    addrStart = Convert.ToInt32(address.Substring(1), MelsecMcDataType.X.FromBase);
+                    addrStart = Convert.ToInt32(address.Substring(1), 8);
                     break;
                 }
                 case 'Y':
                 case 'y': {
                     type = MelsecMcDataType.Y;
-                    addrStart = Convert.ToInt32(address.Substring(1), MelsecMcDataType.Y.FromBase);
+                    addrStart = Convert.ToInt32(address.Substring(1), 8);
                     break;
                 }
                 case 'D':
