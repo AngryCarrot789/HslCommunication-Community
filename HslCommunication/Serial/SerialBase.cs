@@ -1,11 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO.Ports;
-using System.Net.Http.Json;
-using System.Threading.Tasks.Dataflow;
 using HslCommunication.Core.Thread;
 using HslCommunication.Core.Types;
-using HslCommunication.LogNet.Core;
 
 namespace HslCommunication.Serial;
 
@@ -17,18 +13,9 @@ public class SerialBase : IDisposable {
     private readonly byte[] rxBuffer;
     private readonly SimpleHybirdLock hybirdLock; // Guard against multiple threads sending and receiving data at the same time
     private readonly Stopwatch readTimer = new Stopwatch();
-    private ILogNet? logNet;
     private int receiveTimeout = 5000;
     private int sleepTime;
     private bool disposedValue;
-
-    /// <summary>
-    /// 当前的日志情况
-    /// </summary>
-    public ILogNet? LogNet {
-        get => this.logNet;
-        set => this.logNet = value;
-    }
 
     /// <summary>
     /// The maximum amount of time to wait for a message to be received from the serial port, in milliseconds. Default value of 5000.
@@ -59,12 +46,18 @@ public class SerialBase : IDisposable {
     /// <summary>
     /// Gets the current port name
     /// </summary>
-    public string PortName { get; private set; }
+    public string? PortName { get; private set; }
 
     /// <summary>
     /// Gets the current baud rate
     /// </summary>
     public int BaudRate { get; private set; }
+    
+    /// <summary>
+    /// 获取一个值，指示串口是否处于打开状态
+    /// </summary>
+    /// <value>是或否</value>
+    public bool IsOpen => this.serialPort.IsOpen;
 
     /// <summary>
     /// 实例化一个无参的构造方法
@@ -123,12 +116,6 @@ public class SerialBase : IDisposable {
             this.InitializationOnOpen();
         }
     }
-
-    /// <summary>
-    /// 获取一个值，指示串口是否处于打开状态
-    /// </summary>
-    /// <returns>是或否</returns>
-    public bool IsOpen() => this.serialPort.IsOpen;
 
     /// <summary>
     /// 关闭端口连接
@@ -195,7 +182,6 @@ public class SerialBase : IDisposable {
             return LightOperationResult.CreateSuccessResult(Array.Empty<byte>());
         }
 
-        DateTime start = DateTime.Now;
         this.hybirdLock.Enter();
 
         if (this.ClearReadBufferBeforeSend)

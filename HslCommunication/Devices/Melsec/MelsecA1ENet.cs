@@ -212,9 +212,9 @@ public class MelsecA1ENet : NetworkDeviceBase<MelsecA1EBinaryMessage, RegularByt
     /// <param name="plcNumber">PLC编号</param>
     /// <returns>带有成功标志的指令数据</returns>
     public static OperateResult<byte[]> BuildReadCommand(string address, ushort length, bool isBit, byte plcNumber) {
-        OperateResult<MelsecA1EDataType, ushort> analysis = MelsecHelper.McA1EAnalysisAddress(address);
+        LightOperationResult<MelsecA1EDataType, ushort> analysis = MelsecHelper.McA1EAnalysisAddress(address);
         if (!analysis.IsSuccess)
-            return OperateResult.CreateFailedResult<byte[]>(analysis);
+            return new OperateResult<byte[]>(analysis.ErrorCode, analysis.Message);
 
         // 默认信息----注意：高低字节交错
         // byte subtitle = analysis.Content1.DataType == 0x01 ? (byte)0x00 : (byte)0x01;
@@ -245,9 +245,9 @@ public class MelsecA1ENet : NetworkDeviceBase<MelsecA1EBinaryMessage, RegularByt
     /// <param name="plcNumber">PLC编号</param>
     /// <returns>带有成功标志的指令数据</returns>
     public static OperateResult<byte[]> BuildWriteCommand(string address, byte[] value, byte plcNumber) {
-        OperateResult<MelsecA1EDataType, ushort> analysis = MelsecHelper.McA1EAnalysisAddress(address);
+        LightOperationResult<MelsecA1EDataType, ushort> analysis = MelsecHelper.McA1EAnalysisAddress(address);
         if (!analysis.IsSuccess)
-            return OperateResult.CreateFailedResult<byte[]>(analysis);
+            return new OperateResult<byte[]>(analysis.ErrorCode, analysis.Message);
 
         int length = -1;
         if (analysis.Content1.DataType == 1) {

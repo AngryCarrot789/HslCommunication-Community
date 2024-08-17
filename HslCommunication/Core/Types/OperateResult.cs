@@ -37,10 +37,10 @@ public readonly struct LightOperationResult {
         this.ErrorCode = err;
     }
 
-    private LightOperationResult(bool isSuccess) {
+    public LightOperationResult(bool isSuccess) {
         this.IsSuccess = isSuccess;
-        this.ErrorCode = 0;
-        this.Message = StringResources.Language.SuccessText;
+        this.ErrorCode = isSuccess ? 0 : 10000;
+        this.Message = isSuccess ? StringResources.Language.SuccessText : StringResources.Language.UnknownError;
     }
 
     public OperateResult ToOperateResult() => this.IsSuccess ? OperateResult.CreateSuccessResult() : new OperateResult(this.ErrorCode, this.Message);

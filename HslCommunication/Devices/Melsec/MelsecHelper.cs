@@ -14,56 +14,33 @@ public class MelsecHelper {
     /// </summary>
     /// <param name="address">数据地址</param>
     /// <returns></returns>
-    public static OperateResult<MelsecA1EDataType, ushort> McA1EAnalysisAddress(string address) {
-        OperateResult<MelsecA1EDataType, ushort> result = new OperateResult<MelsecA1EDataType, ushort>();
+    public static LightOperationResult<MelsecA1EDataType, ushort> McA1EAnalysisAddress(string address) {
         try {
             switch (address[0]) {
                 case 'X':
-                case 'x': {
-                    result.Content1 = MelsecA1EDataType.X;
-                    result.Content2 = Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.X.FromBase);
-                    break;
-                }
+                case 'x':
+                    return new LightOperationResult<MelsecA1EDataType, ushort>(MelsecA1EDataType.X, Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.X.FromBase)); 
                 case 'Y':
-                case 'y': {
-                    result.Content1 = MelsecA1EDataType.Y;
-                    result.Content2 = Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.Y.FromBase);
-                    break;
-                }
+                case 'y':
+                    return new LightOperationResult<MelsecA1EDataType, ushort>(MelsecA1EDataType.X, Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.Y.FromBase));
                 case 'M':
-                case 'm': {
-                    result.Content1 = MelsecA1EDataType.M;
-                    result.Content2 = Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.M.FromBase);
-                    break;
-                }
+                case 'm':
+                    return new LightOperationResult<MelsecA1EDataType, ushort>(MelsecA1EDataType.X, Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.M.FromBase));
                 case 'S':
-                case 's': {
-                    result.Content1 = MelsecA1EDataType.S;
-                    result.Content2 = Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.S.FromBase);
-                    break;
-                }
+                case 's':
+                    return new LightOperationResult<MelsecA1EDataType, ushort>(MelsecA1EDataType.X, Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.S.FromBase));
                 case 'D':
-                case 'd': {
-                    result.Content1 = MelsecA1EDataType.D;
-                    result.Content2 = Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.D.FromBase);
-                    break;
-                }
+                case 'd':
+                    return new LightOperationResult<MelsecA1EDataType, ushort>(MelsecA1EDataType.X, Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.D.FromBase));
                 case 'R':
-                case 'r': {
-                    result.Content1 = MelsecA1EDataType.R;
-                    result.Content2 = Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.R.FromBase);
-                    break;
-                }
+                case 'r':
+                    return new LightOperationResult<MelsecA1EDataType, ushort>(MelsecA1EDataType.X, Convert.ToUInt16(address.Substring(1), MelsecA1EDataType.R.FromBase));
                 default: throw new Exception(StringResources.Language.NotSupportedDataType);
             }
         }
         catch (Exception ex) {
-            result.Message = ex.Message;
-            return result;
+            return new LightOperationResult<MelsecA1EDataType, ushort>(ex.Message);
         }
-
-        result.IsSuccess = true;
-        return result;
     }
 
     /// <summary>
@@ -78,7 +55,9 @@ public class MelsecHelper {
         command[1] = 0x04;
         command[2] = isBit ? (byte) 0x01 : (byte) 0x00; // 以点为单位还是字为单位成批读取
         command[3] = 0x00;
-        command[4] = BitConverter.GetBytes(addressData.AddressStart)[0]; // 起始地址的地位
+
+        byte[] addressStartBits = BitConverter.GetBytes(addressData.AddressStart);
+        command[4] = BitConverter.GetBytes(addressData.AddressStart)[0]; // Starting Address
         command[5] = BitConverter.GetBytes(addressData.AddressStart)[1];
         command[6] = BitConverter.GetBytes(addressData.AddressStart)[2];
         command[7] = addressData.McDataType.DataCode; // 指明读取的数据
@@ -106,19 +85,24 @@ public class MelsecHelper {
         command[7] = isBit ? (byte) 0x31 : (byte) 0x30;
 
         string code = addressData.McDataType.AsciiCode;
-        command[8] = Encoding.ASCII.GetBytes(code)[0]; // 软元件类型
-        command[9] = Encoding.ASCII.GetBytes(code)[1];
+        byte[] asciiCode = Encoding.ASCII.GetBytes(code);
         
-        command[10] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[0]; // 起始地址的地位
-        command[11] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[1];
-        command[12] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[2];
-        command[13] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[3];
-        command[14] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[4];
-        command[15] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[5];
-        command[16] = SoftBasic.BuildAsciiBytesFrom(addressData.Length)[0]; // 软元件点数
-        command[17] = SoftBasic.BuildAsciiBytesFrom(addressData.Length)[1];
-        command[18] = SoftBasic.BuildAsciiBytesFrom(addressData.Length)[2];
-        command[19] = SoftBasic.BuildAsciiBytesFrom(addressData.Length)[3];
+        command[8] = asciiCode[0]; // Component Type
+        command[9] = asciiCode[1];
+
+        byte[] asciiAddress = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType);
+        command[10] = asciiAddress[0]; // Starting Address
+        command[11] = asciiAddress[1];
+        command[12] = asciiAddress[2];
+        command[13] = asciiAddress[3];
+        command[14] = asciiAddress[4];
+        command[15] = asciiAddress[5];
+
+        byte[] asciiAddressLength = SoftBasic.BuildAsciiBytesFrom(addressData.Length); 
+        command[16] = asciiAddressLength[0]; // 软元件点数
+        command[17] = asciiAddressLength[1];
+        command[18] = asciiAddressLength[2];
+        command[19] = asciiAddressLength[3];
 
         return command;
     }
@@ -137,9 +121,11 @@ public class MelsecHelper {
         command[1] = 0x14;
         command[2] = 0x00; // 以字为单位成批读取
         command[3] = 0x00;
-        command[4] = BitConverter.GetBytes(addressData.AddressStart)[0]; // 起始地址的地位
-        command[5] = BitConverter.GetBytes(addressData.AddressStart)[1];
-        command[6] = BitConverter.GetBytes(addressData.AddressStart)[2];
+
+        byte[] addressBits = BitConverter.GetBytes(addressData.AddressStart);
+        command[4] = addressBits[0]; // Starting Address
+        command[5] = addressBits[1];
+        command[6] = addressBits[2];
         command[7] = addressData.McDataType.DataCode; // 指明写入的数据
         command[8] = (byte) (value.Length / 2 % 256); // 软元件长度的地位
         command[9] = (byte) (value.Length / 2 / 256);
@@ -174,21 +160,23 @@ public class MelsecHelper {
         command[6] = 0x30;
         command[7] = 0x30;
 
-        
-        string code = addressData.McDataType.AsciiCode;
-        command[8] = Encoding.ASCII.GetBytes(code)[0]; // 软元件类型
-        command[9] = Encoding.ASCII.GetBytes(code)[1];
-        
-        command[10] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[0]; // 起始地址的地位
-        command[11] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[1];
-        command[12] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[2];
-        command[13] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[3];
-        command[14] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[4];
-        command[15] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[5];
-        command[16] = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length / 4))[0]; // 软元件点数
-        command[17] = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length / 4))[1];
-        command[18] = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length / 4))[2];
-        command[19] = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length / 4))[3];
+        byte[] asciiCode = Encoding.ASCII.GetBytes(addressData.McDataType.AsciiCode);
+        command[8] = asciiCode[0]; // Component Type
+        command[9] = asciiCode[1];
+
+        byte[] asciiAddress = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType); 
+        command[10] = asciiAddress[0]; // Starting Address
+        command[11] = asciiAddress[1];
+        command[12] = asciiAddress[2];
+        command[13] = asciiAddress[3];
+        command[14] = asciiAddress[4];
+        command[15] = asciiAddress[5];
+
+        byte[] asciiValLen = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length / 4)); 
+        command[16] = asciiValLen[0]; // 软元件点数
+        command[17] = asciiValLen[1];
+        command[18] = asciiValLen[2];
+        command[19] = asciiValLen[3];
         value.CopyTo(command, 20);
 
         return command;
@@ -209,9 +197,11 @@ public class MelsecHelper {
         command[1] = 0x14;
         command[2] = 0x01; // 以位为单位成批写入
         command[3] = 0x00;
-        command[4] = BitConverter.GetBytes(addressData.AddressStart)[0]; // 起始地址的地位
-        command[5] = BitConverter.GetBytes(addressData.AddressStart)[1];
-        command[6] = BitConverter.GetBytes(addressData.AddressStart)[2];
+
+        byte[] addressBits = BitConverter.GetBytes(addressData.AddressStart);
+        command[4] = addressBits[0]; // Starting Address
+        command[5] = addressBits[1];
+        command[6] = addressBits[2];
         command[7] = addressData.McDataType.DataCode; // 指明写入的数据
         command[8] = (byte) (value.Length % 256); // 软元件长度的地位
         command[9] = (byte) (value.Length / 256);
@@ -241,20 +231,24 @@ public class MelsecHelper {
         command[6] = 0x30;
         command[7] = 0x31;
         
-        string code = addressData.McDataType.AsciiCode;
-        command[8] = Encoding.ASCII.GetBytes(code)[0]; // 软元件类型
-        command[9] = Encoding.ASCII.GetBytes(code)[1];
-        
-        command[10] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[0]; // 起始地址的地位
-        command[11] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[1];
-        command[12] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[2];
-        command[13] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[3];
-        command[14] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[4];
-        command[15] = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType)[5];
-        command[16] = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length))[0]; // 软元件点数
-        command[17] = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length))[1];
-        command[18] = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length))[2];
-        command[19] = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length))[3];
+        byte[] asciiCode = Encoding.ASCII.GetBytes(addressData.McDataType.AsciiCode);
+        command[8] = asciiCode[0]; // Component Type
+        command[9] = asciiCode[1];
+
+
+        byte[] asciiAddress = BuildBytesFromAddress(addressData.AddressStart, addressData.McDataType);
+        command[10] = asciiAddress[0]; // Starting Address
+        command[11] = asciiAddress[1];
+        command[12] = asciiAddress[2];
+        command[13] = asciiAddress[3];
+        command[14] = asciiAddress[4];
+        command[15] = asciiAddress[5];
+
+        byte[] asciiValLen = SoftBasic.BuildAsciiBytesFrom((ushort) (value.Length));
+        command[16] = asciiValLen[0]; // 软元件点数
+        command[17] = asciiValLen[1];
+        command[18] = asciiValLen[2];
+        command[19] = asciiValLen[3];
         buffer.CopyTo(command, 20);
 
         return command;

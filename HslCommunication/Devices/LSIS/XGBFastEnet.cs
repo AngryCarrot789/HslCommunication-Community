@@ -213,19 +213,19 @@ public class XGBFastEnet : NetworkDeviceBase<LsisFastEnetMessage, RegularByteTra
                         sb.Append(types[i]);
                         sb.Append("B");
                         if (address[1] == 'B') {
-                            sb.Append(int.Parse(address.Substring(2)) * 2);
+                            sb.Append(int.Parse(address.AsSpan(2)) * 2);
                         }
                         else if (address[1] == 'W') {
-                            sb.Append(int.Parse(address.Substring(2)) * 2);
+                            sb.Append(int.Parse(address.AsSpan(2)) * 2);
                         }
                         else if (address[1] == 'D') {
-                            sb.Append(int.Parse(address.Substring(2)) * 4);
+                            sb.Append(int.Parse(address.AsSpan(2)) * 4);
                         }
                         else if (address[1] == 'L') {
-                            sb.Append(int.Parse(address.Substring(2)) * 8);
+                            sb.Append(int.Parse(address.AsSpan(2)) * 8);
                         }
                         else {
-                            sb.Append(int.Parse(address.Substring(1)));
+                            sb.Append(int.Parse(address.AsSpan(1)));
                         }
 
                         exsist = true;
@@ -256,23 +256,19 @@ public class XGBFastEnet : NetworkDeviceBase<LsisFastEnetMessage, RegularByteTra
     /// <returns></returns>
     public static OperateResult<string> GetDataTypeToAddress(string address) {
         string lSDataType = string.Empty;
-        ;
         try {
             char[] types = new char[] { 'P', 'M', 'L', 'K', 'F', 'T', 'C', 'D', 'S', 'Q', 'I', 'R' };
             bool exsist = false;
 
             for (int i = 0; i < types.Length; i++) {
                 if (types[i] == address[1]) {
-                    if (address[2] == 'W')
-                        lSDataType = "Word";
-                    else if (address[2] == 'D')
-                        lSDataType = "DWord";
-                    else if (address[2] == 'L')
-                        lSDataType = "LWord";
-                    else if (address[2] == 'B')
-                        lSDataType = "Continuous";
-                    else if (address[2] == 'X')
-                        lSDataType = "Bit";
+                    switch (address[2]) {
+                        case 'W': lSDataType = "Word"; break;
+                        case 'D': lSDataType = "DWord"; break;
+                        case 'L': lSDataType = "LWord"; break;
+                        case 'B': lSDataType = "Continuous"; break;
+                        case 'X': lSDataType = "Bit"; break;
+                    }
 
                     exsist = true;
                     break;

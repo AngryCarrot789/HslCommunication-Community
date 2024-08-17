@@ -106,7 +106,7 @@ public class OmronFinsNetHelper {
                 }
                 else {
                     // 字操作
-                    ushort addr = ushort.Parse(address.Substring(1));
+                    ushort addr = ushort.Parse(address.AsSpan(1));
                     result.Content2 = new byte[3];
                     result.Content2[0] = BitConverter.GetBytes(addr)[1];
                     result.Content2[1] = BitConverter.GetBytes(addr)[0];

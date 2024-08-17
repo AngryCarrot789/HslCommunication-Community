@@ -3,7 +3,6 @@ using Newtonsoft.Json.Linq;
 #if !NETSTANDARD2_0 && !NETCOREAPP
 using System.Windows.Forms;
 #endif
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 
 namespace HslCommunication.BasicFramework;
@@ -557,8 +556,8 @@ public static class SoftBasic {
     public static byte[] BytesReverseByWord(byte[] inBytes) {
         if (inBytes == null)
             return null;
+        
         byte[] buffer = ArrayExpandToLengthEven(inBytes);
-
         for (int i = 0; i < buffer.Length / 2; i++) {
             byte tmp = buffer[i * 2 + 0];
             buffer[i * 2 + 0] = buffer[i * 2 + 1];
@@ -567,7 +566,7 @@ public static class SoftBasic {
 
         return buffer;
     }
-
+    
     /// <summary>
     /// 将原始的byte数组转换成ascii格式的byte数组 ->
     /// Converts the original byte array to an ASCII-formatted byte array
@@ -598,20 +597,23 @@ public static class SoftBasic {
     }
 
     /// <summary>
-    /// 从short构建一个ASCII格式的数据内容
-    /// </summary>
-    /// <param name="value">数据</param>
-    /// <returns>ASCII格式的字节数组</returns>
-    public static byte[] BuildAsciiBytesFrom(short value) {
-        return Encoding.ASCII.GetBytes(value.ToString("X4"));
-    }
-
-    /// <summary>
     /// 从ushort构建一个ASCII格式的数据内容
     /// </summary>
     /// <param name="value">数据</param>
     /// <returns>ASCII格式的字节数组</returns>
     public static byte[] BuildAsciiBytesFrom(ushort value) {
+        // This runs faster than optimisations using ArrayPool<byte>.Shared.Rent(4)
+        // Using an Action<byte[]> accept parameter to accept a cached array also
+        // does not runs faster and generally runs slower actually...???
+        
+        // The test was using DateTime.Now so take it with a grain of salt
+        // 100,000 tests in a for loop, calling a static method with an
+        // out param which gets added to an array. See Program.cs for more info
+        // The GetBytes() method averaged 1.85 ticks per execution,
+        // Using memory pool and accept parameter was 2.0 ticks per execution.
+        // Thought on systems with low memory (e.g. rasp PI), the array pool way
+        // might actually run faster?
+        
         return Encoding.ASCII.GetBytes(value.ToString("X4"));
     }
 

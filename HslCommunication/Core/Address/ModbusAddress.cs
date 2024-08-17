@@ -75,15 +75,16 @@ public class ModbusAddress : DeviceAddressBase {
             // 带功能码的地址
             string[] list = address.Split(';');
             for (int i = 0; i < list.Length; i++) {
-                if (list[i][0] == 's' || list[i][0] == 'S') {
+                string item = list[i];
+                if (item[0] == 's' || item[0] == 'S') {
                     // 站号信息
-                    this.Station = byte.Parse(list[i].Substring(2));
+                    this.Station = byte.Parse(item.AsSpan(2));
                 }
-                else if (list[i][0] == 'x' || list[i][0] == 'X') {
-                    this.Function = byte.Parse(list[i].Substring(2));
+                else if (item[0] == 'x' || item[0] == 'X') {
+                    this.Function = byte.Parse(item.AsSpan(2));
                 }
                 else {
-                    this.Address = ushort.Parse(list[i]);
+                    this.Address = ushort.Parse(item);
                 }
             }
         }

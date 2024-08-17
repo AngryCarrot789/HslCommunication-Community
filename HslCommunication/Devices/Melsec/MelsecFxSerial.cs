@@ -134,12 +134,18 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
 
     /*
      * Control Codes:
-         STX 0x2 Start of Text        LF  0xA Line Feed
-         ETX 0x3 End of Text          CL  0xC Clear
-         EOT 0x4 End of Transmission  CR  0xD Carriage Return
-         ENQ 0x5 Enquiry              NAK 0x15 Negative Acknowledge
-         ACK 0x6 Acknowledge
+         STX 0x02 Start of Text        LF  0x0A Line Feed
+         ETX 0x03 End of Text          CL  0x0C Clear
+         EOT 0x04 End of Transmission  CR  0x0D Carriage Return
+         ENQ 0x05 Enquiry              NAK 0x15 Negative Acknowledge
+         ACK 0x06 Acknowledge
      */
+
+    private const int CODE_STX = 0x02;
+    private const int CODE_ETX = 0x03;
+    private const int CODE_ENQ = 0x05;
+    private const int CODE_ACK = 0x06;
+    private const int CODE_NAK = 0x15;
     
     protected override bool IsReceivedMessageComplete(byte[] buffer, int count) {
         switch (count) {
@@ -150,16 +156,16 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
             default:
                 // Check for STX, check buffer is big enough has contains ETX,
                 // then verify checksum
-                return buffer[0] == 0x2 && count >= 5 && buffer[count - 3] == 0x3 && MelsecHelper.CheckCRC(buffer, count);
+                return buffer[0] == CODE_STX && count >= 5 && buffer[count - 3] == CODE_ETX && MelsecHelper.CheckCRC(buffer, count);
         }
     }
 
     private LightOperationResult CheckPlcReadResponse(byte[] ack) {
         if (ack.Length == 0)
             return new LightOperationResult(StringResources.Language.MelsecFxReceiveZore);
-        if (ack[0] == 0x15) // Received NAK
+        if (ack[0] == CODE_NAK) // Received NAK
             return new LightOperationResult(StringResources.Language.MelsecFxAckNagative + " Actual: " + SoftBasic.ByteToHexString(ack, ' '));
-        if (ack[0] != 0x02) // 
+        if (ack[0] != CODE_STX) // 
             return new LightOperationResult(StringResources.Language.MelsecFxAckWrong + ack[0] + " Actual: " + SoftBasic.ByteToHexString(ack, ' '));
         if (!MelsecHelper.CheckCRC(ack))
             return new LightOperationResult(StringResources.Language.MelsecFxCrcCheckFailed);
@@ -170,9 +176,9 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     private LightOperationResult CheckPlcWriteResponse(byte[] ack) {
         if (ack.Length == 0)
             return new LightOperationResult(StringResources.Language.MelsecFxReceiveZore);
-        if (ack[0] == 0x15)
+        if (ack[0] == CODE_NAK)
             return new LightOperationResult(StringResources.Language.MelsecFxAckNagative + " Actual: " + SoftBasic.ByteToHexString(ack, ' '));
-        if (ack[0] != 0x06)
+        if (ack[0] != CODE_ACK)
             return new LightOperationResult(StringResources.Language.MelsecFxAckWrong + ack[0] + " Actual: " + SoftBasic.ByteToHexString(ack, ' '));
 
         return LightOperationResult.CreateSuccessResult();
@@ -310,6 +316,10 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         return OperateResult.CreateSuccessResult();
     }
 
+    public override OperateResult Write(string address, bool[] value) {
+        return new OperateResult();
+    }
+
     /// <summary>
     /// 获取当前对象的字符串标识形式
     /// </summary>
@@ -325,11 +335,12 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     /// <param name="value"><c>True</c>或是<c>False</c></param>
     /// <returns>带报文信息的结果对象</returns>
     public static LightOperationResult<byte[]> BuildWriteBoolPacket(string address, bool value) {
-        LightOperationResult<MelsecMcDataType, ushort> analysis = FxAnalysisAddress(address);
+        LightOperationResult<MelsecMcDataType, ushort> analysis = FxParseAddress(address);
         if (!analysis.IsSuccess)
             return new LightOperationResult<byte[]>(analysis.ErrorCode, analysis.Message);
 
-        // 二次运算起始地址偏移量，根据类型的不同，地址的计算方式不同
+        // The offset of the starting address of the secondary operation.
+        // The address is calculated differently depending on the type.
         ushort startAddress = analysis.Content2;
         if (analysis.Content1 == MelsecMcDataType.M) {
             if (startAddress >= 8000) {
@@ -370,17 +381,18 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
             return new LightOperationResult<byte[]>(StringResources.Language.MelsecCurrentTypeNotSupportedBitOperate);
         }
 
-        byte[] _PLCCommand = new byte[9];
-        _PLCCommand[0] = 0x02; // STX
-        _PLCCommand[1] = value ? (byte) 0x37 : (byte) 0x38; // Read
-        _PLCCommand[2] = SoftBasic.BuildAsciiBytesFrom(startAddress)[2]; // 偏移地址
-        _PLCCommand[3] = SoftBasic.BuildAsciiBytesFrom(startAddress)[3];
-        _PLCCommand[4] = SoftBasic.BuildAsciiBytesFrom(startAddress)[0];
-        _PLCCommand[5] = SoftBasic.BuildAsciiBytesFrom(startAddress)[1];
-        _PLCCommand[6] = 0x03; // ETX
-        MelsecHelper.FxCalculateCRC(_PLCCommand).CopyTo(_PLCCommand, 7); // CRC
+        byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(startAddress);
+        byte[] cmd = new byte[9];
+        cmd[0] = CODE_STX; // STX
+        cmd[1] = value ? (byte) 0x37 : (byte) 0x38; // Read
+        cmd[2] = asciiAddress[2];
+        cmd[3] = asciiAddress[3];
+        cmd[4] = asciiAddress[0];
+        cmd[5] = asciiAddress[1];
+        cmd[6] = CODE_ETX; // ETX
+        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, 7); // CRC
 
-        return LightOperationResult.CreateSuccessResult(_PLCCommand);
+        return LightOperationResult.CreateSuccessResult(cmd);
     }
 
     /// <summary>
@@ -394,22 +406,22 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         if (!addressResult.IsSuccess)
             return new LightOperationResult<byte[]>(addressResult.ErrorCode, addressResult.Message);
 
-        length = (ushort) (length * 2);
-        ushort startAddress = addressResult.Content;
+        byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(addressResult.Content);
+        byte[] asciiLength = SoftBasic.BuildAsciiBytesFrom((byte) (ushort) (length * 2));
+        
+        byte[] cmd = new byte[11];
+        cmd[0] = CODE_STX; // STX
+        cmd[1] = 0x30; // Read
+        cmd[2] = asciiAddress[0]; // 偏移地址
+        cmd[3] = asciiAddress[1];
+        cmd[4] = asciiAddress[2];
+        cmd[5] = asciiAddress[3];
+        cmd[6] = asciiLength[0]; // 读取长度
+        cmd[7] = asciiLength[1];
+        cmd[8] = CODE_ETX; // ETX
+        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, 9); // CRC
 
-        byte[] _PLCCommand = new byte[11];
-        _PLCCommand[0] = 0x02; // STX
-        _PLCCommand[1] = 0x30; // Read
-        _PLCCommand[2] = SoftBasic.BuildAsciiBytesFrom(startAddress)[0]; // 偏移地址
-        _PLCCommand[3] = SoftBasic.BuildAsciiBytesFrom(startAddress)[1];
-        _PLCCommand[4] = SoftBasic.BuildAsciiBytesFrom(startAddress)[2];
-        _PLCCommand[5] = SoftBasic.BuildAsciiBytesFrom(startAddress)[3];
-        _PLCCommand[6] = SoftBasic.BuildAsciiBytesFrom((byte) length)[0]; // 读取长度
-        _PLCCommand[7] = SoftBasic.BuildAsciiBytesFrom((byte) length)[1];
-        _PLCCommand[8] = 0x03; // ETX
-        MelsecHelper.FxCalculateCRC(_PLCCommand).CopyTo(_PLCCommand, 9); // CRC
-
-        return LightOperationResult.CreateSuccessResult(_PLCCommand); // Return
+        return LightOperationResult.CreateSuccessResult(cmd); // Return
     }
 
     /// <summary>
@@ -419,59 +431,58 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     /// <param name="length">bool数组长度</param>
     /// <returns>带有成功标志的指令数据</returns>
     public static LightOperationResult<byte[], int> BuildReadBoolCommand(string address, ushort length) {
-        LightOperationResult<ushort, ushort, ushort> addressResult = FxCalculateBoolStartAddress(address);
-        if (!addressResult.IsSuccess)
-            return new LightOperationResult<byte[], int>(addressResult.ErrorCode, addressResult.Message);
-
-        // 计算下实际需要读取的数据长度
-        ushort length2 = (ushort) ((addressResult.Content2 + length - 1) / 8 - (addressResult.Content2 / 8) + 1);
-
-        ushort startAddress = addressResult.Content1;
-        byte[] _PLCCommand = new byte[11];
-        _PLCCommand[0] = 0x02; // STX
-        _PLCCommand[1] = 0x30; // Read
-        _PLCCommand[2] = SoftBasic.BuildAsciiBytesFrom(startAddress)[0]; // 偏移地址
-        _PLCCommand[3] = SoftBasic.BuildAsciiBytesFrom(startAddress)[1];
-        _PLCCommand[4] = SoftBasic.BuildAsciiBytesFrom(startAddress)[2];
-        _PLCCommand[5] = SoftBasic.BuildAsciiBytesFrom(startAddress)[3];
-        _PLCCommand[6] = SoftBasic.BuildAsciiBytesFrom((byte) length2)[0]; // 读取长度
-        _PLCCommand[7] = SoftBasic.BuildAsciiBytesFrom((byte) length2)[1];
-        _PLCCommand[8] = 0x03; // ETX
-        MelsecHelper.FxCalculateCRC(_PLCCommand).CopyTo(_PLCCommand, 9); // CRC
-
-        return LightOperationResult.CreateSuccessResult(_PLCCommand, (int) addressResult.Content3);
+        LightOperationResult<ushort, ushort, ushort> startAddress = FxCalculateReadBoolStartAddress(address);
+        if (!startAddress.IsSuccess)
+            return new LightOperationResult<byte[], int>(startAddress.ErrorCode, startAddress.Message);
+        
+        byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(startAddress.Content1);
+        byte[] asciiLength = SoftBasic.BuildAsciiBytesFrom((byte) (ushort) ((startAddress.Content2 + length - 1) / 8 - (startAddress.Content2 / 8) + 1));
+        
+        byte[] cmd = new byte[11];
+        cmd[0] = CODE_STX; // STX
+        cmd[1] = 0x30; // Read
+        cmd[2] = asciiAddress[0]; // 偏移地址
+        cmd[3] = asciiAddress[1];
+        cmd[4] = asciiAddress[2];
+        cmd[5] = asciiAddress[3];
+        cmd[6] = asciiLength[0]; // 读取长度
+        cmd[7] = asciiLength[1];
+        cmd[8] = CODE_ETX; // ETX
+        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, 9); // CRC
+        
+        return LightOperationResult.CreateSuccessResult(cmd, (int) startAddress.Content3);
     }
 
     /// <summary>
-    /// 根据类型地址以及需要写入的数据来生成指令头
+    /// Generates a command header based on the address and the data to be written
     /// </summary>
-    /// <param name="address">起始地址</param>
-    /// <param name="value">实际的数据信息</param>
-    /// <returns>带有成功标志的指令数据</returns>
-    public static LightOperationResult<byte[]> BuildWriteWordCommand(string address, byte[] value) {
-        LightOperationResult<ushort> addressResult = FxCalculateWordStartAddress(address);
-        if (!addressResult.IsSuccess)
-            return new LightOperationResult<byte[]>(addressResult.ErrorCode, addressResult.Message);
+    /// <param name="address">Start address</param>
+    /// <param name="data">Data to be written</param>
+    /// <returns>Command data</returns>
+    public static LightOperationResult<byte[]> BuildWriteWordCommand(string address, byte[] data) {
+        LightOperationResult<ushort> startAddress = FxCalculateWordStartAddress(address);
+        if (!startAddress.IsSuccess)
+            return new LightOperationResult<byte[]>(startAddress.ErrorCode, startAddress.Message);
 
-        // 字节数据转换成ASCII格式
-        if (value != null)
-            value = SoftBasic.BuildAsciiBytesFrom(value);
+        // Convert bytes to ASCII
+        byte[] dataBytes = SoftBasic.BuildAsciiBytesFrom(data);
+        byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(startAddress.Content);
+        byte[] asciiLength = SoftBasic.BuildAsciiBytesFrom((byte) (dataBytes.Length / 2));
+        
+        byte[] cmd = new byte[11 + dataBytes.Length];
+        cmd[0] = CODE_STX; // STX
+        cmd[1] = 0x31; // Read
+        cmd[2] = asciiAddress[0]; // Starting Address
+        cmd[3] = asciiAddress[1];
+        cmd[4] = asciiAddress[2];
+        cmd[5] = asciiAddress[3];
+        cmd[6] = asciiLength[0]; // Read Length
+        cmd[7] = asciiLength[1];
+        Array.Copy(dataBytes, 0, cmd, 8, dataBytes.Length);
+        cmd[cmd.Length - 3] = CODE_ETX; // ETX
+        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, cmd.Length - 2); // CRC
 
-        ushort startAddress = addressResult.Content;
-        byte[] _PLCCommand = new byte[11 + value.Length];
-        _PLCCommand[0] = 0x02; // STX
-        _PLCCommand[1] = 0x31; // Read
-        _PLCCommand[2] = SoftBasic.BuildAsciiBytesFrom(startAddress)[0]; // Offect Address
-        _PLCCommand[3] = SoftBasic.BuildAsciiBytesFrom(startAddress)[1];
-        _PLCCommand[4] = SoftBasic.BuildAsciiBytesFrom(startAddress)[2];
-        _PLCCommand[5] = SoftBasic.BuildAsciiBytesFrom(startAddress)[3];
-        _PLCCommand[6] = SoftBasic.BuildAsciiBytesFrom((byte) (value.Length / 2))[0]; // Read Length
-        _PLCCommand[7] = SoftBasic.BuildAsciiBytesFrom((byte) (value.Length / 2))[1];
-        Array.Copy(value, 0, _PLCCommand, 8, value.Length);
-        _PLCCommand[_PLCCommand.Length - 3] = 0x03; // ETX
-        MelsecHelper.FxCalculateCRC(_PLCCommand).CopyTo(_PLCCommand, _PLCCommand.Length - 2); // CRC
-
-        return LightOperationResult.CreateSuccessResult(_PLCCommand);
+        return LightOperationResult.CreateSuccessResult(cmd);
     }
 
 
@@ -538,81 +549,60 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     /// <summary>
     /// Parse data addresses into different Mitsubishi address types
     /// </summary>
-    /// <param name="address">数据地址</param>
-    /// <returns>地址结果对象</returns>
-    public static LightOperationResult<MelsecMcDataType, ushort> FxAnalysisAddress(string address) {
-        LightOperationResult<MelsecMcDataType, ushort> result;
+    public static LightOperationResult<MelsecMcDataType, ushort> FxParseAddress(string address) {
         try {
             switch (address[0]) {
                 case 'M':
-                case 'm': {
-                    result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.M, Convert.ToUInt16(address.Substring(1), MelsecMcDataType.M.FromBase));
-                    break;
-                }
+                case 'm':
+                    return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.M, Convert.ToUInt16(address.Substring(1), MelsecMcDataType.M.FromBase));
                 case 'X':
-                case 'x': {
-                    result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.X, Convert.ToUInt16(address.Substring(1), 8));
-                    break;
-                }
+                case 'x':
+                    return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.X, Convert.ToUInt16(address.Substring(1), 8));
                 case 'Y':
-                case 'y': {
-                    result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.Y, Convert.ToUInt16(address.Substring(1), 8));
-                    break;
-                }
+                case 'y':
+                    return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.Y, Convert.ToUInt16(address.Substring(1), 8));
                 case 'D':
-                case 'd': {
-                    result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.D, Convert.ToUInt16(address.Substring(1), MelsecMcDataType.D.FromBase));
-                    break;
-                }
+                case 'd':
+                    return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.D, Convert.ToUInt16(address.Substring(1), MelsecMcDataType.D.FromBase));
                 case 'S':
-                case 's': {
-                    result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.S, Convert.ToUInt16(address.Substring(1), MelsecMcDataType.S.FromBase));
-                    break;
-                }
+                case 's':
+                    return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.S, Convert.ToUInt16(address.Substring(1), MelsecMcDataType.S.FromBase));
                 case 'T':
                 case 't': {
-                    if (address[1] == 'N' || address[1] == 'n') {
-                        result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.TN, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.TN.FromBase));
-                        break;
-                    }
-                    else if (address[1] == 'S' || address[1] == 's') {
-                        result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.TS, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.TS.FromBase));
-                        break;
-                    }
-                    else if (address[1] == 'C' || address[1] == 'c') {
-                        result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.TC, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.TC.FromBase));
-                        break;
-                    }
-                    else {
-                        throw new Exception(StringResources.Language.NotSupportedDataType);
+                    switch (address[1]) {
+                        case 'N':
+                        case 'n':
+                            return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.TN, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.TN.FromBase));
+                        case 'S':
+                        case 's':
+                            return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.TS, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.TS.FromBase));
+                        case 'C':
+                        case 'c':
+                            return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.TC, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.TC.FromBase));
+                        default: throw new Exception(StringResources.Language.NotSupportedDataType + ": " + address);
                     }
                 }
                 case 'C':
                 case 'c': {
-                    if (address[1] == 'N' || address[1] == 'n') {
-                        result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.CN, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.CN.FromBase));
-                        break;
-                    }
-                    else if (address[1] == 'S' || address[1] == 's') {
-                        result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.CS, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.CS.FromBase));
-                        break;
-                    }
-                    else if (address[1] == 'C' || address[1] == 'c') {
-                        result = new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.CC, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.CC.FromBase));
-                        break;
-                    }
-                    else {
-                        throw new Exception(StringResources.Language.NotSupportedDataType);
+                    switch (address[1]) {
+                        case 'N':
+                        case 'n':
+                            return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.CN, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.CN.FromBase));
+                        case 'S':
+                        case 's':
+                            return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.CS, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.CS.FromBase));
+                        case 'C':
+                        case 'c':
+                            return new LightOperationResult<MelsecMcDataType, ushort>(MelsecMcDataType.CC, Convert.ToUInt16(address.Substring(2), MelsecMcDataType.CC.FromBase));
+                        default: throw new Exception(StringResources.Language.NotSupportedDataType + ": " + address);
                     }
                 }
-                default: throw new Exception(StringResources.Language.NotSupportedDataType);
+                default: throw new Exception(StringResources.Language.NotSupportedDataType + ": " + address);
             }
         }
         catch (Exception ex) {
             return new LightOperationResult<MelsecMcDataType, ushort>(ex.Message);
         }
-
-        return result;
     }
 
     /// <summary>
@@ -622,12 +612,11 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     /// <returns>带起始地址的结果对象</returns>
     public static LightOperationResult<ushort> FxCalculateWordStartAddress(string address) {
         // 初步解析，失败就返回
-        LightOperationResult<MelsecMcDataType, ushort> analysis = FxAnalysisAddress(address);
+        LightOperationResult<MelsecMcDataType, ushort> analysis = FxParseAddress(address);
         if (analysis.IsSuccess)
             return FxCalculateWordStartAddress(analysis.Content1, analysis.Content2);
 
         return new LightOperationResult<ushort>(analysis.ErrorCode, analysis.Message);
-
     }
     
     public static LightOperationResult<ushort> FxCalculateWordStartAddress(MelsecMcDataType dataType, ushort startAddress) {
@@ -662,18 +651,16 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
     /// 返回读取的地址及长度信息，以及当前的偏置信息
     /// </summary><param name="address">读取的地址信息</param>
     /// <returns>带起始地址的结果对象</returns>
-    public static LightOperationResult<ushort, ushort, ushort> FxCalculateBoolStartAddress(string address) {
+    public static LightOperationResult<ushort, ushort, ushort> FxCalculateReadBoolStartAddress(string address) {
         // 初步解析
-        LightOperationResult<MelsecMcDataType, ushort> analysis = FxAnalysisAddress(address);
+        LightOperationResult<MelsecMcDataType, ushort> analysis = FxParseAddress(address);
         if (analysis.IsSuccess)
-            return FxCalculateBoolStartAddress(analysis.Content1, analysis.Content2);
+            return FxCalculateReadBoolStartAddress(analysis.Content1, analysis.Content2);
 
         return new LightOperationResult<ushort, ushort, ushort>(analysis.ErrorCode, analysis.Message);
     }
     
-    public static LightOperationResult<ushort, ushort, ushort> FxCalculateBoolStartAddress(MelsecMcDataType dataType, ushort startAddress) {
-        // 二次解析
-        
+    public static LightOperationResult<ushort, ushort, ushort> FxCalculateReadBoolStartAddress(MelsecMcDataType dataType, ushort startAddress) {
         ushort originalAddress = startAddress;
         if (dataType == MelsecMcDataType.M) {
             if (startAddress >= 8000) {

@@ -278,55 +278,55 @@ public class PanasonicMewtocol : SerialDeviceBase<RegularByteTransform> {
             result.Content2 = 0;
             if (address.StartsWith("IX") || address.StartsWith("ix")) {
                 result.Content1 = "IX";
-                result.Content2 = int.Parse(address.Substring(2));
+                result.Content2 = int.Parse(address.AsSpan(2));
             }
             else if (address.StartsWith("IY") || address.StartsWith("iy")) {
                 result.Content1 = "IY";
-                result.Content2 = int.Parse(address.Substring(2));
+                result.Content2 = int.Parse(address.AsSpan(2));
             }
             else if (address.StartsWith("ID") || address.StartsWith("id")) {
                 result.Content1 = "ID";
-                result.Content2 = int.Parse(address.Substring(2));
+                result.Content2 = int.Parse(address.AsSpan(2));
             }
             else if (address[0] == 'X' || address[0] == 'x') {
                 result.Content1 = "X";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else if (address[0] == 'Y' || address[0] == 'y') {
                 result.Content1 = "Y";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else if (address[0] == 'R' || address[0] == 'r') {
                 result.Content1 = "R";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else if (address[0] == 'T' || address[0] == 't') {
                 result.Content1 = "T";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else if (address[0] == 'C' || address[0] == 'c') {
                 result.Content1 = "C";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else if (address[0] == 'L' || address[0] == 'l') {
                 result.Content1 = "L";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else if (address[0] == 'D' || address[0] == 'd') {
                 result.Content1 = "D";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else if (address[0] == 'F' || address[0] == 'f') {
                 result.Content1 = "F";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else if (address[0] == 'S' || address[0] == 's') {
                 result.Content1 = "S";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else if (address[0] == 'K' || address[0] == 'k') {
                 result.Content1 = "K";
-                result.Content2 = ushort.Parse(address.Substring(1));
+                result.Content2 = ushort.Parse(address.AsSpan(1));
             }
             else {
                 throw new Exception(StringResources.Language.NotSupportedDataType);
