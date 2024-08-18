@@ -9,7 +9,7 @@ namespace HslCommunication.Serial;
 /// The base class for all types of serial devices. There may be a similarly named class for a PLC that can communicate via serial, ethernet, etc.
 /// </summary>
 public class SerialBase : IDisposable {
-    private readonly SerialPort serialPort;
+    public readonly SerialPort serialPort;
     private readonly byte[] rxBuffer;
     private readonly SimpleHybirdLock hybirdLock; // Guard against multiple threads sending and receiving data at the same time
     private readonly Stopwatch readTimer = new Stopwatch();
@@ -108,13 +108,21 @@ public class SerialBase : IDisposable {
     /// <summary>
     /// 打开一个新的串行端口连接
     /// </summary>
-    public void Open() {
+    public LightOperationResult Open() {
         if (!this.serialPort.IsOpen) {
             this.serialPort.ReadTimeout = this.ReceiveTimeout;
             this.serialPort.WriteTimeout = 5000;
             this.serialPort.Open();
-            this.InitializationOnOpen();
+
+            OperateResult init = this.InitializationOnOpen();
+            if (!init.IsSuccess) {
+                this.serialPort.Close();
+            }
+
+            return init.IsSuccess ? new LightOperationResult() : new LightOperationResult(init.ErrorCode, init.Message);
         }
+
+        return new LightOperationResult();
     }
 
     /// <summary>

@@ -644,44 +644,10 @@ public static class SoftBasic {
         if (array == null)
             return null;
 
-        int length = array.Length % 8 == 0 ? array.Length / 8 : array.Length / 8 + 1;
-        byte[] buffer = new byte[length];
-
+        byte[] buffer = new byte[array.Length % 8 == 0 ? (array.Length / 8) : (array.Length / 8 + 1)];
         for (int i = 0; i < array.Length; i++) {
-            int index = i / 8;
-            int offect = i % 8;
-
-            byte temp = 0;
-            switch (offect) {
-                case 0:
-                    temp = 0x01;
-                    break;
-                case 1:
-                    temp = 0x02;
-                    break;
-                case 2:
-                    temp = 0x04;
-                    break;
-                case 3:
-                    temp = 0x08;
-                    break;
-                case 4:
-                    temp = 0x10;
-                    break;
-                case 5:
-                    temp = 0x20;
-                    break;
-                case 6:
-                    temp = 0x40;
-                    break;
-                case 7:
-                    temp = 0x80;
-                    break;
-                default: break;
-            }
-
             if (array[i])
-                buffer[index] += temp;
+                buffer[i / 8] += (byte) (1 << (i % 8));
         }
 
         return buffer;
@@ -691,54 +657,23 @@ public static class SoftBasic {
     /// 从Byte数组中提取位数组，length代表位数 ->
     /// Extracts a bit array from a byte array, length represents the number of digits
     /// </summary>
-    /// <param name="InBytes">原先的字节数组</param>
+    /// <param name="input">原先的字节数组</param>
     /// <param name="length">想要转换的长度，如果超出自动会缩小到数组最大长度</param>
     /// <returns>转换后的bool数组</returns>
     /// <example>
     /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\BasicFramework\SoftBasicExample.cs" region="ByteToBoolArray" title="ByteToBoolArray示例" />
     /// </example> 
-    public static bool[] ByteToBoolArray(byte[] InBytes, int length) {
-        if (InBytes == null)
+    public static bool[] ByteToBoolArray(byte[] input, int length) {
+        if (input == null)
             return null;
-
-        if (length > InBytes.Length * 8)
-            length = InBytes.Length * 8;
+        
+        if (length > input.Length * 8)
+            length = input.Length * 8;
+        
         bool[] buffer = new bool[length];
-
         for (int i = 0; i < length; i++) {
-            int index = i / 8;
-            int offect = i % 8;
-
-            byte temp = 0;
-            switch (offect) {
-                case 0:
-                    temp = 0x01;
-                    break;
-                case 1:
-                    temp = 0x02;
-                    break;
-                case 2:
-                    temp = 0x04;
-                    break;
-                case 3:
-                    temp = 0x08;
-                    break;
-                case 4:
-                    temp = 0x10;
-                    break;
-                case 5:
-                    temp = 0x20;
-                    break;
-                case 6:
-                    temp = 0x40;
-                    break;
-                case 7:
-                    temp = 0x80;
-                    break;
-                default: break;
-            }
-
-            if ((InBytes[index] & temp) == temp) {
+            byte temp = (byte) (1 << (i % 8));
+            if ((input[i / 8] & temp) == temp) {
                 buffer[i] = true;
             }
         }
@@ -750,16 +685,16 @@ public static class SoftBasic {
     /// 从Byte数组中提取所有的位数组 ->
     /// Extracts a bit array from a byte array, length represents the number of digits
     /// </summary>
-    /// <param name="InBytes">原先的字节数组</param>
+    /// <param name="input">原先的字节数组</param>
     /// <returns>转换后的bool数组</returns>
     /// <example>
     /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\BasicFramework\SoftBasicExample.cs" region="ByteToBoolArray" title="ByteToBoolArray示例" />
     /// </example> 
-    public static bool[] ByteToBoolArray(byte[] InBytes) {
-        if (InBytes == null)
+    public static bool[] ByteToBoolArray(byte[] input) {
+        if (input == null)
             return null;
 
-        return ByteToBoolArray(InBytes, InBytes.Length * 8);
+        return ByteToBoolArray(input, input.Length * 8);
     }
 
     /// <summary>

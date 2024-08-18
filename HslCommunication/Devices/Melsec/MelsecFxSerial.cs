@@ -125,6 +125,26 @@ namespace HslCommunication.Devices.Melsec;
 /// <code lang="cs" source="HslCommunication.Test\Documentation\Samples\Devices\MelsecFxSerial.cs" region="Usage" title="简单的使用" />
 /// </example>
 public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
+    public const int CODE_STX = 0x02;
+    public const int CODE_ETX = 0x03;
+    public const int CODE_EOT = 0x04;
+    public const int CODE_ENQ = 0x05;
+    public const int CODE_ACK = 0x06;
+    public const int CODE_LF = 0x0A;
+    public const int CODE_CL = 0x0C;
+    public const int CODE_CR = 0x0D;
+    public const int CODE_NAK = 0x15;
+    
+    public const int CMD_BASIC_READ = 0x30;
+    public const int CMD_BASIC_WRITE = 0x31;
+    public const int CMD_FORCE_SET_BIT = 0x37;
+    public const int CMD_FORCE_RESET_BIT = 0x38;
+    public const int CMD_EXT_PREFIX = 0x45;
+    public const int CMD_EXT_READ_PREFIX = 0x30;
+    public const int CMD_EXT_WRITE_PREFIX = 0x31;
+    public const int CMD_EXT_CONFIG = 0x30;
+    public const int CMD_EXT_PLC_CODE = 0x31;
+    
     /// <summary>
     /// 实例化三菱的串口协议的通讯对象
     /// </summary>
@@ -132,21 +152,27 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         this.WordLength = 1;
     }
 
+    protected override OperateResult InitializationOnOpen() {
+        LightOperationResult<byte[]> responce = this.SendMessageAndGetResponce(new byte[] { 0x05 });
+        if (responce.IsSuccess && responce.Content[0] == CODE_ACK) {
+            Console.WriteLine("Successfully connected to PLC!");
+        }
+        
+        return base.InitializationOnOpen();
+    }
+
     /*
-     * Control Codes:
-         STX 0x02 Start of Text        LF  0x0A Line Feed
-         ETX 0x03 End of Text          CL  0x0C Clear
-         EOT 0x04 End of Transmission  CR  0x0D Carriage Return
-         ENQ 0x05 Enquiry              NAK 0x15 Negative Acknowledge
-         ACK 0x06 Acknowledge
+        For more info: https://github.com/KunYi/FX3U_Simulation
+        BASIC READ:                 0x30
+        BASIC WRITE:                0x31
+        FORCE SET BIT:              0x37
+        FORCE RESET BIT:            0x38
+        EXTENSION READ PLC CONFIG:  0x45 0x30 0x30
+        EXTENSION READ PLC CODE:    0x45 0x30 0x31
+        EXTENSION WRITE PLC CONFIG: 0x45 0x31 0x30
+        EXTENSION WRITE PLC CODE:   0x45 0x31 0x31
      */
 
-    private const int CODE_STX = 0x02;
-    private const int CODE_ETX = 0x03;
-    private const int CODE_ENQ = 0x05;
-    private const int CODE_ACK = 0x06;
-    private const int CODE_NAK = 0x15;
-    
     protected override bool IsReceivedMessageComplete(byte[] buffer, int count) {
         switch (count) {
             case 0: return false;
@@ -213,7 +239,7 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
             return new OperateResult<byte[]>(ackResult.ErrorCode, ackResult.Message);
 
         // 数据提炼
-        return ExtractActualData(read.Content).ToOperateResult();
+        return ConvertResponse(read.Content).ToOperateResult();
     }
 
 
@@ -240,24 +266,7 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
             return new OperateResult<bool[]>(ackResult.ErrorCode, ackResult.Message);
 
         // 提取真实的数据
-        return ExtractActualBoolData(read.Content, command.Content2, length).ToOperateResult();
-    }
-    
-    public virtual LightOperationResult<bool[]> ReadBoolLight(string address, ushort length) {
-        LightOperationResult<byte[], int> command = BuildReadBoolCommand(address, length);
-        if (!command.IsSuccess)
-            return new LightOperationResult<bool[]>(command.ErrorCode, command.Message);
-
-        LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content1);
-        if (!read.IsSuccess)
-            return new LightOperationResult<bool[]>(read.ErrorCode, read.Message);
-
-        LightOperationResult ackResult = this.CheckPlcReadResponse(read.Content);
-        if (!ackResult.IsSuccess)
-            return new LightOperationResult<bool[]>(ackResult.ErrorCode, ackResult.Message);
-
-        // 提取真实的数据
-        return ExtractActualBoolData(read.Content, command.Content2, length);
+        return ExtractBoolArrayFromResponce(read.Content, command.Content2, length).ToOperateResult();
     }
 
     /// <summary>
@@ -316,9 +325,23 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         return OperateResult.CreateSuccessResult();
     }
 
-    public override OperateResult Write(string address, bool[] value) {
-        return new OperateResult();
-    }
+    // public override OperateResult Write(string address, bool[] value) {
+    //     LightOperationResult<byte[]> command = BuildWriteBoolPacket(address, value);
+    //     if (!command.IsSuccess)
+    //         return command.ToOperateResult();
+    //
+    //     // 和串口进行核心的数据交互
+    //     LightOperationResult<byte[]> read = this.SendMessageAndGetResponce(command.Content);
+    //     if (!read.IsSuccess)
+    //         return new OperateResult<byte[]>(read.ErrorCode, read.Message);
+    //
+    //     // 检查结果是否正确
+    //     LightOperationResult checkResult = this.CheckPlcWriteResponse(read.Content);
+    //     if (!checkResult.IsSuccess)
+    //         return checkResult.ToOperateResult();
+    //
+    //     return OperateResult.CreateSuccessResult();
+    // }
 
     /// <summary>
     /// 获取当前对象的字符串标识形式
@@ -383,17 +406,108 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
 
         byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(startAddress);
         byte[] cmd = new byte[9];
-        cmd[0] = CODE_STX; // STX
-        cmd[1] = value ? (byte) 0x37 : (byte) 0x38; // Read
+        cmd[0] = CODE_STX;
+        cmd[1] = value ? (byte) CMD_FORCE_SET_BIT : (byte) CMD_FORCE_RESET_BIT;
         cmd[2] = asciiAddress[2];
         cmd[3] = asciiAddress[3];
         cmd[4] = asciiAddress[0];
         cmd[5] = asciiAddress[1];
-        cmd[6] = CODE_ETX; // ETX
-        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, 7); // CRC
+        cmd[6] = CODE_ETX;
+        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, 7);
 
         return LightOperationResult.CreateSuccessResult(cmd);
     }
+
+    // public static LightOperationResult<byte[]> BuildWriteBoolPacket(string address, bool[] values) {
+    //     LightOperationResult<MelsecMcDataType, ushort> analysis = FxParseAddress(address);
+    //     if (!analysis.IsSuccess)
+    //         return new LightOperationResult<byte[]>(analysis.ErrorCode, analysis.Message);
+    //
+    //     // The offset of the starting address of the secondary operation.
+    //     // The address is calculated differently depending on the type.
+    //     ushort startAddress = analysis.Content2;
+    //     if (analysis.Content1 == MelsecMcDataType.M) {
+    //         if (startAddress >= 8000) {
+    //             startAddress = (ushort) (startAddress - 8000 + 0x0F00);
+    //         }
+    //         else {
+    //             startAddress = (ushort) (startAddress + 0x0800);
+    //         }
+    //     }
+    //     else if (analysis.Content1 == MelsecMcDataType.S) {
+    //         startAddress = (ushort) (startAddress + 0x0000);
+    //     }
+    //     else if (analysis.Content1 == MelsecMcDataType.X) {
+    //         startAddress = (ushort) (startAddress + 0x0400);
+    //     }
+    //     else if (analysis.Content1 == MelsecMcDataType.Y) {
+    //         startAddress = (ushort) (startAddress + 0x0500);
+    //     }
+    //     else if (analysis.Content1 == MelsecMcDataType.CS) {
+    //         startAddress += (ushort) (startAddress + 0x01C0);
+    //     }
+    //     else if (analysis.Content1 == MelsecMcDataType.CC) {
+    //         startAddress += (ushort) (startAddress + 0x03C0);
+    //     }
+    //     else if (analysis.Content1 == MelsecMcDataType.CN) {
+    //         startAddress += (ushort) (startAddress + 0x0E00);
+    //     }
+    //     else if (analysis.Content1 == MelsecMcDataType.TS) {
+    //         startAddress += (ushort) (startAddress + 0x00C0);
+    //     }
+    //     else if (analysis.Content1 == MelsecMcDataType.TC) {
+    //         startAddress += (ushort) (startAddress + 0x02C0);
+    //     }
+    //     else if (analysis.Content1 == MelsecMcDataType.TN) {
+    //         startAddress += (ushort) (startAddress + 0x0600);
+    //     }
+    //     else {
+    //         return new LightOperationResult<byte[]>(StringResources.Language.MelsecCurrentTypeNotSupportedBitOperate);
+    //     }
+    //
+    //     // byte[] rawArray = new byte[] { 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, };
+    //     // byte[] dataBytes = SoftBasic.BuildAsciiBytesFrom(SoftBasic.BoolArrayToByte(values));
+    //     // byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(startAddress);
+    //     // byte[] lengthBytes = Encoding.ASCII.GetBytes((dataBytes.Length).ToString("D2").Substring(0, 2));
+    //     // byte[] cmd = new byte[11 + dataBytes.Length];
+    //     // cmd[0] = CODE_STX;
+    //     // cmd[1] = CMD_BASIC_WRITE;
+    //     // cmd[2] = asciiAddress[2];
+    //     // cmd[3] = asciiAddress[3];
+    //     // cmd[4] = asciiAddress[0];
+    //     // cmd[5] = asciiAddress[1];
+    //     // cmd[6] = lengthBytes[0];
+    //     // cmd[7] = lengthBytes[1];
+    //     // Array.Copy(dataBytes, 0, cmd, 8, dataBytes.Length);
+    //     // cmd[cmd.Length - 3] = CODE_ETX;
+    //     // MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, cmd.Length - 2);
+    //     // return LightOperationResult.CreateSuccessResult(cmd);
+    //
+    //     // Doesn't work, even if the raw address is used without additional processing above
+    //     // Maybe FX3U uses an older protocol? This should work according to the manuals
+    //     byte[] array = SoftBasic.BoolArrayToByte(values);
+    //     byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(startAddress);
+    //     byte[] lengthBytes = Encoding.ASCII.GetBytes(array.Length.ToString("D2").Substring(0, 2));
+    //     byte[] cmd = new byte[17 + array.Length];
+    //     cmd[0] = 0x05; // ENQ
+    //     cmd[1] = 0x30; // STATION BYTE 0
+    //     cmd[2] = 0x30; // STATION BYTE 1
+    //     cmd[3] = 0x30; // PC NUMBER BYTE 0 
+    //     cmd[4] = 0x30; // PC NUMBER BYTE 1
+    //     cmd[5] = 0x42; // 'B'
+    //     cmd[6] = 0x57; // 'W'
+    //     cmd[7] = 0x30;
+    //     cmd[8] = Encoding.ASCII.GetBytes(char.ToUpperInvariant(address[0]).ToString())[0]; // Y
+    //     cmd[9] = asciiAddress[0];
+    //     cmd[10] = asciiAddress[1];
+    //     cmd[11] = asciiAddress[2];
+    //     cmd[12] = asciiAddress[3];
+    //     cmd[13] = lengthBytes[0];
+    //     cmd[14] = lengthBytes[1];
+    //     array.CopyTo(cmd, 15); // Copy data
+    //     MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, cmd.Length - 2);
+    //     return LightOperationResult.CreateSuccessResult(cmd);
+    // }
 
     /// <summary>
     /// 根据类型地址长度确认需要读取的指令头
@@ -408,18 +522,18 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
 
         byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(addressResult.Content);
         byte[] asciiLength = SoftBasic.BuildAsciiBytesFrom((byte) (ushort) (length * 2));
-        
+
         byte[] cmd = new byte[11];
-        cmd[0] = CODE_STX; // STX
-        cmd[1] = 0x30; // Read
-        cmd[2] = asciiAddress[0]; // 偏移地址
+        cmd[0] = CODE_STX;
+        cmd[1] = CMD_BASIC_READ;
+        cmd[2] = asciiAddress[0];
         cmd[3] = asciiAddress[1];
         cmd[4] = asciiAddress[2];
         cmd[5] = asciiAddress[3];
-        cmd[6] = asciiLength[0]; // 读取长度
+        cmd[6] = asciiLength[0];
         cmd[7] = asciiLength[1];
-        cmd[8] = CODE_ETX; // ETX
-        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, 9); // CRC
+        cmd[8] = CODE_ETX;
+        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, 9);
 
         return LightOperationResult.CreateSuccessResult(cmd); // Return
     }
@@ -434,22 +548,22 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         LightOperationResult<ushort, ushort, ushort> startAddress = FxCalculateReadBoolStartAddress(address);
         if (!startAddress.IsSuccess)
             return new LightOperationResult<byte[], int>(startAddress.ErrorCode, startAddress.Message);
-        
+
         byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(startAddress.Content1);
         byte[] asciiLength = SoftBasic.BuildAsciiBytesFrom((byte) (ushort) ((startAddress.Content2 + length - 1) / 8 - (startAddress.Content2 / 8) + 1));
-        
+
         byte[] cmd = new byte[11];
-        cmd[0] = CODE_STX; // STX
-        cmd[1] = 0x30; // Read
-        cmd[2] = asciiAddress[0]; // 偏移地址
+        cmd[0] = CODE_STX;
+        cmd[1] = CMD_BASIC_READ;
+        cmd[2] = asciiAddress[0];
         cmd[3] = asciiAddress[1];
         cmd[4] = asciiAddress[2];
         cmd[5] = asciiAddress[3];
-        cmd[6] = asciiLength[0]; // 读取长度
+        cmd[6] = asciiLength[0];
         cmd[7] = asciiLength[1];
-        cmd[8] = CODE_ETX; // ETX
-        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, 9); // CRC
-        
+        cmd[8] = CODE_ETX;
+        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, 9);
+
         return LightOperationResult.CreateSuccessResult(cmd, (int) startAddress.Content3);
     }
 
@@ -468,40 +582,41 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         byte[] dataBytes = SoftBasic.BuildAsciiBytesFrom(data);
         byte[] asciiAddress = SoftBasic.BuildAsciiBytesFrom(startAddress.Content);
         byte[] asciiLength = SoftBasic.BuildAsciiBytesFrom((byte) (dataBytes.Length / 2));
-        
+
         byte[] cmd = new byte[11 + dataBytes.Length];
-        cmd[0] = CODE_STX; // STX
-        cmd[1] = 0x31; // Read
-        cmd[2] = asciiAddress[0]; // Starting Address
+        cmd[0] = CODE_STX;
+        cmd[1] = CMD_BASIC_WRITE;
+        cmd[2] = asciiAddress[0];
         cmd[3] = asciiAddress[1];
         cmd[4] = asciiAddress[2];
         cmd[5] = asciiAddress[3];
-        cmd[6] = asciiLength[0]; // Read Length
+        cmd[6] = asciiLength[0];
         cmd[7] = asciiLength[1];
         Array.Copy(dataBytes, 0, cmd, 8, dataBytes.Length);
-        cmd[cmd.Length - 3] = CODE_ETX; // ETX
-        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, cmd.Length - 2); // CRC
+        cmd[cmd.Length - 3] = CODE_ETX;
+        MelsecHelper.FxCalculateCRC(cmd).CopyTo(cmd, cmd.Length - 2);
 
         return LightOperationResult.CreateSuccessResult(cmd);
     }
-
 
     /// <summary>
     /// 从PLC反馈的数据进行提炼操作
     /// </summary>
     /// <param name="response">PLC反馈的真实数据</param>
     /// <returns>数据提炼后的真实数据</returns>
-    public static LightOperationResult<byte[]> ExtractActualData(byte[] response) {
+    public static LightOperationResult<byte[]> ConvertResponse(byte[] response) {
         try {
+            // I wonder if this is slower or faster than using a traditional byte[]
+            // stackalloc is 6.67 microseconds, byte array is about 5.5 micros.
+            // But i tested this in debug mode so maybe release is faster?
+            byte[] buffer = new byte[2];
             byte[] data = new byte[(response.Length - 4) / 2];
             for (int i = 0; i < data.Length; i++) {
-                byte[] buffer = new byte[2];
                 buffer[0] = response[i * 2 + 1];
                 buffer[1] = response[i * 2 + 2];
-
                 data[i] = Convert.ToByte(Encoding.ASCII.GetString(buffer), 16);
             }
-
+            
             return LightOperationResult.CreateSuccessResult(data);
         }
         catch (Exception ex) {
@@ -509,32 +624,24 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         }
     }
 
-
-    /// <summary>
-    /// 从PLC反馈的数据进行提炼bool数组操作
-    /// </summary>
-    /// <param name="response">PLC反馈的真实数据</param>
-    /// <param name="start">起始提取的点信息</param>
-    /// <param name="length">bool数组的长度</param>
-    /// <returns>数据提炼后的真实数据</returns>
-    public static LightOperationResult<bool[]> ExtractActualBoolData(byte[] response, int start, int length) {
-        LightOperationResult<byte[]> extraResult = ExtractActualData(response);
-        if (!extraResult.IsSuccess)
-            return new LightOperationResult<bool[]>(extraResult.ErrorCode, extraResult.Message);
+    public static LightOperationResult<bool[]> ExtractBoolArrayFromResponce(byte[] response, int start, int length) {
+        LightOperationResult<byte[]> realResponse = ConvertResponse(response);
+        if (!realResponse.IsSuccess)
+            return new LightOperationResult<bool[]>(realResponse.ErrorCode, realResponse.Message);
 
         try {
             // DateTime startTime = DateTime.Now;
             bool[] data = new bool[length];
-            bool[] array = SoftBasic.ByteToBoolArray(extraResult.Content, extraResult.Content.Length * 8);
-            
+            bool[] array = SoftBasic.ByteToBoolArray(realResponse.Content, realResponse.Content.Length * 8);
+
             // Although I profiled this in debug mode, manual array copy is
             // still faster. BlockCopy is a bit slower, and CopyBlockUnaligned
             // is also slower than BlockCopy
-            
+
             for (int i = 0; i < length; i++) {
                 data[i] = array[i + start];
             }
-            
+
             // Buffer.BlockCopy(array, start, data, 0, length);
             // Unsafe.CopyBlockUnaligned(ref Unsafe.As<bool, byte>(ref data[0]), ref Unsafe.As<bool, byte>(ref array[start]), (uint) length);
             // double millisTaken = (DateTime.Now - startTime).TotalMilliseconds;
@@ -546,6 +653,88 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         }
     }
 
+    internal static LightOperationResult<ushort> FxCalculateWordStartAddress(string address) {
+        LightOperationResult<MelsecMcDataType, ushort> analysis = FxParseAddress(address);
+        if (!analysis.IsSuccess)
+            return new LightOperationResult<ushort>(analysis.ErrorCode, analysis.Message);
+
+        return FxCalculateWordStartAddress(analysis.Content1, analysis.Content2);
+    }
+    
+    internal static LightOperationResult<ushort, ushort, ushort> FxCalculateReadBoolStartAddress(string address) {
+        LightOperationResult<MelsecMcDataType, ushort> analysis = FxParseAddress(address);
+        if (!analysis.IsSuccess) {
+            return new LightOperationResult<ushort, ushort, ushort>(analysis.ErrorCode, analysis.Message);
+        }
+
+        return FxCalculateReadBoolStartAddress(analysis.Content1, analysis.Content2);
+    }
+
+    internal static LightOperationResult<ushort> FxCalculateWordStartAddress(MelsecMcDataType dataType, ushort startAddress) {
+        if (dataType == MelsecMcDataType.D) {
+            if (startAddress >= 8000) {
+                startAddress = (ushort) ((startAddress - 8000) * 2 + 0x0E00);
+            }
+            else {
+                startAddress = (ushort) (startAddress * 2 + 0x1000);
+            }
+        }
+        else if (dataType == MelsecMcDataType.CN) {
+            if (startAddress >= 200) {
+                startAddress = (ushort) ((startAddress - 200) * 4 + 0x0C00);
+            }
+            else {
+                startAddress = (ushort) (startAddress * 2 + 0x0A00);
+            }
+        }
+        else if (dataType == MelsecMcDataType.TN) {
+            startAddress = (ushort) (startAddress * 2 + 0x0800);
+        }
+        else {
+            return new LightOperationResult<ushort>(StringResources.Language.MelsecCurrentTypeNotSupportedWordOperate);
+        }
+
+        return LightOperationResult.CreateSuccessResult(startAddress);
+    }
+
+    internal static LightOperationResult<ushort, ushort, ushort> FxCalculateReadBoolStartAddress(MelsecMcDataType dataType, ushort startAddress) {
+        ushort originalAddress = startAddress;
+        if (dataType == MelsecMcDataType.M) {
+            if (startAddress >= 8000) {
+                startAddress = (ushort) ((startAddress - 8000) / 8 + 0x01E0);
+            }
+            else {
+                startAddress = (ushort) (startAddress / 8 + 0x0100);
+            }
+        }
+        else if (dataType == MelsecMcDataType.X) {
+            startAddress = (ushort) (startAddress / 8 + 0x0080);
+        }
+        else if (dataType == MelsecMcDataType.Y) {
+            startAddress = (ushort) (startAddress / 8 + 0x00A0);
+        }
+        else if (dataType == MelsecMcDataType.S) {
+            startAddress = (ushort) (startAddress / 8 + 0x0000);
+        }
+        else if (dataType == MelsecMcDataType.CS) {
+            startAddress += (ushort) (startAddress / 8 + 0x01C0);
+        }
+        else if (dataType == MelsecMcDataType.CC) {
+            startAddress += (ushort) (startAddress / 8 + 0x03C0);
+        }
+        else if (dataType == MelsecMcDataType.TS) {
+            startAddress += (ushort) (startAddress / 8 + 0x00C0);
+        }
+        else if (dataType == MelsecMcDataType.TC) {
+            startAddress += (ushort) (startAddress / 8 + 0x02C0);
+        }
+        else {
+            return new LightOperationResult<ushort, ushort, ushort>(StringResources.Language.MelsecCurrentTypeNotSupportedBitOperate);
+        }
+
+        return LightOperationResult.CreateSuccessResult(startAddress, originalAddress, (ushort) (originalAddress % 8));
+    }
+    
     /// <summary>
     /// Parse data addresses into different Mitsubishi address types
     /// </summary>
@@ -603,98 +792,5 @@ public class MelsecFxSerial : SerialDeviceBase<RegularByteTransform> {
         catch (Exception ex) {
             return new LightOperationResult<MelsecMcDataType, ushort>(ex.Message);
         }
-    }
-
-    /// <summary>
-    /// 返回读取的地址及长度信息
-    /// </summary>
-    /// <param name="address">读取的地址信息</param>
-    /// <returns>带起始地址的结果对象</returns>
-    public static LightOperationResult<ushort> FxCalculateWordStartAddress(string address) {
-        // 初步解析，失败就返回
-        LightOperationResult<MelsecMcDataType, ushort> analysis = FxParseAddress(address);
-        if (analysis.IsSuccess)
-            return FxCalculateWordStartAddress(analysis.Content1, analysis.Content2);
-
-        return new LightOperationResult<ushort>(analysis.ErrorCode, analysis.Message);
-    }
-    
-    public static LightOperationResult<ushort> FxCalculateWordStartAddress(MelsecMcDataType dataType, ushort startAddress) {
-        // 二次解析
-        if (dataType == MelsecMcDataType.D) {
-            if (startAddress >= 8000) {
-                startAddress = (ushort) ((startAddress - 8000) * 2 + 0x0E00);
-            }
-            else {
-                startAddress = (ushort) (startAddress * 2 + 0x1000);
-            }
-        }
-        else if (dataType == MelsecMcDataType.CN) {
-            if (startAddress >= 200) {
-                startAddress = (ushort) ((startAddress - 200) * 4 + 0x0C00);
-            }
-            else {
-                startAddress = (ushort) (startAddress * 2 + 0x0A00);
-            }
-        }
-        else if (dataType == MelsecMcDataType.TN) {
-            startAddress = (ushort) (startAddress * 2 + 0x0800);
-        }
-        else {
-            return new LightOperationResult<ushort>(StringResources.Language.MelsecCurrentTypeNotSupportedWordOperate);
-        }
-
-        return LightOperationResult.CreateSuccessResult(startAddress);
-    }
-
-    /// <summary>
-    /// 返回读取的地址及长度信息，以及当前的偏置信息
-    /// </summary><param name="address">读取的地址信息</param>
-    /// <returns>带起始地址的结果对象</returns>
-    public static LightOperationResult<ushort, ushort, ushort> FxCalculateReadBoolStartAddress(string address) {
-        // 初步解析
-        LightOperationResult<MelsecMcDataType, ushort> analysis = FxParseAddress(address);
-        if (analysis.IsSuccess)
-            return FxCalculateReadBoolStartAddress(analysis.Content1, analysis.Content2);
-
-        return new LightOperationResult<ushort, ushort, ushort>(analysis.ErrorCode, analysis.Message);
-    }
-    
-    public static LightOperationResult<ushort, ushort, ushort> FxCalculateReadBoolStartAddress(MelsecMcDataType dataType, ushort startAddress) {
-        ushort originalAddress = startAddress;
-        if (dataType == MelsecMcDataType.M) {
-            if (startAddress >= 8000) {
-                startAddress = (ushort) ((startAddress - 8000) / 8 + 0x01E0);
-            }
-            else {
-                startAddress = (ushort) (startAddress / 8 + 0x0100);
-            }
-        }
-        else if (dataType == MelsecMcDataType.X) {
-            startAddress = (ushort) (startAddress / 8 + 0x0080);
-        }
-        else if (dataType == MelsecMcDataType.Y) {
-            startAddress = (ushort) (startAddress / 8 + 0x00A0);
-        }
-        else if (dataType == MelsecMcDataType.S) {
-            startAddress = (ushort) (startAddress / 8 + 0x0000);
-        }
-        else if (dataType == MelsecMcDataType.CS) {
-            startAddress += (ushort) (startAddress / 8 + 0x01C0);
-        }
-        else if (dataType == MelsecMcDataType.CC) {
-            startAddress += (ushort) (startAddress / 8 + 0x03C0);
-        }
-        else if (dataType == MelsecMcDataType.TS) {
-            startAddress += (ushort) (startAddress / 8 + 0x00C0);
-        }
-        else if (dataType == MelsecMcDataType.TC) {
-            startAddress += (ushort) (startAddress / 8 + 0x02C0);
-        }
-        else {
-            return new LightOperationResult<ushort, ushort, ushort>(StringResources.Language.MelsecCurrentTypeNotSupportedBitOperate);
-        }
-
-        return LightOperationResult.CreateSuccessResult(startAddress, originalAddress, (ushort) (originalAddress % 8));
     }
 }

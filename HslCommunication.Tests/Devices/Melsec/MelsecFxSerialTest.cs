@@ -56,7 +56,7 @@ public class MelsecFxSerialTest {
 
     [TestMethod]
     public void ExtractActualBoolDataTest() {
-        LightOperationResult<bool[]> operate = HslCommunication.Devices.Melsec.MelsecFxSerial.ExtractActualBoolData(
+        LightOperationResult<bool[]> operate = HslCommunication.Devices.Melsec.MelsecFxSerial.ExtractBoolArrayFromResponce(
             HslCommunication.BasicFramework.SoftBasic.HexStringToBytes("02 30 32 03 36 35"), 1, 7);
 
         Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(operate.IsSuccess, "bool数组指定解析失败");

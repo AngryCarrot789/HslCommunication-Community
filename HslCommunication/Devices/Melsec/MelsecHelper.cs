@@ -8,7 +8,7 @@ namespace HslCommunication.Devices.Melsec;
 /// <summary>
 /// 所有三菱通讯类的通用辅助工具类，包含了一些通用的静态方法，可以使用本类来获取一些原始的报文信息。详细的操作参见例子
 /// </summary>
-public class MelsecHelper {
+public static class MelsecHelper {
     /// <summary>
     /// 解析A1E协议数据地址
     /// </summary>
@@ -311,15 +311,22 @@ public class MelsecHelper {
     /// </summary>
     /// <param name="data">字节数据</param>
     /// <returns>校验之后的数据</returns>
-    internal static byte[] FxCalculateCRC(byte[] data) => FxCalculateCRC(data, data.Length);
+    public static byte[] FxCalculateCRC(byte[] data) => FxCalculateCRC(data, data.Length);
     
-    internal static byte[] FxCalculateCRC(byte[] data, int length) {
+    public static byte[] FxCalculateCRC(byte[] data, int length) {
         int sum = 0;
         for (int i = 1; i < length - 2; i++)
             sum += data[i];
         return SoftBasic.BuildAsciiBytesFrom((byte) sum);
     }
-
+    
+    public static byte[] FxCalculateCRCRaw(byte[] data, int offset, int count) {
+        int sum = 0;
+        for (int i = 0; i < count; i++)
+            sum += data[offset + i];
+        return SoftBasic.BuildAsciiBytesFrom((byte) sum);
+    }
+    
     /// <summary>
     /// 检查指定的和校验是否是正确的
     /// </summary>
